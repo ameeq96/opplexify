@@ -1,0 +1,38 @@
+{
+  "name": "opplexify",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:web",
+    "dev:web": "npm --workspace apps/web run dev -- --port 3001 --hostname 0.0.0.0",
+    "dev:api": "npm --workspace apps/api run start:dev",
+    "build": "npm run build:web && npm run build:api",
+    "build:web": "npm --workspace apps/web run build",
+    "build:api": "npm --workspace apps/api run build",
+    "start:web": "node server.web.cjs",
+    "start:api": "node server.api.cjs",
+    "start:pm2": "pm2 start ecosystem.config.cjs",
+    "restart:pm2": "pm2 restart ecosystem.config.cjs --update-env",
+    "lint": "npm --workspace apps/web run lint",
+    "prisma:generate": "npm --workspace apps/api run prisma:generate",
+    "db:push": "npm --workspace apps/api run db:push",
+    "seed": "npm --workspace apps/api run seed",
+    "hostinger:build:web": "npm run build:web",
+    "hostinger:build:api": "npm run prisma:generate && npm run build:api",
+    "hostinger:init:db": "npm run db:push && npm run seed",
+    "hostinger:static": "NEXT_OUTPUT=export npm run build:web",
+    "hostinger:build": "npm run prisma:generate && npm run build",
+    "hostinger:setup": "npm run prisma:generate && npm run db:push && npm run seed && npm run build",
+    "visual:check": "node scripts/visual-check.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1"
+  }
+}

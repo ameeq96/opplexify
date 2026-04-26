@@ -1,0 +1,172 @@
+# Hostinger Deployment
+
+This project is ready for `opplexify.com` on Hostinger Business Web Hosting with Node.js Web Apps.
+
+Use two Hostinger Node.js apps:
+
+- `opplexify.com` for the Next.js frontend
+- `api.opplexify.com` for the NestJS backend API
+
+Production setup for your domain:
+
+- Frontend: `https://opplexify.com`
+- Backend API: `https://api.opplexify.com/api`
+- Web port: `3001`
+- API port: `4001`
+- Frontend start file: `server.js` or `server.web.cjs`
+- API start file: `server.api.cjs`
+- PM2 config: `ecosystem.config.cjs`
+
+## 1. Required Server Settings
+
+Use Node.js 20 or newer.
+
+Install dependencies from the project root:
+
+```bash
+npm install
+```
+
+Create production env files:
+
+```bash
+cp apps/web/.env.production.example apps/web/.env.local
+cp apps/api/.env.production.example apps/api/.env
+```
+
+Edit the values:
+
+```bash
+# apps/web/.env.local
+NEXT_PUBLIC_API_URL=https://api.opplexify.com/api
+```
+
+```bash
+# apps/api/.env
+NODE_ENV=production
+PORT=4001
+DATABASE_URL="file:./prod.db"
+JWT_SECRET="use-a-long-random-secret"
+FRONTEND_URL="https://opplexify.com,https://www.opplexify.com"
+```
+
+`NEXT_PUBLIC_API_URL` must be set before building the frontend because Next.js reads it at build time.
+
+## 2. Build And Prepare Database
+
+Run this from the project root:
+
+```bash
+npm run hostinger:setup
+```
+
+This runs:
+
+- Prisma client generation
+- SQLite table setup
+- Seed data
+- Next.js build
+- NestJS build
+
+## 3. Start With PM2
+
+If you are on a Hostinger VPS, start both apps with:
+
+```bash
+npm install -g pm2
+npm run start:pm2
+pm2 save
+pm2 startup
+```
+
+PM2 will run:
+
+- `opplexify-web` on port `3001`
+- `opplexify-api` on port `4001`
+
+Restart after env or code changes:
+
+```bash
+npm run restart:pm2
+```
+
+## 4. Hostinger Business Web Hosting Node.js Apps
+
+Create two Node.js apps in hPanel.
+
+Frontend app for `opplexify.com`:
+
+- Application root: project root
+- Startup file: `server.js`
+- Build command: `npm run hostinger:build:web`
+- Environment variable: `NEXT_PUBLIC_API_URL=https://api.opplexify.com/api`
+
+API app for `api.opplexify.com`:
+
+- Application root: project root
+- Startup file: `server.api.cjs`
+- Build command: `npm run hostinger:build:api`
+- Environment variable: `DATABASE_URL=file:./prod.db`
+- Environment variable: `JWT_SECRET=use-a-long-random-secret`
+- Environment variable: `FRONTEND_URL=https://opplexify.com,https://www.opplexify.com`
+
+Run the database command once after the first API deployment:
+
+```bash
+npm run hostinger:init:db
+```
+
+## 5. Static Fallback
+
+Use this only if you choose normal file hosting instead of Hostinger's Node.js app feature:
+
+```bash
+npm install
+NEXT_PUBLIC_API_URL=https://api.opplexify.com/api npm run hostinger:static
+```
+
+Upload the contents of:
+
+```bash
+apps/web/out
+```
+
+to Hostinger `public_html` for `opplexify.com`.
+
+Important: contact forms, quote requests, admin login, and dashboard still need the API at `https://api.opplexify.com/api`. If you do not deploy the API elsewhere, those dynamic features will not save data.
+
+## 6. Health Checks
+
+Check the backend:
+
+```bash
+curl https://api.opplexify.com/api/health
+```
+
+Expected response:
+
+```json
+{
+  "ok": true,
+  "service": "opplexify-api"
+}
+```
+
+Check the frontend:
+
+```bash
+curl https://opplexify.com
+```
+
+## 7. Demo Admin
+
+Seed creates this admin account:
+
+- Email: `admin@opplexify.dev`
+- Password: `ChangeMe123!`
+
+Change this password after deployment.
+
+## Notes
+
+The current Prisma schema uses SQLite for easiest direct deployment. If you want PostgreSQL on Hostinger VPS, switch `apps/api/prisma/schema.prisma` to `provider = "postgresql"` and use a PostgreSQL `DATABASE_URL` before running Prisma setup.

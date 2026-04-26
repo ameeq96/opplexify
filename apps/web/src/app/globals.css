@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --background: #f7fafc;
+  --foreground: #0f172a;
+  --muted: #5f6f89;
+  --panel: rgba(255, 255, 255, 0.88);
+  --line: rgba(15, 23, 42, 0.12);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #07111f;
+  --foreground: #f8fafc;
+  --muted: #adc0d8;
+  --panel: rgba(11, 24, 43, 0.82);
+  --line: rgba(226, 232, 240, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(135deg, rgba(110, 231, 183, 0.10), transparent 32%),
+    linear-gradient(315deg, rgba(255, 122, 89, 0.10), transparent 30%),
+    var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.surface {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.hero-image {
+  background-image:
+    linear-gradient(90deg, rgba(7, 17, 31, 0.94), rgba(7, 17, 31, 0.72), rgba(7, 17, 31, 0.34)),
+    url("https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1800&q=82");
+  background-position: center;
+  background-size: cover;
+}
+
+.lab-grid {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 3px rgba(36, 85, 214, 0.35);
+}
+
+.animate-panel {
+  animation: lift-in 640ms ease both;
+}
+
+@keyframes lift-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
