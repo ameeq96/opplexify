@@ -1,6 +1,6 @@
 # Hostinger Deployment
 
-This project is ready for `opplexify.com` on Hostinger Business Web Hosting with Node.js Web Apps.
+This project is ready for `opplexify.com` on Hostinger Business Web Hosting with Hostinger Node.js Apps.
 
 Use two Hostinger Node.js apps:
 
@@ -92,25 +92,31 @@ npm run restart:pm2
 
 ## 4. Hostinger Business Web Hosting Node.js Apps
 
+Hostinger Business Web Hosting supports managed Node.js apps. Deploy this repo as two separate apps from GitHub or from a `.zip` file.
+
 Create two Node.js apps in hPanel.
 
 Frontend app for `opplexify.com`:
 
 - Application root: project root
+- Framework: Next.js, or `Other` if Hostinger does not auto-detect the monorepo
 - Startup file: `server.js`
 - Build command: `npm run hostinger:build:web`
+- Output directory: `.next` if Hostinger asks for one
 - Environment variable: `NEXT_PUBLIC_API_URL=https://api.opplexify.com/api`
 
 API app for `api.opplexify.com`:
 
 - Application root: project root
+- Framework: NestJS, or `Other` if Hostinger does not auto-detect the monorepo
 - Startup file: `server.api.cjs`
-- Build command: `npm run hostinger:build:api`
+- Build command: `npm run hostinger:deploy:api`
+- Output directory: `apps/api/dist` if Hostinger asks for one
 - Environment variable: `DATABASE_URL=file:./prod.db`
 - Environment variable: `JWT_SECRET=use-a-long-random-secret`
 - Environment variable: `FRONTEND_URL=https://opplexify.com,https://www.opplexify.com`
 
-Run the database command once after the first API deployment:
+The API build command initializes and seeds the SQLite database during deployment. If you ever need to run it manually, use:
 
 ```bash
 npm run hostinger:init:db
