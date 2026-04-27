@@ -6,7 +6,7 @@ A premium agency website and backend for selling websites, web applications, Saa
 
 - Frontend: Next.js App Router, TypeScript, Tailwind CSS
 - Backend: NestJS, TypeScript
-- Database: Prisma with a local SQLite dev database
+- Database: Prisma with MySQL
 - Auth: JWT admin login
 
 ## Quick Start
@@ -23,7 +23,7 @@ npm install
 cp apps/api/.env.example apps/api/.env
 ```
 
-3. Update `JWT_SECRET` in `apps/api/.env` for production.
+3. Update `DATABASE_URL` and `JWT_SECRET` in `apps/api/.env`.
 
 4. Prepare the database:
 
@@ -82,7 +82,7 @@ npm run start:pm2
 On Hostinger Business Web Hosting, use two Node.js apps:
 
 - `opplexify.com` -> startup file `server.js`, build command `npm run hostinger:build:web`
-- `api.opplexify.com` -> startup file `server.api.cjs`, build command `npm run hostinger:build:api`
+- `api.opplexify.com` -> startup file `server.api.cjs`, build command `npm run hostinger:deploy:api`
 
 Static fallback is also available:
 

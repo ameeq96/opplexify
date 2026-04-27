@@ -3,82 +3,82 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  name         String
-  role         String   @default("admin")
+  id           String   @id @default(cuid()) @db.VarChar(191)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @db.VarChar(255)
+  name         String   @db.VarChar(255)
+  role         String   @default("admin") @db.VarChar(64)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
 model PortfolioProject {
-  id        String   @id @default(cuid())
-  title     String
-  slug      String   @unique
-  category  String
-  summary   String
-  problem   String
-  solution  String
-  result    String
-  image     String
+  id        String   @id @default(cuid()) @db.VarChar(191)
+  title     String   @db.VarChar(255)
+  slug      String   @unique @db.VarChar(191)
+  category  String   @db.VarChar(191)
+  summary   String   @db.Text
+  problem   String   @db.Text
+  solution  String   @db.Text
+  result    String   @db.Text
+  image     String   @db.VarChar(2048)
   tech      Json
   features  Json
-  liveUrl   String
-  githubUrl String
+  liveUrl   String   @db.VarChar(2048)
+  githubUrl String   @db.VarChar(2048)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model ContactMessage {
-  id          String   @id @default(cuid())
-  name        String
-  email       String
-  phone       String?
-  projectType String
-  budget      String
-  message     String
+  id          String   @id @default(cuid()) @db.VarChar(191)
+  name        String   @db.VarChar(255)
+  email       String   @db.VarChar(255)
+  phone       String?  @db.VarChar(64)
+  projectType String   @db.VarChar(191)
+  budget      String   @db.VarChar(191)
+  message     String   @db.Text
   createdAt   DateTime @default(now())
 }
 
 model QuoteRequest {
-  id                 String   @id @default(cuid())
-  name               String
-  email              String
-  phone              String?
-  projectType        String
+  id                 String   @id @default(cuid()) @db.VarChar(191)
+  name               String   @db.VarChar(255)
+  email              String   @db.VarChar(255)
+  phone              String?  @db.VarChar(64)
+  projectType        String   @db.VarChar(191)
   features           Json
-  timeline           String
-  budget             String
-  message            String?
-  recommendedPackage String
+  timeline           String   @db.VarChar(191)
+  budget             String   @db.VarChar(191)
+  message            String?  @db.Text
+  recommendedPackage String   @db.VarChar(191)
   estimatedPrice     Int
   createdAt          DateTime @default(now())
 }
 
 model PricingPackage {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  name        String
+  id          String   @id @default(cuid()) @db.VarChar(191)
+  key         String   @unique @db.VarChar(191)
+  name        String   @db.VarChar(255)
   price       Int
-  label       String
-  description String
-  timeline    String
+  label       String   @db.VarChar(255)
+  description String   @db.Text
+  timeline    String   @db.VarChar(191)
   features    Json
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Testimonial {
-  id        String   @id @default(cuid())
-  name      String
-  role      String
-  quote     String
+  id        String   @id @default(cuid()) @db.VarChar(191)
+  name      String   @db.VarChar(255)
+  role      String   @db.VarChar(255)
+  quote     String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

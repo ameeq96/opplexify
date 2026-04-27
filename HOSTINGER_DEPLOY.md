@@ -11,6 +11,7 @@ Production setup for your domain:
 
 - Frontend: `https://opplexify.com`
 - Backend API: `https://api.opplexify.com/api`
+- Database: Hostinger MySQL
 - Web port: `3001`
 - API port: `4001`
 - Frontend start file: `server.js` or `server.web.cjs`
@@ -26,6 +27,13 @@ Install dependencies from the project root:
 ```bash
 npm install
 ```
+
+Create a MySQL database in Hostinger hPanel:
+
+- Go to Databases -> MySQL Databases
+- Create a database, database user, and password
+- Save the database name, username, password, and host
+- Hostinger's database host is usually `localhost`
 
 Create production env files:
 
@@ -45,7 +53,7 @@ NEXT_PUBLIC_API_URL=https://api.opplexify.com/api
 # apps/api/.env
 NODE_ENV=production
 PORT=4001
-DATABASE_URL="file:./prod.db"
+DATABASE_URL="mysql://hostinger_database_user:hostinger_database_password@localhost:3306/hostinger_database_name"
 JWT_SECRET="use-a-long-random-secret"
 FRONTEND_URL="https://opplexify.com,https://www.opplexify.com"
 ```
@@ -63,7 +71,7 @@ npm run hostinger:setup
 This runs:
 
 - Prisma client generation
-- SQLite table setup
+- MySQL table setup through Prisma
 - Seed data
 - Next.js build
 - NestJS build
@@ -112,11 +120,11 @@ API app for `api.opplexify.com`:
 - Startup file: `server.api.cjs`
 - Build command: `npm run hostinger:deploy:api`
 - Output directory: `apps/api/dist` if Hostinger asks for one
-- Environment variable: `DATABASE_URL=file:./prod.db`
+- Environment variable: `DATABASE_URL=mysql://hostinger_database_user:hostinger_database_password@localhost:3306/hostinger_database_name`
 - Environment variable: `JWT_SECRET=use-a-long-random-secret`
 - Environment variable: `FRONTEND_URL=https://opplexify.com,https://www.opplexify.com`
 
-The API build command initializes and seeds the SQLite database during deployment. If you ever need to run it manually, use:
+The API build command initializes and seeds the MySQL database during deployment. If you ever need to run it manually, use:
 
 ```bash
 npm run hostinger:init:db
@@ -175,4 +183,4 @@ Change this password after deployment.
 
 ## Notes
 
-The current Prisma schema uses SQLite for easiest direct deployment. If you want PostgreSQL on Hostinger VPS, switch `apps/api/prisma/schema.prisma` to `provider = "postgresql"` and use a PostgreSQL `DATABASE_URL` before running Prisma setup.
+The Prisma schema is configured for MySQL. Hostinger Business Web Hosting supports MySQL databases for managed hosting; keep the real `DATABASE_URL` only in Hostinger environment variables or local `.env` files, not in Git.

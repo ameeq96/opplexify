@@ -7,7 +7,7 @@
     "start": "node dist/src/main.js",
     "start:dev": "nest start --watch",
     "prisma:generate": "prisma generate",
-    "db:push": "ts-node prisma/init-sqlite.ts",
+    "db:push": "prisma db push",
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
