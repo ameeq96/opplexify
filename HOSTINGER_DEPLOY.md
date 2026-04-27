@@ -53,7 +53,12 @@ NEXT_PUBLIC_API_URL=https://api.opplexify.com/api
 # apps/api/.env
 NODE_ENV=production
 PORT=4001
-DATABASE_URL="mysql://hostinger_database_user:hostinger_database_password@localhost:3306/hostinger_database_name"
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=hostinger_database_name
+DB_USERNAME=hostinger_database_user
+DB_PASSWORD=hostinger_database_password
 JWT_SECRET="use-a-long-random-secret"
 FRONTEND_URL="https://opplexify.com,https://www.opplexify.com"
 ```
@@ -120,11 +125,16 @@ API app for `api.opplexify.com`:
 - Startup file: `server.api.cjs`
 - Build command: `npm run hostinger:deploy:api`
 - Output directory: `apps/api/dist` if Hostinger asks for one
-- Environment variable: `DATABASE_URL=mysql://hostinger_database_user:hostinger_database_password@localhost:3306/hostinger_database_name`
+- Environment variable: `DB_CONNECTION=mysql`
+- Environment variable: `DB_HOST=localhost`
+- Environment variable: `DB_PORT=3306`
+- Environment variable: `DB_DATABASE=hostinger_database_name`
+- Environment variable: `DB_USERNAME=hostinger_database_user`
+- Environment variable: `DB_PASSWORD=hostinger_database_password`
 - Environment variable: `JWT_SECRET=use-a-long-random-secret`
 - Environment variable: `FRONTEND_URL=https://opplexify.com,https://www.opplexify.com`
 
-The API build command initializes and seeds the MySQL database during deployment. If you ever need to run it manually, use:
+The API build command builds Prisma's internal `DATABASE_URL` from the `DB_*` values, then initializes and seeds the MySQL database during deployment. If you ever need to run it manually, use:
 
 ```bash
 npm run hostinger:init:db
@@ -183,4 +193,4 @@ Change this password after deployment.
 
 ## Notes
 
-The Prisma schema is configured for MySQL. Hostinger Business Web Hosting supports MySQL databases for managed hosting; keep the real `DATABASE_URL` only in Hostinger environment variables or local `.env` files, not in Git.
+The Prisma schema is configured for MySQL. Hostinger Business Web Hosting supports MySQL databases for managed hosting; keep real DB passwords only in Hostinger environment variables or local `.env` files, not in Git.

@@ -23,7 +23,7 @@ npm install
 cp apps/api/.env.example apps/api/.env
 ```
 
-3. Update `DATABASE_URL` and `JWT_SECRET` in `apps/api/.env`.
+3. Update `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, and `JWT_SECRET` in `apps/api/.env`.
 
 4. Prepare the database:
 
