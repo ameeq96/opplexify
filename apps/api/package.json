@@ -8,7 +8,8 @@
     "start:dev": "nest start --watch",
     "prisma:generate": "node scripts/with-database-url.cjs prisma generate",
     "db:push": "node scripts/with-database-url.cjs prisma db push",
-    "seed": "node scripts/with-database-url.cjs ts-node prisma/seed.ts"
+    "seed": "node scripts/with-database-url.cjs ts-node prisma/seed.ts",
+    "seed:sql": "ts-node prisma/generate-mysql-seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",

@@ -24,13 +24,14 @@
     "prisma:generate": "npm --workspace apps/api run prisma:generate",
     "db:push": "npm --workspace apps/api run db:push",
     "seed": "npm --workspace apps/api run seed",
+    "seed:sql": "npm --workspace apps/api run seed:sql",
     "hostinger:build:web": "npm run build:web",
     "hostinger:build:api": "npm run prisma:generate && npm run build:api",
-    "hostinger:deploy:api": "npm run prisma:generate && npm run db:push && npm run seed && npm run build:api",
+    "hostinger:deploy:api": "npm run hostinger:build:api",
     "hostinger:init:db": "npm run db:push && npm run seed",
     "hostinger:static": "NEXT_OUTPUT=export npm run build:web",
     "hostinger:build": "npm run prisma:generate && npm run build",
-    "hostinger:setup": "npm run prisma:generate && npm run db:push && npm run seed && npm run build",
+    "hostinger:setup": "npm run prisma:generate && npm run build",
     "visual:check": "node scripts/visual-check.mjs"
   },
   "devDependencies": {

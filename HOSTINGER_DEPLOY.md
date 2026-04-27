@@ -65,7 +65,7 @@ FRONTEND_URL="https://opplexify.com,https://www.opplexify.com"
 
 `NEXT_PUBLIC_API_URL` must be set before building the frontend because Next.js reads it at build time.
 
-## 2. Build And Prepare Database
+## 2. Build
 
 Run this from the project root:
 
@@ -76,10 +76,13 @@ npm run hostinger:setup
 This runs:
 
 - Prisma client generation
-- MySQL table setup through Prisma
-- Seed data
 - Next.js build
 - NestJS build
+
+It does not create or seed database tables. Import your MySQL database manually in phpMyAdmin before starting the API:
+
+1. Import `apps/api/prisma/mysql-schema.sql`
+2. Import `apps/api/prisma/mysql-seed.sql`
 
 ## 3. Start With PM2
 
@@ -134,11 +137,7 @@ API app for `api.opplexify.com`:
 - Environment variable: `JWT_SECRET=use-a-long-random-secret`
 - Environment variable: `FRONTEND_URL=https://opplexify.com,https://www.opplexify.com`
 
-The API build command builds Prisma's internal `DATABASE_URL` from the `DB_*` values, then initializes and seeds the MySQL database during deployment. If you ever need to run it manually, use:
-
-```bash
-npm run hostinger:init:db
-```
+The API build command only generates Prisma Client and builds NestJS. It does not run `prisma db push` or seed data. Import the database manually in phpMyAdmin: first `apps/api/prisma/mysql-schema.sql`, then `apps/api/prisma/mysql-seed.sql`.
 
 ## 5. Static Fallback
 
