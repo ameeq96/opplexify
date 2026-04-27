@@ -6,9 +6,9 @@
     "build": "nest build",
     "start": "node dist/src/main.js",
     "start:dev": "nest start --watch",
-    "prisma:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "seed": "ts-node prisma/seed.ts"
+    "prisma:generate": "node scripts/with-database-url.cjs prisma generate",
+    "db:push": "node scripts/with-database-url.cjs prisma db push",
+    "seed": "node scripts/with-database-url.cjs ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",
@@ -40,6 +40,6 @@
     "typescript": "^5.7.2"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "node scripts/with-database-url.cjs ts-node prisma/seed.ts"
   }
 }

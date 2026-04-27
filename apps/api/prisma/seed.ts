@@ -1,6 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
+import { applyDatabaseUrl } from "../src/config/database-url";
 import { portfolioProjects } from "./portfolio-data";
+
+applyDatabaseUrl();
 
 const prisma = new PrismaClient();
 
