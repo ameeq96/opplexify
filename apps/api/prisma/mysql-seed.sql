@@ -11,7 +11,7 @@ SET NAMES utf8mb4;
 START TRANSACTION;
 
 INSERT INTO `User` (`id`, `email`, `passwordHash`, `name`, `role`, `createdAt`, `updatedAt`)
-VALUES ('user-admin', 'admin@opplexify.dev', '$2a$12$f/qzZ/X3Vk9vU8r1ODIuzOuYtLAIMXrZXbwBxeG1ZD3kl14sx/a5G', 'Opplexify Admin', 'admin', '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000')
+VALUES ('user-admin', 'admin@opplexify.dev', '$2a$12$69a8OkV9sm.dQDvauW/JlO.g8b/tBnBfQlulbHnpHkJAuDJbtSTFK', 'Opplexify Admin', 'admin', '2026-01-01 00:00:00.000', '2026-01-01 00:00:00.000')
 ON DUPLICATE KEY UPDATE `email` = VALUES(`email`), `passwordHash` = VALUES(`passwordHash`), `name` = VALUES(`name`), `role` = VALUES(`role`), `updatedAt` = VALUES(`updatedAt`);
 
 INSERT INTO `PricingPackage` (`id`, `key`, `name`, `price`, `label`, `description`, `timeline`, `features`, `createdAt`, `updatedAt`)
