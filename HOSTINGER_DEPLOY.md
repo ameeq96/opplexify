@@ -12,7 +12,7 @@ Production setup for your domain:
 - Frontend: `https://opplexify.com`
 - Backend API: `https://api.opplexify.com/api`
 - Database: Hostinger MySQL
-- Web port: `3001`
+- Web port: `3003`
 - API port: `4001`
 - Frontend start file: `server.js` or `server.web.cjs`
 - API start file: `server.api.cjs`
@@ -97,7 +97,7 @@ pm2 startup
 
 PM2 will run:
 
-- `opplexify-web` on port `3001`
+- `opplexify-web` on port `3003`
 - `opplexify-api` on port `4001`
 
 Restart after env or code changes:

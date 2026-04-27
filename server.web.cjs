@@ -1,7 +1,7 @@
 const { createServer } = require("node:http");
 const next = require("next");
 
-const port = Number(process.env.PORT || process.env.WEB_PORT || 3001);
+const port = Number(process.env.PORT || process.env.WEB_PORT || 3003);
 const hostname = process.env.HOST || "0.0.0.0";
 const app = next({
   dev: false,

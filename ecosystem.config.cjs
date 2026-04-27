@@ -6,7 +6,7 @@ module.exports = {
       cwd: __dirname,
       env: {
         NODE_ENV: "production",
-        PORT: process.env.WEB_PORT || "3001",
+        PORT: process.env.WEB_PORT || "3003",
         NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "https://api.opplexify.com/api"
       }
     },
