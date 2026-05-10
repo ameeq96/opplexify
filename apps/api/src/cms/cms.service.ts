@@ -71,6 +71,14 @@ const resources: Record<string, ResourceConfig> = {
 
 const sluggedResources = new Set(["pages", "services", "project-categories", "projects", "blog-categories", "tags", "blog-posts", "team"]);
 
+export type UploadedMediaFile = {
+  fieldname: string;
+  filename: string;
+  originalname: string;
+  mimetype: string;
+  size: number;
+};
+
 @Injectable()
 export class CmsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -262,7 +270,7 @@ export class CmsService {
     return this.delegate(config).delete({ where: { id } });
   }
 
-  async createMedia(file: Express.Multer.File, body: Record<string, string>, userId?: string) {
+  async createMedia(file: UploadedMediaFile, body: Record<string, string>, userId?: string) {
     if (!file) throw new BadRequestException("File is required");
 
     return this.prisma.media.create({

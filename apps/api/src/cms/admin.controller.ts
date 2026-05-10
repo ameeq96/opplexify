@@ -21,9 +21,11 @@ import { diskStorage } from "multer";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { Roles } from "../auth/roles.decorator";
 import { RolesGuard } from "../auth/roles.guard";
-import { CmsService } from "./cms.service";
+import { CmsService, type UploadedMediaFile } from "./cms.service";
 
 type AuthedRequest = { user: { id: string; role: string } };
+type MulterCallback = (error: Error | null, value: string) => void;
+type MulterFileInfo = { fieldname: string; originalname: string };
 
 @ApiTags("Admin")
 @ApiBearerAuth()
@@ -42,12 +44,12 @@ export class AdminController {
   @UseInterceptors(
     FileInterceptor("file", {
       storage: diskStorage({
-        destination: (_req, _file, cb) => {
+        destination: (_req: unknown, _file: unknown, cb: MulterCallback) => {
           const destination = join(process.cwd(), "uploads");
           mkdirSync(destination, { recursive: true });
           cb(null, destination);
         },
-        filename: (_req, file, cb) => {
+        filename: (_req: unknown, file: MulterFileInfo, cb: MulterCallback) => {
           const suffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
           cb(null, `${file.fieldname}-${suffix}${extname(file.originalname)}`);
         }
@@ -55,7 +57,7 @@ export class AdminController {
     })
   )
   uploadMedia(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: UploadedMediaFile,
     @Body() body: Record<string, string>,
     @Req() req: AuthedRequest
   ) {
