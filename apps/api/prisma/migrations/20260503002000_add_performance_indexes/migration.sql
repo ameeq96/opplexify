@@ -1,0 +1,12 @@
+CREATE INDEX `User_deleted_created_idx` ON `User`(`deletedAt`, `createdAt`);
+CREATE INDEX `MenuItem_menu_active_sort_idx` ON `MenuItem`(`menuId`, `isActive`, `sortOrder`);
+CREATE INDEX `Page_status_deleted_sort_idx` ON `Page`(`status`, `deletedAt`, `sortOrder`);
+CREATE INDEX `PageSection_page_enabled_sort_idx` ON `PageSection`(`pageId`, `enabled`, `sortOrder`);
+CREATE INDEX `Service_public_sort_idx` ON `Service`(`status`, `deletedAt`, `featured`, `sortOrder`);
+CREATE INDEX `Project_public_sort_idx` ON `Project`(`status`, `deletedAt`, `featured`, `sortOrder`);
+CREATE INDEX `BlogPost_public_date_idx` ON `BlogPost`(`status`, `deletedAt`, `featured`, `publishedAt`);
+CREATE INDEX `TeamMember_public_sort_idx` ON `TeamMember`(`status`, `deletedAt`, `sortOrder`);
+CREATE INDEX `Faq_active_sort_idx` ON `Faq`(`isActive`, `deletedAt`, `sortOrder`);
+CREATE INDEX `Testimonial_active_sort_idx` ON `Testimonial`(`isActive`, `deletedAt`, `sortOrder`);
+CREATE INDEX `ContactMessage_status_date_idx` ON `ContactMessage`(`status`, `deletedAt`, `createdAt`);
+CREATE INDEX `Media_deleted_created_idx` ON `Media`(`deletedAt`, `createdAt`);

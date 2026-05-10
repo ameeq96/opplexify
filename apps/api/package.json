@@ -1,46 +1,41 @@
 {
-  "name": "@opplexify/api",
+  "name": "@adon/api",
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev": "nest start --watch",
     "build": "nest build",
-    "start": "node dist/src/main.js",
-    "start:dev": "nest start --watch",
-    "prisma:generate": "node scripts/with-database-url.cjs prisma generate",
-    "db:push": "node scripts/with-database-url.cjs prisma db push",
-    "seed": "node scripts/with-database-url.cjs ts-node prisma/seed.ts",
-    "seed:sql": "ts-node prisma/generate-mysql-seed.ts"
+    "start": "node dist/main.js"
   },
   "dependencies": {
-    "@nestjs/common": "^10.4.15",
-    "@nestjs/config": "^3.3.0",
-    "@nestjs/core": "^10.4.15",
-    "@nestjs/jwt": "^10.2.0",
-    "@nestjs/cli": "^10.4.8",
-    "@nestjs/passport": "^10.0.3",
-    "@nestjs/platform-express": "^10.4.15",
-    "@prisma/client": "^6.1.0",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/express": "^4.17.21",
-    "@types/node": "^22.10.2",
-    "@types/passport-jwt": "^4.0.1",
-    "bcryptjs": "^2.4.3",
+    "@adon/shared": "1.0.0",
+    "@nestjs/common": "^11.1.19",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.1.19",
+    "@nestjs/jwt": "^11.0.1",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/platform-express": "^11.1.19",
+    "@nestjs/swagger": "^11.2.3",
+    "@prisma/adapter-mariadb": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
+    "class-validator": "^0.14.2",
+    "helmet": "^8.1.0",
+    "multer": "^2.0.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "prisma": "^6.1.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.2"
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
-    "@nestjs/schematics": "^10.2.3",
-    "@nestjs/testing": "^10.4.15"
-  },
-  "prisma": {
-    "seed": "node scripts/with-database-url.cjs ts-node prisma/seed.ts"
+    "@nestjs/cli": "^11.0.10",
+    "@nestjs/schematics": "^11.0.9",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.10.1",
+    "@types/passport-jwt": "^4.0.1",
+    "source-map-support": "^0.5.21"
   }
 }

@@ -1,84 +1,319 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 model User {
-  id           String   @id @default(cuid()) @db.VarChar(191)
-  email        String   @unique @db.VarChar(255)
-  passwordHash String   @db.VarChar(255)
-  name         String   @db.VarChar(255)
-  role         String   @default("admin") @db.VarChar(64)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                  String     @id @default(cuid())
+  email               String     @unique
+  password            String
+  name                String
+  role                Role       @default(EDITOR)
+  avatar              String?
+  resetToken          String?
+  resetTokenExpiresAt DateTime?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  deletedAt           DateTime?
+  posts               BlogPost[] @relation("BlogAuthor")
+  media               Media[]    @relation("MediaOwner")
+
+  @@index([deletedAt, createdAt], map: "User_deleted_created_idx")
 }
 
-model PortfolioProject {
-  id        String   @id @default(cuid()) @db.VarChar(191)
-  title     String   @db.VarChar(255)
-  slug      String   @unique @db.VarChar(191)
-  category  String   @db.VarChar(191)
-  summary   String   @db.Text
-  problem   String   @db.Text
-  solution  String   @db.Text
-  result    String   @db.Text
-  image     String   @db.VarChar(2048)
-  tech      Json
-  features  Json
-  liveUrl   String   @db.VarChar(2048)
-  githubUrl String   @db.VarChar(2048)
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model ContactMessage {
-  id          String   @id @default(cuid()) @db.VarChar(191)
-  name        String   @db.VarChar(255)
-  email       String   @db.VarChar(255)
-  phone       String?  @db.VarChar(64)
-  projectType String   @db.VarChar(191)
-  budget      String   @db.VarChar(191)
-  message     String   @db.Text
-  createdAt   DateTime @default(now())
+model Menu {
+  id        String     @id @default(cuid())
+  name      String
+  location  String     @unique
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
-model QuoteRequest {
-  id                 String   @id @default(cuid()) @db.VarChar(191)
-  name               String   @db.VarChar(255)
-  email              String   @db.VarChar(255)
-  phone              String?  @db.VarChar(64)
-  projectType        String   @db.VarChar(191)
-  features           Json
-  timeline           String   @db.VarChar(191)
-  budget             String   @db.VarChar(191)
-  message            String?  @db.Text
-  recommendedPackage String   @db.VarChar(191)
-  estimatedPrice     Int
-  createdAt          DateTime @default(now())
+model MenuItem {
+  id        String     @id @default(cuid())
+  menuId    String
+  parentId  String?
+  label     String
+  url       String
+  target    String?
+  sortOrder Int        @default(0)
+  isActive  Boolean    @default(true)
+  menu      Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parent    MenuItem?  @relation("MenuTree", fields: [parentId], references: [id])
+  children  MenuItem[] @relation("MenuTree")
+
+  @@index([menuId, isActive, sortOrder], map: "MenuItem_menu_active_sort_idx")
 }
 
-model PricingPackage {
-  id          String   @id @default(cuid()) @db.VarChar(191)
-  key         String   @unique @db.VarChar(191)
-  name        String   @db.VarChar(255)
-  price       Int
-  label       String   @db.VarChar(255)
-  description String   @db.Text
-  timeline    String   @db.VarChar(191)
-  features    Json
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Page {
+  id             String        @id @default(cuid())
+  title          String
+  slug           String        @unique
+  pageType       String        @default("custom")
+  summary        String?       @db.Text
+  seoTitle       String?
+  seoDescription String?       @db.Text
+  ogImage        String?
+  canonicalUrl   String?
+  status         PublishStatus @default(DRAFT)
+  sortOrder      Int           @default(0)
+  sections       PageSection[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  @@index([status, deletedAt, sortOrder], map: "Page_status_deleted_sort_idx")
+}
+
+model PageSection {
+  id        String   @id @default(cuid())
+  pageId    String
+  key       String
+  type      String
+  title     String?
+  subtitle  String?
+  content   Json?
+  sortOrder Int      @default(0)
+  enabled   Boolean  @default(true)
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pageId, enabled, sortOrder], map: "PageSection_page_enabled_sort_idx")
+}
+
+model Service {
+  id               String        @id @default(cuid())
+  title            String
+  slug             String        @unique
+  shortDescription String?       @db.Text
+  description      String?       @db.Text
+  icon             String?
+  image            String?
+  gallery          Json?
+  featured         Boolean       @default(false)
+  sortOrder        Int           @default(0)
+  seoTitle         String?
+  seoDescription   String?       @db.Text
+  ogImage          String?
+  canonicalUrl     String?
+  status           PublishStatus @default(DRAFT)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+
+  @@index([status, deletedAt, featured, sortOrder], map: "Service_public_sort_idx")
+}
+
+model ProjectCategory {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id               String           @id @default(cuid())
+  title            String
+  slug             String           @unique
+  client           String?
+  categoryId       String?
+  date             DateTime?
+  location         String?
+  tools            String?
+  duration         String?
+  shortDescription String?          @db.Text
+  description      String?          @db.Text
+  mainImage        String?
+  gallery          Json?
+  videoUrl         String?
+  contentBlocks    Json?
+  featured         Boolean          @default(false)
+  sortOrder        Int              @default(0)
+  seoTitle         String?
+  seoDescription   String?          @db.Text
+  ogImage          String?
+  canonicalUrl     String?
+  status           PublishStatus    @default(DRAFT)
+  category         ProjectCategory? @relation(fields: [categoryId], references: [id])
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+
+  @@index([status, deletedAt, featured, sortOrder], map: "Project_public_sort_idx")
+}
+
+model PortfolioItem {
+  id        String        @id @default(cuid())
+  title     String
+  tag       String?
+  mediaUrl  String        @unique
+  mediaType String        @default("image")
+  alt       String?
+  featured  Boolean       @default(false)
+  sortOrder Int           @default(0)
+  status    PublishStatus @default(DRAFT)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime?
+
+  @@index([status, deletedAt, featured, sortOrder], map: "PortfolioItem_public_sort_idx")
+}
+
+model BlogCategory {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  posts     BlogPost[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  posts     BlogPost[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model BlogPost {
+  id             String        @id @default(cuid())
+  title          String
+  slug           String        @unique
+  excerpt        String?       @db.Text
+  content        String?       @db.Text
+  featuredImage  String?
+  categoryId     String?
+  authorId       String?
+  featured       Boolean       @default(false)
+  status         PublishStatus @default(DRAFT)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?       @db.Text
+  ogImage        String?
+  canonicalUrl   String?
+  category       BlogCategory? @relation(fields: [categoryId], references: [id])
+  author         User?         @relation("BlogAuthor", fields: [authorId], references: [id])
+  tags           Tag[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  @@index([status, deletedAt, featured, publishedAt], map: "BlogPost_public_date_idx")
+}
+
+model TeamMember {
+  id             String        @id @default(cuid())
+  name           String
+  slug           String        @unique
+  role           String
+  bio            String?       @db.Text
+  image          String?
+  socialLinks    Json?
+  skills         Json?
+  sortOrder      Int           @default(0)
+  status         PublishStatus @default(PUBLISHED)
+  seoTitle       String?
+  seoDescription String?       @db.Text
+  ogImage        String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  @@index([status, deletedAt, sortOrder], map: "TeamMember_public_sort_idx")
+}
+
+model Faq {
+  id        String    @id @default(cuid())
+  question  String
+  answer    String    @db.Text
+  category  String?
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([isActive, deletedAt, sortOrder], map: "Faq_active_sort_idx")
 }
 
 model Testimonial {
-  id        String   @id @default(cuid()) @db.VarChar(191)
-  name      String   @db.VarChar(255)
-  role      String   @db.VarChar(255)
-  quote     String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(cuid())
+  clientName String
+  position   String?
+  company    String?
+  rating     Int       @default(5)
+  image      String?
+  reviewText String    @db.Text
+  sortOrder  Int       @default(0)
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@index([isActive, deletedAt, sortOrder], map: "Testimonial_active_sort_idx")
+}
+
+model ContactMessage {
+  id         String    @id @default(cuid())
+  name       String
+  email      String
+  phone      String?
+  subject    String?
+  message    String    @db.Text
+  status     String    @default("unread")
+  adminNotes String?   @db.Text
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@index([status, deletedAt, createdAt], map: "ContactMessage_status_date_idx")
+}
+
+model Media {
+  id           String    @id @default(cuid())
+  url          String
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  alt          String?
+  folder       String?
+  metadata     Json?
+  createdById  String?
+  createdBy    User?     @relation("MediaOwner", fields: [createdById], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  @@index([deletedAt, createdAt], map: "Media_deleted_created_idx")
 }

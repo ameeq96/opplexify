@@ -1,15 +1,16 @@
-# Opplexify Software Product Lab
+# Opplexify Dynamic Platform
 
-A premium agency website and backend for selling websites, web applications, SaaS platforms, mobile apps, and admin dashboards.
+Production-ready full-stack conversion scaffold for the Opplexify dark agency template.
 
 ## Stack
 
-- Frontend: Next.js App Router, TypeScript, Tailwind CSS
-- Backend: NestJS, TypeScript
-- Database: Prisma with MySQL
-- Auth: JWT admin login
+- Next.js 16 App Router frontend
+- NestJS 11 REST API
+- MySQL-compatible database using Prisma's MariaDB driver adapter
+- Prisma 7
+- JWT auth with role-based admin access
 
-## Quick Start
+## Setup
 
 1. Install dependencies:
 
@@ -17,75 +18,105 @@ A premium agency website and backend for selling websites, web applications, Saa
 npm install
 ```
 
-2. Configure the backend:
+2. Create env files:
 
 ```bash
+cp .env.example .env
 cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env.local
 ```
 
-3. Update `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, and `JWT_SECRET` in `apps/api/.env`.
-
-4. Prepare the database:
+3. Start MySQL:
 
 ```bash
-npm run prisma:generate
-npm run db:push
-npm run seed
+docker compose up -d mysql
 ```
 
-5. Start the apps:
+4. Generate Prisma client, run migrations, and seed:
 
 ```bash
-npm run dev:api
-npm run dev:web
+npm run db:generate
+npm run db:migrate -- --name init
+npm run db:seed
 ```
 
-Frontend runs on `http://localhost:3001`.
-Backend runs on `http://localhost:4001/api`.
-
-## Demo Admin
-
-After running the seed script:
-
-- Email: `admin@opplexify.dev`
-- Password: `ChangeMe123!`
-
-## Environment
-
-Frontend can call the API through:
+5. Run API and web:
 
 ```bash
-NEXT_PUBLIC_API_URL=http://localhost:4001/api
+npm run start:api
+npm run start:web
 ```
 
-Backend environment variables are documented in `apps/api/.env.example`.
+Frontend: http://localhost:3000
+
+API: http://localhost:4000
+
+Swagger: http://localhost:4000/docs
+
+Admin: http://localhost:3000/admin
+
+## Local Seed Admin
+
+- Email: `admin@opplexify.local`
+- Password: `Admin123!`
+
+For Hostinger production, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in the API app environment before running `npm run hostinger:db:seed`.
 
 ## Hostinger Deployment
 
-Deployment files are included for Hostinger VPS or Hostinger Node.js hosting:
+The app is prepared for Hostinger Business Web Hosting as two managed Node.js apps:
 
-- `server.js` starts the Next.js frontend.
-- `server.api.cjs` starts the NestJS API.
-- `ecosystem.config.cjs` starts both apps with PM2.
-- `HOSTINGER_DEPLOY.md` contains the full deployment steps.
+- Frontend: `https://opplexify.com`
+- API: `https://api.opplexify.com`
+- Database: Hostinger MySQL/MariaDB
+- Node.js: `22.x`
 
-For `opplexify.com` production setup:
-
-```bash
-npm install
-cp apps/web/.env.production.example apps/web/.env.local
-cp apps/api/.env.production.example apps/api/.env
-npm run hostinger:setup
-npm run start:pm2
-```
-
-On Hostinger Business Web Hosting, use two Node.js apps:
-
-- `opplexify.com` -> startup file `server.js`, build command `npm run hostinger:build:web`
-- `api.opplexify.com` -> startup file `server.api.cjs`, build command `npm run hostinger:deploy:api`
-
-Static fallback is also available:
+Production scripts:
 
 ```bash
-NEXT_PUBLIC_API_URL=https://api.opplexify.com/api npm run hostinger:static
+npm run hostinger:build:web
+npm run hostinger:start:web
+npm run hostinger:build:api
+npm run hostinger:start:api
+npm run hostinger:db:deploy
+npm run hostinger:db:seed
 ```
+
+Use `npm run hostinger:db:deploy` for every schema deploy. Use `npm run hostinger:db:seed` only once during first production setup, because seed data can overwrite CMS-managed content.
+
+Full hPanel setup instructions are in [docs/HOSTINGER_DEPLOY.md](docs/HOSTINGER_DEPLOY.md).
+
+## Playwright QA
+
+The repo includes a permanent Playwright QA suite for public pages, responsive checks, portfolio media, contact submission, admin login/modules, admin API CRUD smoke tests, and API health.
+
+Install browser binaries once:
+
+```bash
+npx playwright install
+```
+
+On Linux, WebKit may also require system packages:
+
+```bash
+sudo npx playwright install-deps
+```
+
+Run the full QA suite:
+
+```bash
+npm run qa:e2e
+```
+
+Debug or inspect reports:
+
+```bash
+npm run qa:e2e:ui
+npm run qa:e2e:report
+```
+
+The QA runner starts `npm run start:api` and `npm run start:web` automatically, and reuses existing `127.0.0.1:3000` / `127.0.0.1:4000` servers when they are already running.
+
+## Notes
+
+The original HTML assets from `dark.zip` are copied under `apps/web/public/template-assets/dark/assets`. The app references only clean asset paths and ignores HTTrack placeholder `.html` artifacts.

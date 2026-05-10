@@ -1,0 +1,30 @@
+<svg width="560" height="160" viewBox="0 0 560 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Opplexify logo</title>
+  <desc id="desc">Professional Opplexify O and X mark with wordmark for dark backgrounds.</desc>
+  <defs>
+    <linearGradient id="opplexify-accent-light" x1="24" y1="26" x2="132" y2="134" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F3EA"/>
+      <stop offset="0.36" stop-color="#B6FF4A"/>
+      <stop offset="1" stop-color="#FF6B4A"/>
+    </linearGradient>
+    <linearGradient id="opplexify-line-light" x1="172" y1="112" x2="360" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B6FF4A"/>
+      <stop offset="1" stop-color="#FF6B4A"/>
+    </linearGradient>
+    <filter id="opplexify-soft-light" x="-8" y="-8" width="176" height="176" color-interpolation-filters="sRGB">
+      <feFlood flood-color="#B6FF4A" flood-opacity="0.18"/>
+      <feComposite in2="SourceAlpha" operator="in"/>
+      <feGaussianBlur stdDeviation="8"/>
+      <feOffset dy="3"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g filter="url(#opplexify-soft-light)">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M80 18C45.76 18 18 45.76 18 80s27.76 62 62 62 62-27.76 62-62-27.76-62-62-62Zm0 20c23.2 0 42 18.8 42 42s-18.8 42-42 42-42-18.8-42-42 18.8-42 42-42Z" fill="url(#opplexify-accent-light)"/>
+    <path d="M52 48h21.5l28.7 64H80.7L52 48Z" fill="#F7F3EA"/>
+    <path d="M103.4 48H125L91.4 80.2 57.7 112H36.5L70 80.1 103.4 48Z" fill="#FF6B4A"/>
+    <path d="M48 79.8c0-17.7 14.3-32 32-32 8.5 0 16.2 3.3 21.9 8.7L91.7 66.3A17.9 17.9 0 0 0 80 61.8c-9.9 0-18 8.1-18 18 0 5.2 2.2 9.8 5.7 13.1L57.4 103A31.8 31.8 0 0 1 48 79.8Z" fill="#050505" opacity="0.38"/>
+  </g>
+  <text x="170" y="96" fill="#F7F3EA" font-family="Inter, Arial, Helvetica, sans-serif" font-size="58" font-weight="800">Opplexify</text>
+  <path d="M174 113h180" stroke="url(#opplexify-line-light)" stroke-width="5" stroke-linecap="round"/>
+</svg>

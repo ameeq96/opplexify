@@ -1,0 +1,14 @@
+<svg width="64" height="64" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="opplexify-favicon-accent" x1="22" y1="24" x2="138" y2="136" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F3EA"/>
+      <stop offset="0.38" stop-color="#B6FF4A"/>
+      <stop offset="1" stop-color="#FF6B4A"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="144" height="144" rx="36" fill="#050505"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M80 18C45.76 18 18 45.76 18 80s27.76 62 62 62 62-27.76 62-62-27.76-62-62-62Zm0 20c23.2 0 42 18.8 42 42s-18.8 42-42 42-42-18.8-42-42 18.8-42 42-42Z" fill="url(#opplexify-favicon-accent)"/>
+  <path d="M52 48h21.5l28.7 64H80.7L52 48Z" fill="#F7F3EA"/>
+  <path d="M103.4 48H125L91.4 80.2 57.7 112H36.5L70 80.1 103.4 48Z" fill="#FF6B4A"/>
+  <path d="M48 79.8c0-17.7 14.3-32 32-32 8.5 0 16.2 3.3 21.9 8.7L91.7 66.3A17.9 17.9 0 0 0 80 61.8c-9.9 0-18 8.1-18 18 0 5.2 2.2 9.8 5.7 13.1L57.4 103A31.8 31.8 0 0 1 48 79.8Z" fill="#050505" opacity="0.38"/>
+</svg>
