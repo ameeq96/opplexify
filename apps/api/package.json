@@ -35,7 +35,6 @@
   "devDependencies": {
     "@nestjs/cli": "^11.0.10",
     "@nestjs/schematics": "^11.0.9",
-    "@types/bcryptjs": "^3.0.0",
     "source-map-support": "^0.5.21"
   }
 }

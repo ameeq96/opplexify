@@ -4,13 +4,14 @@ import { config } from "dotenv";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import * as bcrypt from "bcryptjs";
 import { Prisma, PrismaClient } from "../src/generated/prisma/client";
+import { databaseUrl } from "../src/database-url";
 import { productionSeedValue } from "../src/env";
 
 config({ path: "apps/api/.env" });
 config();
 
 const prisma = new PrismaClient({
-  adapter: new PrismaMariaDb(process.env.DATABASE_URL ?? "mysql://adon:adon@localhost:3306/adon")
+  adapter: new PrismaMariaDb(databaseUrl())
 });
 
 const asset = (path: string) => `/template-assets/dark/assets/imgs/${path}`;

@@ -1,9 +1,10 @@
 import { config as loadEnv } from "dotenv";
+import { hasDatabaseConfig, missingDatabaseConfigMessage } from "./database-url";
 
 loadEnv({ path: "apps/api/.env" });
 loadEnv();
 
-const REQUIRED_PRODUCTION_ENV = ["DATABASE_URL", "JWT_SECRET"] as const;
+const REQUIRED_PRODUCTION_ENV = ["JWT_SECRET"] as const;
 
 export const isProduction = process.env.NODE_ENV === "production";
 export const webOrigin = process.env.WEB_ORIGIN ?? "http://localhost:3000";
@@ -13,7 +14,11 @@ export const jwtExpiresIn = process.env.JWT_EXPIRES_IN ?? "7d";
 export function assertProductionEnv() {
   if (!isProduction) return;
 
-  const missing = REQUIRED_PRODUCTION_ENV.filter((name) => !process.env[name]?.trim());
+  const missing: string[] = REQUIRED_PRODUCTION_ENV.filter((name) => !process.env[name]?.trim());
+  if (!hasDatabaseConfig()) {
+    missing.unshift(missingDatabaseConfigMessage());
+  }
+
   if (missing.length > 0) {
     throw new Error(`Missing required production environment variable(s): ${missing.join(", ")}`);
   }

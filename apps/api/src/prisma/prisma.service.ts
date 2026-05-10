@@ -1,6 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "../generated/prisma/client";
+import { databaseUrl } from "../database-url";
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -19,19 +20,3 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   }
 }
 
-function databaseUrl() {
-  const connectionString = process.env.DATABASE_URL ?? "mysql://adon:adon@localhost:3306/adon";
-
-  try {
-    const url = new URL(connectionString);
-    const allowPublicKeyRetrieval = process.env.DB_ALLOW_PUBLIC_KEY_RETRIEVAL ?? "true";
-
-    if (!url.searchParams.has("allowPublicKeyRetrieval") && allowPublicKeyRetrieval !== "false") {
-      url.searchParams.set("allowPublicKeyRetrieval", allowPublicKeyRetrieval);
-    }
-
-    return url.toString();
-  } catch {
-    return connectionString;
-  }
-}
