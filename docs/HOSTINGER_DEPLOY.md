@@ -61,6 +61,8 @@ Recommended settings:
 | Output directory | `apps/api/dist` |
 | Entry file | `apps/api/dist/main.js` |
 
+The API start script points directly to the compiled NestJS entry at `apps/api/dist/main.js`.
+
 API environment variables:
 
 ```bash

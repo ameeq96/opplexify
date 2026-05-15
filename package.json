@@ -24,7 +24,7 @@
     "hostinger:build:web": "npm run build -w @adon/shared && npm run build -w @adon/web",
     "hostinger:start:web": "npm run start -w @adon/web",
     "hostinger:build:api": "npm run db:generate && npm run build -w @adon/shared && npm run build -w @adon/api",
-    "hostinger:start:api": "node scripts/start-hostinger-api.cjs",
+    "hostinger:start:api": "node apps/api/dist/main.js",
     "hostinger:db:deploy": "prisma migrate deploy --config apps/api/prisma.config.ts",
     "hostinger:db:seed": "prisma db seed --config apps/api/prisma.config.ts"
   },
