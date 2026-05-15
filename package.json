@@ -23,8 +23,9 @@
     "db:studio": "prisma studio --config apps/api/prisma.config.ts",
     "hostinger:build:web": "npm run build -w @adon/shared && npm run build -w @adon/web",
     "hostinger:start:web": "npm run start -w @adon/web",
-    "hostinger:build:api": "npm run db:generate && npm run build -w @adon/shared && npm run build -w @adon/api",
+    "hostinger:build:api": "npm run db:generate && npm run build -w @adon/shared && npm run build -w @adon/api && npm run hostinger:verify:api-output",
     "hostinger:check:api": "node scripts/check-hostinger-api.cjs --production",
+    "hostinger:verify:api-output": "node scripts/verify-api-output.cjs",
     "hostinger:start:api": "npm run hostinger:check:api && node apps/api/dist/main.js",
     "hostinger:db:deploy": "prisma migrate deploy --config apps/api/prisma.config.ts",
     "hostinger:db:seed": "prisma db seed --config apps/api/prisma.config.ts"
