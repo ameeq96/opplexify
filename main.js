@@ -1,15 +1,42 @@
 #!/usr/bin/env node
+const fs = require("node:fs");
 const path = require("node:path");
 const express = require("express");
 const next = require("next");
 const { createApiApp } = require("./apps/api/dist/main.js");
 
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || process.env.APP_PORT || process.env.NODE_PORT || 3000);
+const host = process.env.HOST || "0.0.0.0";
 const dev = process.env.NODE_ENV !== "production";
-const nextApp = next({ dev, dir: path.join(__dirname, "apps/web") });
+const webDir = path.join(__dirname, "apps/web");
+const nextApp = next({ dev, dir: webDir });
 const handle = nextApp.getRequestHandler();
 
+function log(message, extra) {
+  const line = `[${new Date().toISOString()}] ${message}${extra ? ` ${JSON.stringify(extra)}` : ""}`;
+  console.log(line);
+  try {
+    fs.appendFileSync(path.join(__dirname, "startup.log"), `${line}\n`);
+  } catch {
+    // Hostinger may make the app directory read-only after deploy; console logs still work.
+  }
+}
+
 async function start() {
+  log("Opplexify startup", {
+    node: process.version,
+    cwd: process.cwd(),
+    dirname: __dirname,
+    nodeEnv: process.env.NODE_ENV,
+    port,
+    host,
+    hasJwtSecret: Boolean(process.env.JWT_SECRET),
+    hasDbHost: Boolean(process.env.DB_HOST),
+    hasDbDatabase: Boolean(process.env.DB_DATABASE),
+    apiEntryExists: fs.existsSync(path.join(__dirname, "apps/api/dist/main.js")),
+    webBuildExists: fs.existsSync(path.join(webDir, ".next"))
+  });
+
   await nextApp.prepare();
 
   const server = express();
@@ -17,12 +44,17 @@ async function start() {
   server.use(createApiApp());
   server.use((req, res) => handle(req, res));
 
-  server.listen(port, () => {
-    console.log(`Opplexify app listening on ${port}`);
+  const listener = server.listen(port, host, () => {
+    log(`Opplexify app listening on ${host}:${port}`);
+  });
+
+  listener.on("error", (error) => {
+    log("Opplexify server listen error", { message: error.message, stack: error.stack });
+    process.exit(1);
   });
 }
 
 start().catch((error) => {
-  console.error(error);
+  log("Opplexify startup failed", { message: error.message, stack: error.stack });
   process.exit(1);
 });
