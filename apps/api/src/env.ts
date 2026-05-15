@@ -1,8 +1,10 @@
 import { config as loadEnv } from "dotenv";
 import { hasDatabaseConfig, missingDatabaseConfigMessage } from "./database-url";
 
-loadEnv({ path: "apps/api/.env" });
-loadEnv();
+process.env.DOTENV_CONFIG_QUIET = "true";
+
+loadEnv({ path: "apps/api/.env", quiet: true });
+loadEnv({ quiet: true });
 
 const REQUIRED_PRODUCTION_ENV = ["JWT_SECRET"] as const;
 

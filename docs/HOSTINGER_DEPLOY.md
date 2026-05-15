@@ -27,7 +27,7 @@ test-results
 
 Both the web app and API app should point to the same uploaded repository root. They use different build/start commands.
 
-Install dependencies from the repository root. Keep generated folders out of ZIP uploads because Hostinger will build them.
+Install dependencies from the repository root. If Hostinger lets you choose the install command, use `npm ci` so the deployment uses the exact versions in `package-lock.json`. Keep generated folders out of ZIP uploads because Hostinger will build them.
 
 ## 1. Create Database
 
@@ -75,7 +75,9 @@ ADMIN_EMAIL="admin@opplexify.com"
 ADMIN_PASSWORD="replace-with-a-strong-temporary-admin-password"
 ```
 
-Do not hardcode `PORT` unless Hostinger support asks for it. The API reads `process.env.PORT` automatically. In production the API fails fast if `DATABASE_URL` or `JWT_SECRET` is missing.
+Set these in Hostinger hPanel for the API app. Do not commit a production `.env` file with real secrets. If logs mention `injected env (0)`, it means no local `.env` file was loaded; hPanel environment variables are still fine as long as they appear in `process.env`.
+
+Do not hardcode `PORT` unless Hostinger support asks for it. The API reads `process.env.PORT` automatically. In production the API fails fast if database config or `JWT_SECRET` is missing. The `npm run hostinger:start:api` command also runs a preflight check for the compiled entry file, runtime dependencies, `NODE_ENV=production`, database config, and `JWT_SECRET`.
 
 After the API app builds, run migrations:
 

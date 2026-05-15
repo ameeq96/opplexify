@@ -24,14 +24,14 @@
     "hostinger:build:web": "npm run build -w @adon/shared && npm run build -w @adon/web",
     "hostinger:start:web": "npm run start -w @adon/web",
     "hostinger:build:api": "npm run db:generate && npm run build -w @adon/shared && npm run build -w @adon/api",
-    "hostinger:start:api": "node apps/api/dist/main.js",
+    "hostinger:check:api": "node scripts/check-hostinger-api.cjs --production",
+    "hostinger:start:api": "npm run hostinger:check:api && node apps/api/dist/main.js",
     "hostinger:db:deploy": "prisma migrate deploy --config apps/api/prisma.config.ts",
     "hostinger:db:seed": "prisma db seed --config apps/api/prisma.config.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "concurrently": "^9.2.1",
-    "dotenv": "^17.2.3",
     "prisma": "^7.8.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
