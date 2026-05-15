@@ -60,7 +60,7 @@ Admin: http://localhost:3000/admin
 - Email: `admin@opplexify.local`
 - Password: `Admin123!`
 
-For Hostinger production, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in the API app environment before running `npm run hostinger:db:seed`.
+For Hostinger production, create or import the admin user manually in MySQL/phpMyAdmin.
 
 ## Hostinger Deployment
 
@@ -78,11 +78,9 @@ npm run hostinger:build:web
 npm run hostinger:start:web
 npm run hostinger:build:api
 npm run hostinger:start:api
-npm run hostinger:db:deploy
-npm run hostinger:db:seed
 ```
 
-Use `npm run hostinger:db:deploy` for every schema deploy. Use `npm run hostinger:db:seed` only once during first production setup, because seed data can overwrite CMS-managed content.
+Hostinger deploy does not run database migrations or seed data. Manage production tables and data manually in phpMyAdmin/MySQL.
 
 Full hPanel setup instructions are in [docs/HOSTINGER_DEPLOY.md](docs/HOSTINGER_DEPLOY.md).
 

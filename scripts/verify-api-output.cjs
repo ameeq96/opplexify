@@ -13,11 +13,5 @@ if (!fs.existsSync(entryFile)) {
 }
 
 const stats = fs.statSync(entryFile);
-const files = fs
-  .readdirSync(distDir, { withFileTypes: true })
-  .filter((entry) => entry.isFile())
-  .map((entry) => entry.name)
-  .sort();
 
 console.log(`API build output verified: apps/api/dist/main.js (${stats.size} bytes)`);
-console.log(`API dist files: ${files.join(", ")}`);

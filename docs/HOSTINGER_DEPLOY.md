@@ -90,19 +90,7 @@ Set these in Hostinger hPanel for the API app. Do not commit a production `.env`
 
 Do not hardcode `PORT` unless Hostinger support asks for it. The API reads `process.env.PORT` automatically. In production the API fails fast if database config or `JWT_SECRET` is missing. The `npm run hostinger:start:api` command also runs a preflight check for the compiled entry file, runtime dependencies, `NODE_ENV=production`, database config, and `JWT_SECRET`.
 
-After the API app builds, run migrations:
-
-```bash
-npm run hostinger:db:deploy
-```
-
-Seed only once on the first production setup:
-
-```bash
-npm run hostinger:db:seed
-```
-
-Do not run seed on every deploy because it can overwrite CMS-managed production content.
+The Hostinger deploy path does not run migrations or seed data. Create or import the MySQL tables and initial data manually in phpMyAdmin/MySQL before using CMS-backed API routes.
 
 Verify API:
 
@@ -173,7 +161,7 @@ After both apps are live:
 7. Confirm the uploaded file renders from `https://api.opplexify.com/uploads/...`.
 8. Confirm API health and Swagger open at `https://api.opplexify.com/health` and `https://api.opplexify.com/docs`.
 
-Use the production `ADMIN_EMAIL` and `ADMIN_PASSWORD` values you set before seeding. Change the seeded admin password immediately after the first login.
+Use the production admin account you created manually in MySQL/phpMyAdmin. Change the admin password immediately after the first login if you imported temporary credentials.
 
 ## 6. Local Pre-Deploy Check
 
@@ -190,6 +178,6 @@ npm run qa:e2e -- --project=chromium
 
 - Uploaded files are stored by the API app under `uploads` when started from the repository root.
 - Keep `JWT_SECRET` stable between deployments; changing it logs out existing admin sessions.
-- Keep `ADMIN_EMAIL` and `ADMIN_PASSWORD` private. They are only used by the production seed command.
-- Use `npm run hostinger:db:deploy` for schema updates. Use `npm run hostinger:db:seed` only for the first setup or intentional reset.
-- If a deploy fails after migration, redeploy the previous commit/build and inspect Hostinger app logs before retrying.
+- Keep `ADMIN_EMAIL` and `ADMIN_PASSWORD` private if you use them for manual setup.
+- Manage production schema and data manually through phpMyAdmin/MySQL.
+- If a deploy fails after build, inspect Hostinger app logs before retrying.
