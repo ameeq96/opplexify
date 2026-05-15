@@ -91,7 +91,7 @@ function bindContactForm() {
     }
 
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
       const response = await fetch(`${apiBase}/public/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

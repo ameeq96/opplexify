@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { DEFAULT_DESCRIPTION, SITE_NAME, seoMetadata } from "./seo";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
+
+function apiEndpoint(path: string) {
+  if (typeof window !== "undefined") return `${API_URL}${path}`;
+  const internalBase = (process.env.INTERNAL_API_URL || API_URL || `http://127.0.0.1:${process.env.PORT || 4000}`).replace(/\/+$/, "");
+  return `${internalBase}${path}`;
+}
 
 export type MenuItem = {
   id: string;
@@ -180,7 +186,7 @@ export async function fetchApi<T>(path: string, fallback: T, init: FetchApiInit 
           }
         } as const);
 
-    const response = await fetch(`${API_URL}${path}`, {
+    const response = await fetch(apiEndpoint(path), {
       ...requestInit,
       ...cacheOptions
     });

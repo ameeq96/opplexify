@@ -5,7 +5,7 @@ Production-ready full-stack conversion scaffold for the Opplexify dark agency te
 ## Stack
 
 - Next.js 16 App Router frontend
-- NestJS 11 REST API
+- Express REST API
 - MySQL-compatible database using Prisma's MariaDB driver adapter
 - Prisma 7
 - JWT auth with role-based admin access
@@ -64,20 +64,17 @@ For Hostinger production, create or import the admin user manually in MySQL/phpM
 
 ## Hostinger Deployment
 
-The app is prepared for Hostinger Business Web Hosting as two managed Node.js apps:
+The app is prepared for Hostinger Business Web Hosting as one managed Node.js app:
 
-- Frontend: `https://opplexify.com`
-- API: `https://api.opplexify.com`
+- Site and API: `https://opplexify.com`
 - Database: Hostinger MySQL/MariaDB
 - Node.js: `22.x`
 
 Production scripts:
 
 ```bash
-npm run hostinger:build:web
-npm run hostinger:start:web
-npm run hostinger:build:api
-npm run hostinger:start:api
+npm run hostinger:build
+npm run hostinger:start
 ```
 
 Hostinger deploy does not run database migrations or seed data. Manage production tables and data manually in phpMyAdmin/MySQL.

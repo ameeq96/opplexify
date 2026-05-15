@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import * as bcrypt from "bcryptjs";
-import { PrismaService } from "../prisma/prisma.service";
+import { HttpError } from "../http";
+import { prisma as defaultPrisma, PrismaService } from "../prisma/prisma.service";
 import { CreateContactMessageDto } from "./dto/contact.dto";
 
 type ResourceConfig = {
@@ -79,9 +79,12 @@ export type UploadedMediaFile = {
   size: number;
 };
 
-@Injectable()
 export class CmsService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly prisma: PrismaService;
+
+  constructor(prismaClient: PrismaService = defaultPrisma) {
+    this.prisma = prismaClient;
+  }
 
   async publicSite() {
     const [settings, menus] = await Promise.all([
@@ -108,7 +111,7 @@ export class CmsService {
       }
     });
 
-    if (!page) throw new NotFoundException("Page not found");
+    if (!page) throw new HttpError(404, "Page not found");
     return page;
   }
 
@@ -174,7 +177,7 @@ export class CmsService {
             : undefined
     });
 
-    if (!item) throw new NotFoundException("Content not found");
+    if (!item) throw new HttpError(404, "Content not found");
     return item;
   }
 
@@ -246,7 +249,7 @@ export class CmsService {
       where: { id },
       include: this.includeForResource(resourceName)
     });
-    if (!item) throw new NotFoundException("Item not found");
+    if (!item) throw new HttpError(404, "Item not found");
     return item;
   }
 
@@ -271,7 +274,7 @@ export class CmsService {
   }
 
   async createMedia(file: UploadedMediaFile, body: Record<string, string>, userId?: string) {
-    if (!file) throw new BadRequestException("File is required");
+    if (!file) throw new HttpError(400, "File is required");
 
     return this.prisma.media.create({
       data: {
@@ -289,7 +292,7 @@ export class CmsService {
 
   private resource(resourceName: string) {
     const config = resources[resourceName];
-    if (!config) throw new NotFoundException(`Unknown resource: ${resourceName}`);
+    if (!config) throw new HttpError(404, `Unknown resource: ${resourceName}`);
     return config;
   }
 

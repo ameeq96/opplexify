@@ -5,6 +5,7 @@ const { config: loadEnv } = require("dotenv");
 
 const projectRoot = path.resolve(__dirname, "..");
 const enforceProduction = process.argv.includes("--production");
+const enforceWebOutput = process.argv.includes("--web");
 
 process.env.DOTENV_CONFIG_QUIET = "true";
 
@@ -17,32 +18,31 @@ for (const relativePath of ["apps/api/.env", ".env"]) {
 
 const errors = [];
 const entryPath = path.join(projectRoot, "apps/api/dist/main.js");
+const webOutputPath = path.join(projectRoot, "apps/web/.next");
+const rootWebOutputPath = path.join(projectRoot, ".next");
 
 if (!fs.existsSync(entryPath)) {
   errors.push('Compiled API entry not found at "apps/api/dist/main.js". Run "npm run hostinger:build:api" before starting the API.');
 }
 
+if (enforceWebOutput && !fs.existsSync(webOutputPath) && !fs.existsSync(rootWebOutputPath)) {
+  errors.push('Compiled web output not found at "apps/web/.next" or ".next". Run "npm run hostinger:build" before starting the app.');
+}
+
 const runtimeModules = [
   "@adon/shared",
-  "@nestjs/common",
-  "@nestjs/config",
-  "@nestjs/core",
-  "@nestjs/jwt",
-  "@nestjs/passport",
-  "@nestjs/platform-express",
-  "@nestjs/swagger",
   "@prisma/adapter-mariadb",
   "@prisma/client",
   "bcryptjs",
-  "class-transformer",
-  "class-validator",
+  "cors",
   "dotenv",
+  "express",
   "helmet",
+  "jsonwebtoken",
   "multer",
-  "passport",
-  "passport-jwt",
-  "reflect-metadata",
-  "rxjs"
+  "next",
+  "react",
+  "react-dom"
 ];
 
 for (const moduleName of runtimeModules) {

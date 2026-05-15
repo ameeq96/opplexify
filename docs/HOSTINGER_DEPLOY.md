@@ -1,19 +1,17 @@
-# Hostinger Business Deployment
+# Hostinger Single-Domain Deployment
 
-This is the direct Hostinger hPanel checklist for deploying the same monorepo as two managed Node.js apps:
+Deploy this monorepo as one Hostinger Node.js app on `https://opplexify.com`.
 
-- Web: `https://opplexify.com`
-- API: `https://api.opplexify.com`
+- Site: `https://opplexify.com`
+- API: same domain, using existing paths like `/health`, `/auth/*`, `/public/*`, `/admin/*`, and `/uploads/*`
 - Database: Hostinger MySQL/MariaDB
 - Node.js: `22.x`
 
-Use the repository root as the application root for both Hostinger apps. The API runs at the root of `https://api.opplexify.com`, not under `/backend`.
+Do not create or use a separate `api.opplexify.com` app for production.
 
-## 0. Upload Source
+## 0. Source
 
-Use either GitHub deployment or ZIP upload in Hostinger.
-
-For ZIP upload, include the project source files and exclude generated/local folders:
+Use GitHub deployment or upload a ZIP from the repository root. Exclude generated/local folders:
 
 ```text
 node_modules
@@ -25,159 +23,69 @@ test-results
 .env.local
 ```
 
-Both the web app and API app should point to the same uploaded repository root. They use different build/start commands.
+Install dependencies from the repository root with `npm ci`.
 
-Install dependencies from the repository root. If Hostinger lets you choose the install command, use `npm ci` so the deployment uses the exact versions in `package-lock.json`. Keep generated folders out of ZIP uploads because Hostinger will build them.
+## 1. Hostinger Node App
 
-## 1. Create Database
-
-In Hostinger hPanel:
-
-1. Open **Databases -> MySQL Databases**.
-2. Create a database, user, and strong password.
-3. Copy the database host, name, username, password, and port.
-4. Build the production URL:
-
-```bash
-mysql://USER:PASSWORD@HOST:3306/DATABASE
-```
-
-Keep this value private. It goes only in the API app environment variables.
-
-## 2. Create API App
-
-Create a Node.js Web App for the API.
-
-Recommended settings:
-
-| Setting | Value |
-| --- | --- |
-| Domain | `api.opplexify.com` |
-| Framework | `NestJS` or `Other` |
-| Node version | `22.x` |
-| App root | Repository root |
-| Build command | `npm run hostinger:build:api` |
-| Start command | `npm run hostinger:start:api` |
-| Output directory | `apps/api/dist` |
-| Entry file | `main.js` |
-
-The API start script uses the repository-root `main.js` wrapper, which starts the compiled NestJS entry at `apps/api/dist/main.js`. If Hostinger treats the entry file as relative to the output directory, `main.js` also matches the compiled file inside `apps/api/dist`.
-
-API environment variables:
-
-```bash
-NODE_ENV=production
-DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/DATABASE"
-JWT_SECRET="replace-with-a-long-random-production-secret"
-JWT_EXPIRES_IN="7d"
-WEB_ORIGIN="https://opplexify.com"
-ADMIN_EMAIL="admin@opplexify.com"
-ADMIN_PASSWORD="replace-with-a-strong-temporary-admin-password"
-```
-
-For Hostinger MySQL shown as `Server: 127.0.0.1:3306` in phpMyAdmin, use these DB variables instead of `DATABASE_URL` if preferred:
-
-```bash
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE="u765026793_opplexify"
-DB_USERNAME="u765026793_opplexifyuser"
-DB_PASSWORD="your-hostinger-database-password"
-```
-
-Set these in Hostinger hPanel for the API app. Do not commit a production `.env` file with real secrets. If logs mention `injected env (0)`, it means no local `.env` file was loaded; hPanel environment variables are still fine as long as they appear in `process.env`.
-
-Do not hardcode `PORT` unless Hostinger support asks for it. The API reads `process.env.PORT` automatically. In production the API fails fast if database config or `JWT_SECRET` is missing. The `npm run hostinger:start:api` command also runs a preflight check for the compiled entry file, runtime dependencies, `NODE_ENV=production`, database config, and `JWT_SECRET`.
-
-The Hostinger deploy path does not run migrations or seed data. Create or import the MySQL tables and initial data manually in phpMyAdmin/MySQL before using CMS-backed API routes.
-
-Verify API:
-
-```text
-https://api.opplexify.com/health
-https://api.opplexify.com/docs
-https://api.opplexify.com/public/site
-```
-
-## 3. Create Web App
-
-Create a second Node.js Web App for the frontend.
-
-Recommended settings:
+Create one Node.js app:
 
 | Setting | Value |
 | --- | --- |
 | Domain | `opplexify.com` |
-| Framework | `Next.js` |
+| Framework | `Other` or `Next.js` |
 | Node version | `22.x` |
 | App root | Repository root |
-| Build command | `npm run hostinger:build:web` |
-| Start command | `npm run hostinger:start:web` |
-| Output directory | `apps/web/.next` |
+| Build command | `npm run hostinger:build` |
+| Start command | `npm run hostinger:start` |
+| Output directory | `.next` |
+| Entry file | `main.js` |
 
-Web environment variables:
+The root `main.js` starts Express API routes and Next.js in the same process.
+
+## 2. Environment Variables
+
+Set these on the single `opplexify.com` Node app:
 
 ```bash
 NODE_ENV=production
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE="u765026793_opplexify"
+DB_USERNAME="u765026793_opplexify"
+DB_PASSWORD="your-hostinger-database-password"
+JWT_SECRET="replace-with-a-long-random-production-secret"
+JWT_EXPIRES_IN="365d"
+WEB_ORIGIN="https://opplexify.com"
 NEXT_PUBLIC_SITE_URL="https://opplexify.com"
-NEXT_PUBLIC_API_URL="https://api.opplexify.com"
+ADMIN_EMAIL="admin@opplexify.com"
+ADMIN_PASSWORD="replace-with-a-strong-temporary-admin-password"
 ```
 
-Verify web:
+Leave `NEXT_PUBLIC_API_URL` unset. If Hostinger already has it set to `https://api.opplexify.com`, delete it.
+
+## 3. Production Checks
+
+After deploy/restart, verify:
 
 ```text
 https://opplexify.com
-https://opplexify.com/about
-https://opplexify.com/portfolio
-https://opplexify.com/services
-https://opplexify.com/contact
-https://opplexify.com/admin
-https://opplexify.com/sitemap.xml
-https://opplexify.com/robots.txt
+https://opplexify.com/health
+https://opplexify.com/docs
+https://opplexify.com/public/site
+https://opplexify.com/admin/login
 ```
 
-## 4. SSL and Domains
+Expected health response:
 
-Enable SSL for both:
-
-- `opplexify.com`
-- `api.opplexify.com`
-
-The frontend must use the HTTPS API URL. If the frontend uses `http://` in production, browser requests can be blocked as mixed content.
-
-Use `opplexify.com` as the canonical frontend domain. If `www.opplexify.com` is enabled, redirect it to `https://opplexify.com` in Hostinger or DNS/CDN settings.
-
-## 5. Production Smoke Test
-
-After both apps are live:
-
-1. Open `https://opplexify.com`.
-2. Check `/about`, `/portfolio`, `/services`, and `/contact`.
-3. Submit the contact form.
-4. Log in at `/admin`.
-5. Confirm the contact message appears in admin.
-6. Upload one small media file from admin.
-7. Confirm the uploaded file renders from `https://api.opplexify.com/uploads/...`.
-8. Confirm API health and Swagger open at `https://api.opplexify.com/health` and `https://api.opplexify.com/docs`.
-
-Use the production admin account you created manually in MySQL/phpMyAdmin. Change the admin password immediately after the first login if you imported temporary credentials.
-
-## 6. Local Pre-Deploy Check
-
-Run before pushing or uploading a deploy:
-
-```bash
-npm run hostinger:build:api
-npm run hostinger:build:web
-npm run build
-npm run qa:e2e -- --project=chromium
+```json
+{"ok":true,"service":"opplexify-api"}
 ```
 
-## 7. Notes
+## 4. Notes
 
-- Uploaded files are stored by the API app under `uploads` when started from the repository root.
-- Keep `JWT_SECRET` stable between deployments; changing it logs out existing admin sessions.
-- Keep `ADMIN_EMAIL` and `ADMIN_PASSWORD` private if you use them for manual setup.
-- Manage production schema and data manually through phpMyAdmin/MySQL.
-- If a deploy fails after build, inspect Hostinger app logs before retrying.
+- The API uses Express, not NestJS.
+- Uploaded files are stored under `uploads` from the repository root and served at `/uploads/...`.
+- Keep `JWT_SECRET` stable between deploys or admin sessions will be invalidated.
+- Manage production schema and seed data manually in phpMyAdmin/MySQL unless you intentionally run Prisma migration/seed commands.
+- Delete or detach `api.opplexify.com` only after `https://opplexify.com/health` works.

@@ -1,16 +1,17 @@
 import { randomBytes } from "node:crypto";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
-import { PrismaService } from "../prisma/prisma.service";
+import jwt from "jsonwebtoken";
+import { HttpError } from "../http";
+import { prisma as defaultPrisma, PrismaService } from "../prisma/prisma.service";
+import { jwtExpiresIn, jwtSecret } from "../env";
 import { ForgotPasswordDto, LoginDto, ResetPasswordDto, UpdateProfileDto } from "./dto/login.dto";
 
-@Injectable()
 export class AuthService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwt: JwtService
-  ) {}
+  private readonly prisma: PrismaService;
+
+  constructor(prismaClient: PrismaService = defaultPrisma) {
+    this.prisma = prismaClient;
+  }
 
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findFirst({
@@ -18,7 +19,7 @@ export class AuthService {
     });
 
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
-      throw new UnauthorizedException("Invalid email or password");
+      throw new HttpError(401, "Invalid email or password");
     }
 
     const payload = {
@@ -29,7 +30,7 @@ export class AuthService {
     };
 
     return {
-      accessToken: await this.jwt.signAsync(payload),
+      accessToken: jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn as jwt.SignOptions["expiresIn"] }),
       user: {
         id: user.id,
         email: user.email,
@@ -79,7 +80,7 @@ export class AuthService {
       }
     });
 
-    if (!user) throw new UnauthorizedException("Invalid or expired reset token");
+    if (!user) throw new HttpError(401, "Invalid or expired reset token");
 
     await this.prisma.user.update({
       where: { id: user.id },
