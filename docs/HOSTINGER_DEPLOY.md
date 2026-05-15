@@ -59,9 +59,9 @@ Recommended settings:
 | Build command | `npm run hostinger:build:api` |
 | Start command | `npm run hostinger:start:api` |
 | Output directory | `apps/api/dist` |
-| Entry file | `apps/api/dist/main.js` |
+| Entry file | `main.js` |
 
-The API start script points directly to the compiled NestJS entry at `apps/api/dist/main.js`.
+The API start script points directly to the compiled NestJS entry at `apps/api/dist/main.js`. In Hostinger hPanel, keep the output directory as `apps/api/dist` and set the entry file to `main.js`, because the entry file is the file inside the output directory.
 
 API environment variables:
 
