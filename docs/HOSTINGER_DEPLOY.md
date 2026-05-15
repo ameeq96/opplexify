@@ -61,7 +61,7 @@ Recommended settings:
 | Output directory | `apps/api/dist` |
 | Entry file | `main.js` |
 
-The API start script points directly to the compiled NestJS entry at `apps/api/dist/main.js`. In Hostinger hPanel, keep the output directory as `apps/api/dist` and set the entry file to `main.js`, because the entry file is the file inside the output directory.
+The API start script uses the repository-root `main.js` wrapper, which starts the compiled NestJS entry at `apps/api/dist/main.js`. If Hostinger treats the entry file as relative to the output directory, `main.js` also matches the compiled file inside `apps/api/dist`.
 
 API environment variables:
 
@@ -73,6 +73,17 @@ JWT_EXPIRES_IN="7d"
 WEB_ORIGIN="https://opplexify.com"
 ADMIN_EMAIL="admin@opplexify.com"
 ADMIN_PASSWORD="replace-with-a-strong-temporary-admin-password"
+```
+
+For Hostinger MySQL shown as `Server: 127.0.0.1:3306` in phpMyAdmin, use these DB variables instead of `DATABASE_URL` if preferred:
+
+```bash
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE="u765026793_opplexify"
+DB_USERNAME="u765026793_opplexifyuser"
+DB_PASSWORD="your-hostinger-database-password"
 ```
 
 Set these in Hostinger hPanel for the API app. Do not commit a production `.env` file with real secrets. If logs mention `injected env (0)`, it means no local `.env` file was loaded; hPanel environment variables are still fine as long as they appear in `process.env`.
