@@ -7,6 +7,8 @@ Deploy this monorepo as one Hostinger Node.js app on `https://opplexify.com`.
 - Database: Hostinger MySQL/MariaDB
 - Node.js: `26.1.0`
 
+If `npm ci` fails with `nodenv: version '26.1.0' is not installed`, install/select Node `26.1.0` in Plesk first. If an old `.node-version` file exists on the server from a previous deploy, delete it after pulling the latest code.
+
 Do not create or use a separate `api.opplexify.com` app for production.
 
 ## 0. Source

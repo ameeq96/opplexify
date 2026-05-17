@@ -12,12 +12,14 @@ Production-ready full-stack conversion scaffold for the Opplexify dark agency te
 
 ## Setup
 
-Use Node.js `26.1.0` before installing dependencies. With nvm:
+Use Node.js `26.1.0` before installing dependencies. This repo uses `.nvmrc` for the target version:
 
 ```bash
 nvm install
 nvm use
 ```
+
+On Plesk/nodenv, make sure the selected Node runtime is installed on the server before running `npm ci`.
 
 1. Install dependencies:
 
