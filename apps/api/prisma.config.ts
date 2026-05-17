@@ -1,11 +1,12 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import { config } from "dotenv";
 import { defineConfig } from "prisma/config";
 import { databaseUrl } from "./src/database-url";
 
 process.env.DOTENV_CONFIG_QUIET = "true";
 
-config({ path: "apps/api/.env", quiet: true });
-config({ quiet: true });
+loadEnvFiles();
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -17,3 +18,16 @@ export default defineConfig({
     url: databaseUrl()
   }
 });
+
+function loadEnvFiles() {
+  const candidates = [
+    resolve(process.cwd(), "apps/api/.env"),
+    resolve(process.cwd(), ".env"),
+    resolve(process.cwd(), "../.env"),
+    resolve(process.cwd(), "../../.env")
+  ];
+
+  for (const path of Array.from(new Set(candidates))) {
+    if (existsSync(path)) config({ path, quiet: true });
+  }
+}

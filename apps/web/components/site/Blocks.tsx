@@ -133,11 +133,9 @@ export function BlogGrid({ posts }: { posts: BlogPost[] }) {
 }
 
 export function TeamGrid({ team }: { team: TeamMember[] }) {
-  const visibleTeam = team.slice(0, 3);
-
   return (
     <div className="grid team-grid">
-      {visibleTeam.map((member) => (
+      {team.map((member) => (
         <Link className="card" href={`/team/${member.slug}`} key={member.id}>
           <div className="card-media">
             <img src={assetUrl(member.image)} alt={member.name} loading="lazy" decoding="async" sizes="(max-width: 760px) 100vw, 33vw" />
@@ -187,6 +185,10 @@ function recordItems(value: unknown) {
     : [];
 }
 
+function stringItems(value: unknown) {
+  return Array.isArray(value) ? value.map(String).filter(Boolean) : [];
+}
+
 export function SectionRenderer({ sections }: { sections: Section[] }) {
   return (
     <>
@@ -195,6 +197,7 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
         .map((section) => {
           const content = section.content ?? {};
           const stats = recordItems(content.items);
+          const cta = content.cta ?? {};
           if (section.type === "stats" && stats.length) {
             return (
               <section className="section" key={section.id}>
@@ -210,15 +213,108 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
             );
           }
 
-          if (section.type === "rich-text") {
+          if (section.type === "pricing" && stats.length) {
+            return (
+              <section className="section" key={section.id}>
+                <div className="container">
+                  <SectionHead title={section.title ?? "Pricing"} subtitle={section.subtitle ?? undefined} />
+                  <div className="grid">
+                    {stats.map((item, index) => (
+                      <article className="card" key={`${item.title}-${index}`}>
+                        <p className="eyebrow">{String(item.label ?? "")}</p>
+                        <h3>{String(item.title ?? "Package")}</h3>
+                        <p>{String(item.description ?? "")}</p>
+                        <strong>{String(item.price ?? "")}</strong>
+                        <ul>
+                          {stringItems(item.features).map((feature) => (
+                            <li key={feature}>{feature}</li>
+                          ))}
+                        </ul>
+                        {item.href ? (
+                          <Link className="btn secondary" href={String(item.href)}>
+                            {String(item.ctaLabel ?? "Request Package")}
+                          </Link>
+                        ) : null}
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            );
+          }
+
+          if (section.type === "capability-list" && stats.length) {
+            return (
+              <section className="section" key={section.id}>
+                <div className="container">
+                  <SectionHead title={section.title ?? "Capabilities"} subtitle={section.subtitle ?? undefined} />
+                  <div className="grid">
+                    {stats.map((item, index) => (
+                      <article className="card" key={`${item.category}-${index}`}>
+                        <p className="eyebrow">{String(item.category ?? `0${index + 1}`)}</p>
+                        <h3>{String(item.text ?? item.title ?? "")}</h3>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            );
+          }
+
+          if (section.type === "logo-strip" && recordItems(content.logos).length) {
+            return (
+              <section className="section" key={section.id}>
+                <div className="container">
+                  <SectionHead title={section.title ?? "Partners"} subtitle={section.subtitle ?? undefined} />
+                  <div className="logo-strip-grid">
+                    {recordItems(content.logos).map((logo, index) => (
+                      <img src={assetUrl(String(logo.image ?? logo.lightImage ?? ""))} alt={String(logo.alt ?? `Logo ${index + 1}`)} key={`${logo.image}-${index}`} loading="lazy" decoding="async" />
+                    ))}
+                  </div>
+                </div>
+              </section>
+            );
+          }
+
+          if (section.type === "contact-info") {
+            return (
+              <section className="section" key={section.id}>
+                <div className="container">
+                  <SectionHead title={section.title ?? "Contact"} subtitle={section.subtitle ?? undefined} />
+                  <div className="grid">
+                    {["email", "phone", "address"].map((key) =>
+                      content[key] ? (
+                        <article className="card" key={key}>
+                          <p className="eyebrow">{key}</p>
+                          <h3>{String(content[key])}</h3>
+                        </article>
+                      ) : null
+                    )}
+                  </div>
+                </div>
+              </section>
+            );
+          }
+
+          if (["rich-text", "text-media", "services", "projects", "portfolio", "blog", "team", "faq", "contact"].includes(section.type)) {
+            const paragraphs = stringItems(content.paragraphs).length ? stringItems(content.paragraphs) : content.body ? [String(content.body)] : [];
             return (
               <section className="section" key={section.id}>
                 <div className="container rich-block">
                   <div>
                     <SectionHead title={section.title ?? "About"} subtitle={section.subtitle ?? undefined} />
-                    <p>{content.body}</p>
+                    {paragraphs.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                    {cta.href ? (
+                      <Link className="btn secondary" href={cta.href ?? "/"}>
+                        {cta.label ?? "Learn more"}
+                      </Link>
+                    ) : null}
                   </div>
-                  <img src={assetUrl(content.image)} alt={section.title ?? "Opplexify"} loading="lazy" decoding="async" sizes="(max-width: 760px) 100vw, 44vw" />
+                  {content.image ? (
+                    <img src={assetUrl(content.image)} alt={section.title ?? "Opplexify"} loading="lazy" decoding="async" sizes="(max-width: 760px) 100vw, 44vw" />
+                  ) : null}
                 </div>
               </section>
             );

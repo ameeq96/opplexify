@@ -16,14 +16,15 @@ export function asyncHandler(handler: (req: Request, res: Response, next: NextFu
 }
 
 export function errorHandler(error: unknown, _req: Request, res: Response, _next: NextFunction) {
-  const statusCode = error instanceof HttpError ? error.statusCode : 500;
-  const message = error instanceof Error ? error.message : "Internal server error";
+  const isHttpError = error instanceof HttpError;
+  const statusCode = isHttpError ? error.statusCode : 500;
+  const message = isHttpError ? error.message : "Internal server error";
 
   if (statusCode >= 500) {
     console.error(error);
   }
 
   res.status(statusCode).json({
-    message: statusCode >= 500 ? "Internal server error" : message
+    message
   });
 }

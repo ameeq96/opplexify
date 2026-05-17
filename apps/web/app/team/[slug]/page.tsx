@@ -52,7 +52,9 @@ export default async function TeamDetailPage({ params }: Props) {
       <section className="section">
         <div className="container detail-layout">
           <div>
-            <img src={assetUrl(member.image)} alt={member.name} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
+            <div className="team-detail-portrait">
+              <img src={assetUrl(member.image)} alt={member.name} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
+            </div>
             <p className="detail-copy">{member.bio}</p>
           </div>
           <aside className="meta-panel">
@@ -62,6 +64,18 @@ export default async function TeamDetailPage({ params }: Props) {
                 <strong>{skill}</strong>
               </div>
             ))}
+            {member.socialLinks
+              ? Object.entries(member.socialLinks).map(([name, href]) =>
+                  href ? (
+                    <div className="meta-row" key={name}>
+                      <span>{name}</span>
+                      <strong>
+                        <a href={href}>{href}</a>
+                      </strong>
+                    </div>
+                  ) : null
+                )
+              : null}
           </aside>
         </div>
       </section>

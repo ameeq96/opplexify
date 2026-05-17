@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { StaticTemplatePage } from "../../components/site/StaticTemplatePage";
 import { aboutHtml } from "../../components/site/templateHtml";
-import { fetchApi, getSection, pageMetadata, type Page } from "../../lib/api";
+import { assetUrl, fetchApi, getSection, pageMetadata, type Page, type Section, type TeamMember } from "../../lib/api";
 import { absoluteUrl, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
@@ -136,26 +136,136 @@ function escapeHtml(value: unknown) {
     .replace(/"/g, "&quot;");
 }
 
-function applyAboutCms(html: string, page: Page | null) {
+function asRecord(value: unknown) {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+}
+
+function asArray(value: unknown) {
+  return Array.isArray(value) ? value : [];
+}
+
+function replaceDivBlock(html: string, marker: string, replacement: string) {
+  const start = html.indexOf(marker);
+  const end = start === -1 ? -1 : findDivEnd(html, start);
+  if (start === -1 || end === -1) return html;
+  return html.slice(0, start) + replacement + html.slice(end);
+}
+
+function renderStats(section?: Section) {
+  const items = asArray(section?.content?.items);
+  if (!items.length) return null;
+
+  return `<div class="choose-us__warpper choose-us--about fade-anim">
+    ${items
+      .slice(0, 4)
+      .map((item, index) => {
+        const record = asRecord(item);
+        return `<div class="choose-us__item item-${index + 1}">
+          <p>${escapeHtml(record.label ?? "Metric")}</p>
+          <h2>${escapeHtml(record.value ?? "0")}</h2>
+        </div>`;
+      })
+      .join("")}
+  </div>`;
+}
+
+function renderTeam(section: Section | undefined, team: TeamMember[]) {
+  const limit = Number(section?.content?.limit ?? 3);
+  const members = team.slice(0, Number.isFinite(limit) && limit > 0 ? limit : 3);
+  if (!members.length) return null;
+
+  return `<div class="team-wrapper fade-anim">
+    ${members
+      .map(
+        (member) => `<div class="team-box-1 fade-anim">
+          <div class="thumb"><a href="/team/${escapeHtml(member.slug)}"><img src="${escapeHtml(assetUrl(member.image))}" alt="${escapeHtml(member.name)}"></a></div>
+          <div class="content"><h3 class="name"><a href="/team/${escapeHtml(member.slug)}">${escapeHtml(member.name)}</a></h3><span class="post">${escapeHtml(member.role)}</span></div>
+        </div>`
+      )
+      .join("")}
+  </div>`;
+}
+
+function renderCapabilities(section?: Section) {
+  const items = asArray(section?.content?.items);
+  if (!items.length) return null;
+
+  return `<div class="award-wrapper fade-anim">
+    ${items
+      .map((item, index) => {
+        const record = asRecord(item);
+        return `<div class="award-box">
+          <span class="category">${escapeHtml(record.category ?? "Capability")}</span>
+          <p class="award">${escapeHtml(record.text ?? record.title ?? "")}</p>
+          <span class="year">${escapeHtml(record.year ?? String(index + 1).padStart(2, "0"))}</span>
+        </div>`;
+      })
+      .join("")}
+  </div>`;
+}
+
+function applyAboutCms(html: string, page: Page | null, team: TeamMember[]) {
   const intro = getSection(page, "intro");
+  const stats = getSection(page, "stats");
+  const teamSection = getSection(page, "team-showcase");
+  const marquee = getSection(page, "marquee");
+  const capabilities = getSection(page, "capability-list");
   const title = intro?.title ?? page?.title;
   const subtitle = intro?.subtitle ?? page?.summary;
   const body = typeof intro?.content?.body === "string" ? intro.content.body : undefined;
+  const image = typeof intro?.content?.image === "string" ? assetUrl(intro.content.image) : undefined;
 
-  return html
+  let rendered = html
     .replace(/<h1 class="section-title-2 rr_title_anim">[\s\S]*?<\/h1>/, title ? `<h1 class="section-title-2 rr_title_anim">${escapeHtml(title)}</h1>` : "$&")
     .replace(/<p class="designation text-gray mb-40 fade-anim">[\s\S]*?<\/p>/, subtitle ? `<p class="designation text-gray mb-40 fade-anim">${escapeHtml(subtitle)}</p>` : "$&")
     .replace(/<p class="designation text-gray fade-anim">[\s\S]*?<\/p>/, body ? `<p class="designation text-gray fade-anim">${escapeHtml(body)}</p>` : "$&");
+
+  if (image) {
+    rendered = rendered.replace(
+      /<div class="about-us__media parallax-view">\s*<img data-speed="0\.6" src="[^"]*" alt="">\s*<\/div>/,
+      `<div class="about-us__media parallax-view"><img data-speed="0.6" src="${escapeHtml(image)}" alt="${escapeHtml(title ?? "Opplexify")}"></div>`
+    );
+  }
+
+  const statsHtml = renderStats(stats);
+  if (statsHtml) rendered = replaceDivBlock(rendered, '<div class="choose-us__warpper choose-us--about fade-anim">', statsHtml);
+
+  if (teamSection?.title) {
+    rendered = rendered.replace(
+      /<h2 class="section-title rr_title_anim">A development team for[\s\S]*?<\/h2>/,
+      `<h2 class="section-title rr_title_anim">${escapeHtml(teamSection.title)}</h2>`
+    );
+  }
+  const teamHtml = renderTeam(teamSection, team);
+  if (teamHtml) rendered = replaceDivBlock(rendered, '<div class="team-wrapper fade-anim">', teamHtml);
+
+  if (marquee?.title) {
+    rendered = rendered.replace(/We build websites, SaaS products, mobile apps and dashboards/g, escapeHtml(marquee.title));
+  }
+
+  if (capabilities?.title) {
+    rendered = rendered.replace(
+      /<h2 class="section-title rr_title_anim">We <span>plan<\/span>[\s\S]*?<\/h2>/,
+      `<h2 class="section-title rr_title_anim">${escapeHtml(capabilities.title)}</h2>`
+    );
+  }
+  const capabilityHtml = renderCapabilities(capabilities);
+  if (capabilityHtml) rendered = replaceDivBlock(rendered, '<div class="award-wrapper fade-anim">', capabilityHtml);
+
+  return rendered;
 }
 
 export default async function AboutPage() {
-  const page = await fetchApi<Page | null>("/public/pages/about", null);
+  const [page, team] = await Promise.all([
+    fetchApi<Page | null>("/public/pages/about", null),
+    fetchApi<TeamMember[]>("/public/team", [])
+  ]);
   const jsonLd = { ...aboutJsonLd, name: page?.title ?? aboutJsonLd.name, description: page?.seoDescription ?? page?.summary ?? aboutJsonLd.description };
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <StaticTemplatePage html={applyAboutCms(aboutPageHtml, page)} bodyClassName="body-about-us" />
+      <StaticTemplatePage html={applyAboutCms(aboutPageHtml, page, team)} bodyClassName="body-about-us" />
     </>
   );
 }
