@@ -12,10 +12,7 @@ const publicRoutes = [
   { path: "/team", marker: /Full-stack development team/i },
   { path: "/work", marker: /Case studies for websites/i },
   { path: "/portfolio-grid", marker: /4K visuals|Web development portfolio/i },
-  { path: "/service", marker: /Web development services|Business Websites/i },
-  { path: "/team/ameeq-khan", marker: /Ameeq Khan|Full-Stack Product Lead/i },
-  { path: "/team/atiq-khan", marker: /Atiq Khan|SEO Planning/i },
-  { path: "/team/emmad-khan", marker: /Emmad Khan|Frontend Design/i }
+  { path: "/service", marker: /Web development services|Business Websites/i }
 ];
 
 const viewports = [
@@ -122,53 +119,6 @@ async function assertPortfolioExperience(page: Page, viewport: { width: number; 
 test("portfolio grid scroll pagination, filters and media work across viewports", async ({ page }) => {
   for (const viewport of viewports) {
     await assertPortfolioExperience(page, { width: viewport.width, height: viewport.height });
-  }
-});
-
-test("team portraits render as non-stretched circles on mobile", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/team", { waitUntil: "domcontentloaded" });
-
-  const gridPortrait = page.locator(".team-grid .card-media").first();
-  await expect(gridPortrait).toBeVisible();
-  const gridStyle = await gridPortrait.evaluate((element) => {
-    const rect = element.getBoundingClientRect();
-    const style = window.getComputedStyle(element);
-    const imageStyle = window.getComputedStyle(element.querySelector("img")!);
-    return {
-      width: rect.width,
-      height: rect.height,
-      radius: Number.parseFloat(style.borderTopLeftRadius),
-      objectFit: imageStyle.objectFit,
-      objectPosition: imageStyle.objectPosition
-    };
-  });
-  expect(Math.abs(gridStyle.width - gridStyle.height)).toBeLessThanOrEqual(2);
-  expect(gridStyle.radius).toBeGreaterThanOrEqual(gridStyle.width / 2 - 2);
-  expect(gridStyle.objectFit).toBe("cover");
-  expect(gridStyle.objectPosition).toMatch(/top|0%/i);
-
-  for (const route of ["/team/ameeq-khan", "/team/atiq-khan", "/team/emmad-khan"]) {
-    await page.goto(route, { waitUntil: "domcontentloaded" });
-    const portrait = page.locator(".team-detail-portrait");
-    await expect(portrait).toBeVisible();
-    const detailStyle = await portrait.evaluate((element) => {
-      const rect = element.getBoundingClientRect();
-      const style = window.getComputedStyle(element);
-      const imageStyle = window.getComputedStyle(element.querySelector("img")!);
-      return {
-        width: rect.width,
-        height: rect.height,
-        radius: Number.parseFloat(style.borderTopLeftRadius),
-        objectFit: imageStyle.objectFit,
-        objectPosition: imageStyle.objectPosition
-      };
-    });
-    expect(Math.abs(detailStyle.width - detailStyle.height)).toBeLessThanOrEqual(2);
-    expect(detailStyle.radius).toBeGreaterThanOrEqual(detailStyle.width / 2 - 2);
-    expect(detailStyle.objectFit).toBe("cover");
-    expect(detailStyle.objectPosition).toMatch(/top|0%/i);
-    await assertNoHorizontalOverflow(page);
   }
 });
 

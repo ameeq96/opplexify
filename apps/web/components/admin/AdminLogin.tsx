@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LogIn } from "lucide-react";
 import { API_URL } from "../../lib/api";
 
@@ -10,11 +10,6 @@ export function AdminLogin() {
   const [password, setPassword] = useState(isProduction ? "" : "Admin123!");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    setReady(true);
-  }, []);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,14 +22,8 @@ export function AdminLogin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        const fallback =
-          response.status >= 500
-            ? "Server could not complete login. Check API logs, .env database credentials, and run npm run db:seed."
-            : "Login failed";
-        throw new Error(payload.message ?? fallback);
-      }
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.message ?? "Login failed");
       localStorage.setItem("opplexify_token", payload.accessToken);
       window.location.href = "/admin";
     } catch (error) {
@@ -59,8 +48,8 @@ export function AdminLogin() {
             Password
             <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
           </label>
-          <button className="btn accent" type="submit" disabled={!ready || loading}>
-            <LogIn size={18} /> {loading ? "Signing in..." : ready ? "Sign in" : "Loading..."}
+          <button className="btn accent" type="submit" disabled={loading}>
+            <LogIn size={18} /> {loading ? "Signing in..." : "Sign in"}
           </button>
           {message ? <p className="notice">{message}</p> : null}
         </form>

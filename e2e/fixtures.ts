@@ -26,9 +26,7 @@ function isInternalUrl(url: string) {
 function isIgnoredConsoleError(text: string) {
   return (
     text.includes("ResizeObserver loop completed with undelivered notifications") ||
-    (text.includes("/_next/webpack-hmr") && text.includes("WebSocket connection")) ||
-    text.includes("Failed to load resource: net::ERR_INTERNET_DISCONNECTED") ||
-    text.includes("Failed to load resource: net::ERR_SOCKET_NOT_CONNECTED")
+    (text.includes("/_next/webpack-hmr") && text.includes("WebSocket connection"))
   );
 }
 

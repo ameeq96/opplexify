@@ -31,7 +31,6 @@ export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
   const service = await fetchApi<Service | null>(`/public/services/${slug}`, null);
   if (!service) notFound();
-  const features = Array.isArray(service.gallery) ? service.gallery.filter(Boolean) : [];
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -66,16 +65,6 @@ export default async function ServiceDetailPage({ params }: Props) {
               <span>Slug</span>
               <strong>{service.slug}</strong>
             </div>
-            {features.length ? (
-              <div className="meta-list-panel">
-                <span>What admin controls</span>
-                <ul>
-                  {features.map((feature) => (
-                    <li key={feature}>{feature}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
           </aside>
         </div>
       </section>

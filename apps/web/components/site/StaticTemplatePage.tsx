@@ -1,7 +1,7 @@
 import { DigitalAgencyRuntime } from "./DigitalAgencyRuntime";
 import { emptySite, fetchApi, getMenu, type SitePayload } from "../../lib/api";
 import { TEMPLATE_ASSET_BASE as A, templateCssFiles } from "./templateAssets";
-import { escapeHtml, renderFooterMenuHtml, renderMenuHtml, renderTemplateFooterHtml, renderTemplateHeaderHtml } from "./templateRenderers";
+import { renderFooterMenuHtml, renderMenuHtml, renderTemplateFooterHtml, renderTemplateHeaderHtml } from "./templateRenderers";
 
 type StaticTemplatePageProps = {
   html: string;
@@ -13,10 +13,6 @@ export function normalizeTemplateHtml(html: string, site: SitePayload = emptySit
   const footerHtml = renderTemplateFooterHtml(site);
   const dynamicMenuHtml = renderMenuHtml(getMenu(site, "header"));
   const dynamicFooterMenuHtml = renderFooterMenuHtml(getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header"));
-  const settings = site.settings.site ?? {};
-  const email = escapeHtml(settings.email ?? "hello@opplexify.com");
-  const phone = escapeHtml(settings.phone ?? "(505) 555-0125");
-  const address = escapeHtml(settings.address ?? "Remote web development team");
 
   return html
     .replace(/<!-- Header area start -->[\s\S]*?<!-- Header area end -->\s*(?:<!-- Header area end -->)?/g, headerHtml)
@@ -28,10 +24,9 @@ export function normalizeTemplateHtml(html: string, site: SitePayload = emptySit
     .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/light-logo\.png/g, `${A}/imgs/logo/opplexify-logo-light.svg`)
     .replace(/(<h2 class="title">Company<\/h2>\s*)<ul class="footer-nav-list">[\s\S]*?<\/ul>/g, (_match, heading) => `${heading}${dynamicFooterMenuHtml}`)
     .replace(/action="http:\/\/localhost:4000\/public\/contact"/g, 'action="/contact"')
-    .replace(/infoO@opplexifycreative\.com|hello@opplexify\.com/g, email)
-    .replace(/\(505\) 555-0125/g, phone)
+    .replace(/infoO@opplexifycreative\.com/g, "hello@opplexify.com")
     .replace(/<h2 class="title">Contact US<\/h2>/g, '<h2 class="title">Project Contact</h2>')
-    .replace(/3891 Ranchview Dr\. Richardson|Remote web development team/g, address)
+    .replace(/3891 Ranchview Dr\. Richardson/g, "Remote web development team")
     .replace(/\/template-assets\/dark\/assets\/imgs\/gallery\/contact-us-r-1\.webp/g, `${A}/imgs/gallery/gallery-s-1.webp`);
 }
 

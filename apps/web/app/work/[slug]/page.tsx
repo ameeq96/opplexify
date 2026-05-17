@@ -31,8 +31,6 @@ export default async function WorkDetailPage({ params }: Props) {
   const { slug } = await params;
   const project = await fetchApi<Project | null>(`/public/projects/${slug}`, null);
   if (!project) notFound();
-  const gallery = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
-  const contentBlocks = Array.isArray(project.contentBlocks) ? project.contentBlocks : [];
   const projectJsonLd = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -57,11 +55,6 @@ export default async function WorkDetailPage({ params }: Props) {
           <div>
             <img src={assetUrl(project.mainImage)} alt={project.title} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
             <p className="detail-copy">{project.description}</p>
-            {project.videoUrl ? (
-              <video className="detail-video" controls preload="metadata">
-                <source src={assetUrl(project.videoUrl)} type="video/mp4" />
-              </video>
-            ) : null}
           </div>
           <aside className="meta-panel">
             <div className="meta-row">
@@ -80,46 +73,9 @@ export default async function WorkDetailPage({ params }: Props) {
               <span>Location</span>
               <strong>{project.location ?? "Remote"}</strong>
             </div>
-            {project.date ? (
-              <div className="meta-row">
-                <span>Date</span>
-                <strong>{new Date(project.date).getFullYear()}</strong>
-              </div>
-            ) : null}
           </aside>
         </div>
       </section>
-      {contentBlocks.length ? (
-        <section className="section">
-          <div className="container content-block-grid">
-            {contentBlocks.map((block, index) => (
-              <article className="card content-block-card" key={`${block.title ?? "block"}-${index}`}>
-                {block.image ? (
-                  <div className="card-media">
-                    <img src={assetUrl(block.image)} alt={block.title ?? project.title} loading="lazy" decoding="async" sizes="(max-width: 760px) 100vw, 45vw" />
-                  </div>
-                ) : null}
-                <h2>{block.title ?? `Project section ${index + 1}`}</h2>
-                {block.body ? <p>{block.body}</p> : null}
-                {block.href && block.ctaLabel ? (
-                  <a className="btn secondary" href={block.href}>
-                    {block.ctaLabel}
-                  </a>
-                ) : null}
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
-      {gallery.length ? (
-        <section className="section">
-          <div className="container detail-gallery">
-            {gallery.map((image, index) => (
-              <img src={assetUrl(image)} alt={`${project.title} gallery ${index + 1}`} key={`${image}-${index}`} loading="lazy" decoding="async" sizes="(max-width: 760px) 100vw, 33vw" />
-            ))}
-          </div>
-        </section>
-      ) : null}
     </PublicShell>
   );
 }

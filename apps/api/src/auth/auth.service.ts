@@ -14,15 +14,9 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    let user;
-    try {
-      user = await this.prisma.user.findFirst({
-        where: { email: dto.email, deletedAt: null }
-      });
-    } catch (error) {
-      console.error("Admin login database lookup failed", error);
-      throw new HttpError(503, "Could not reach the database. Check .env database credentials, then run npm run db:seed.");
-    }
+    const user = await this.prisma.user.findFirst({
+      where: { email: dto.email, deletedAt: null }
+    });
 
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new HttpError(401, "Invalid email or password");

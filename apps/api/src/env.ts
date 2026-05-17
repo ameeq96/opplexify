@@ -1,11 +1,10 @@
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { hasDatabaseConfig, missingDatabaseConfigMessage } from "./database-url";
 
 process.env.DOTENV_CONFIG_QUIET = "true";
 
-loadEnvFiles();
+loadEnv({ path: "apps/api/.env", quiet: true });
+loadEnv({ quiet: true });
 
 const REQUIRED_PRODUCTION_ENV = ["JWT_SECRET"] as const;
 
@@ -36,17 +35,4 @@ export function productionSeedValue(name: "ADMIN_EMAIL" | "ADMIN_PASSWORD", fall
   }
 
   return fallback;
-}
-
-function loadEnvFiles() {
-  const candidates = [
-    resolve(process.cwd(), "apps/api/.env"),
-    resolve(process.cwd(), ".env"),
-    resolve(process.cwd(), "../.env"),
-    resolve(process.cwd(), "../../.env")
-  ];
-
-  for (const path of Array.from(new Set(candidates))) {
-    if (existsSync(path)) loadEnv({ path, quiet: true });
-  }
 }
