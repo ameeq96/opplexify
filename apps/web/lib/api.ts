@@ -36,6 +36,7 @@ export type SectionCta = {
 export type SectionContent = Record<string, any> & {
   eyebrow?: string;
   image?: string;
+  lightImage?: string;
   headline?: string;
   body?: string;
   paragraphs?: string[];
@@ -95,6 +96,9 @@ export type Project = {
   description?: string | null;
   mainImage?: string | null;
   gallery?: string[] | null;
+  videoUrl?: string | null;
+  date?: string | null;
+  contentBlocks?: Array<Record<string, any>> | null;
   category?: { name: string; slug: string } | null;
   tools?: string | null;
   duration?: string | null;

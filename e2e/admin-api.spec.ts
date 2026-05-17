@@ -92,7 +92,7 @@ test("admin login and every CMS module opens in the dashboard", async ({ page })
   for (const resource of adminResources) {
     const responsePromise = page.waitForResponse(
       (response) =>
-        response.url().includes(`/admin/${resource.key}?limit=100`) &&
+        response.url().includes(`/admin/${resource.key}?`) &&
         response.request().method() === "GET" &&
         response.status() < 400
     );
@@ -104,7 +104,7 @@ test("admin login and every CMS module opens in the dashboard", async ({ page })
 
   await page.getByRole("button", { name: "Menu Items", exact: true }).click();
   await page.getByRole("button", { name: "New", exact: true }).click();
-  await expect(page.getByLabel("Menu")).toContainText("Header Navigation");
+  await expect(page.locator(".admin-form-grid").getByRole("combobox", { name: "Menu", exact: true })).toContainText("Header Navigation");
 
   await page.getByRole("button", { name: "Pages CMS", exact: true }).click();
   await page.getByRole("button", { name: "New", exact: true }).click();
@@ -141,8 +141,8 @@ test("admin mobile dashboard keeps navigation, forms, media picker and repeaters
   await page.getByRole("button", { name: "Page Sections", exact: true }).click();
   await expect(page.locator(".admin-table")).toBeVisible();
   await page.getByRole("button", { name: "New", exact: true }).click();
-  await expect(page.getByLabel("Page")).toContainText(/Home|About|Portfolio/i);
-  await page.getByLabel("Type").selectOption("pricing");
+  await expect(page.locator(".admin-form-grid").getByRole("combobox", { name: "Page", exact: true })).toContainText(/Home|About|Portfolio/i);
+  await page.locator(".admin-form-grid").getByRole("combobox", { name: "Type", exact: true }).selectOption("pricing");
   const pricingRepeater = page.locator(".repeater").filter({ hasText: "Pricing cards" });
   await expect(pricingRepeater).toBeVisible();
   await pricingRepeater.getByRole("button", { name: /add/i }).click();
@@ -160,6 +160,125 @@ test("admin mobile dashboard keeps navigation, forms, media picker and repeaters
   await page.getByRole("button", { name: "New", exact: true }).click();
   await expect(page.locator(".admin-form-grid")).toBeVisible();
   await assertNoHorizontalOverflow(page);
+});
+
+test("admin search, filters, pagination and lead notes work in the dashboard", async ({ page, request }) => {
+  const token = await adminToken(request);
+  await page.addInitScript((accessToken) => {
+    localStorage.setItem("opplexify_token", accessToken);
+  }, token);
+
+  await page.goto("/admin", { waitUntil: "domcontentloaded" });
+  await expect(page.getByText("Opplexify CMS")).toBeVisible();
+
+  await page.getByLabel("Rows").selectOption("10");
+  await page.getByLabel("Search records").fill("home");
+  const pageSearchResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes("/admin/pages?") &&
+      response.url().includes("q=home") &&
+      response.request().method() === "GET"
+  );
+  await page.getByRole("button", { name: "Search", exact: true }).click();
+  expect((await pageSearchResponse).ok()).toBeTruthy();
+  await expect(page.locator(".admin-table")).toContainText(/Home/i);
+
+  const statusResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes("/admin/pages?") &&
+      response.url().includes("status=PUBLISHED") &&
+      response.request().method() === "GET"
+  );
+  await page.getByLabel("Status").selectOption("PUBLISHED");
+  expect((await statusResponse).ok()).toBeTruthy();
+  await expect(page.locator(".admin-pagination")).toContainText(/Page 1 of/i);
+  await assertNoHorizontalOverflow(page);
+
+  const portfolioLimitResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes("/admin/portfolio-items?") &&
+      response.url().includes("limit=10") &&
+      response.request().method() === "GET"
+  );
+  await page.getByRole("button", { name: "Portfolio Gallery", exact: true }).click();
+  expect((await portfolioLimitResponse).ok()).toBeTruthy();
+  await expect(page.locator(".admin-pagination")).toContainText(/Page 1 of/i);
+  const nextButton = page.locator(".admin-pagination").getByRole("button", { name: "Next", exact: true });
+  if (await nextButton.isEnabled()) {
+    const nextResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/admin/portfolio-items?") &&
+        response.url().includes("page=2") &&
+        response.request().method() === "GET"
+    );
+    await nextButton.click();
+    expect((await nextResponse).ok()).toBeTruthy();
+    await expect(page.locator(".admin-pagination")).toContainText(/Page 2 of/i);
+  }
+
+  const suffix = Date.now();
+  const subject = `QA Admin Lead ${suffix}`;
+  const email = `qa-admin-${suffix}@example.com`;
+  const note = `Reviewed by dashboard QA ${suffix}`;
+  const created = await request.post(`${API_BASE_URL}/public/contact`, {
+    data: {
+      name: "QA Admin Lead",
+      email,
+      phone: "+1 555 0166",
+      subject,
+      message: "QA lead message created to verify admin notes and status editing."
+    }
+  });
+  expect(created.ok()).toBeTruthy();
+
+  const headers = authHeaders(token);
+  const list = await request.get(`${API_BASE_URL}/admin/contact-messages?q=${encodeURIComponent(subject)}&limit=10`, {
+    headers
+  });
+  expect(list.ok()).toBeTruthy();
+  const listPayload = (await list.json()) as { items: Array<{ id: string; subject?: string }> };
+  const message = listPayload.items.find((item) => item.subject === subject);
+  const messageId = message?.id;
+  expect(messageId).toBeTruthy();
+
+  try {
+    await page.getByRole("button", { name: "Contact Messages", exact: true }).click();
+    await page.getByLabel("Search records").fill(subject);
+    const leadSearchResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/admin/contact-messages?") &&
+        response.url().includes("q=QA") &&
+        response.request().method() === "GET"
+    );
+    await page.getByRole("button", { name: "Search", exact: true }).click();
+    expect((await leadSearchResponse).ok()).toBeTruthy();
+    await expect(page.locator(".admin-table")).toContainText(messageId!);
+
+    await page.getByRole("button", { name: /edit/i }).first().click();
+    await page.locator(".admin-form-grid").getByRole("combobox", { name: "Status", exact: true }).selectOption("read");
+    await page.locator(".admin-form-grid").getByRole("textbox", { name: "Admin Notes", exact: true }).fill(note);
+    const patchResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes(`/admin/contact-messages/${messageId}`) &&
+        response.request().method() === "PATCH"
+    );
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    expect((await patchResponse).ok()).toBeTruthy();
+
+    const updated = await request.get(`${API_BASE_URL}/admin/contact-messages?q=${encodeURIComponent(subject)}&limit=10`, {
+      headers
+    });
+    expect(updated.ok()).toBeTruthy();
+    const updatedPayload = (await updated.json()) as { items: Array<{ id: string; status?: string; adminNotes?: string }> };
+    const updatedMessage = updatedPayload.items.find((item) => item.id === messageId);
+    expect(updatedMessage?.status).toBe("read");
+    expect(updatedMessage?.adminNotes).toBe(note);
+  } finally {
+    if (messageId) {
+      const cleanup = await request.delete(`${API_BASE_URL}/admin/contact-messages/${messageId}`, { headers });
+      expect(cleanup.ok()).toBeTruthy();
+    }
+  }
 });
 
 test("admin edits structured home CMS data and public home reflects it", async ({ request, page }) => {
@@ -253,6 +372,77 @@ test("admin edits structured home CMS data and public home reflects it", async (
         headers,
         data: { title: service.title }
       });
+    }
+  }
+});
+
+test("admin settings update public header, footer, contact and social data", async ({ request, page }) => {
+  const token = await adminToken(request);
+  const headers = authHeaders(token);
+  const suffix = Date.now();
+
+  const settingsResponse = await request.get(`${API_BASE_URL}/admin/settings?limit=100`, { headers });
+  expect(settingsResponse.ok()).toBeTruthy();
+  const settingsPayload = (await settingsResponse.json()) as {
+    items: Array<{ id: string; key: string; value: Record<string, unknown> }>;
+  };
+  const site = settingsPayload.items.find((item) => item.key === "site");
+  const social = settingsPayload.items.find((item) => item.key === "social");
+  const footer = settingsPayload.items.find((item) => item.key === "footer");
+  expect(site?.id).toBeTruthy();
+  expect(social?.id).toBeTruthy();
+  expect(footer?.id).toBeTruthy();
+
+  const email = `qa-settings-${suffix}@example.com`;
+  const phone = `+1 555 ${String(suffix).slice(-4)}`;
+  const address = `QA Remote Studio ${suffix}`;
+  const footerHeadline = `QA Footer ${suffix}`;
+  const linkedin = `https://www.linkedin.com/company/opplexify-qa-${suffix}`;
+
+  try {
+    const sitePatch = await request.patch(`${API_BASE_URL}/admin/settings/${site!.id}`, {
+      headers,
+      data: { value: { ...(site!.value ?? {}), email, phone, address } }
+    });
+    expect(sitePatch.ok()).toBeTruthy();
+
+    const socialPatch = await request.patch(`${API_BASE_URL}/admin/settings/${social!.id}`, {
+      headers,
+      data: { value: { ...(social!.value ?? {}), linkedin } }
+    });
+    expect(socialPatch.ok()).toBeTruthy();
+
+    const footerPatch = await request.patch(`${API_BASE_URL}/admin/settings/${footer!.id}`, {
+      headers,
+      data: { value: { ...(footer!.value ?? {}), headline: footerHeadline } }
+    });
+    expect(footerPatch.ok()).toBeTruthy();
+
+    const publicSite = await request.get(`${API_BASE_URL}/public/site`);
+    expect(publicSite.ok()).toBeTruthy();
+    const publicPayload = (await publicSite.json()) as { settings: Record<string, Record<string, string>> };
+    expect(publicPayload.settings.site.email).toBe(email);
+    expect(publicPayload.settings.site.phone).toBe(phone);
+    expect(publicPayload.settings.site.address).toBe(address);
+    expect(publicPayload.settings.social.linkedin).toBe(linkedin);
+    expect(publicPayload.settings.footer.headline).toBe(footerHeadline);
+
+    await page.goto("/contact", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("body")).toContainText(email);
+    await expect(page.locator("body")).toContainText(phone);
+    await expect(page.locator("body")).toContainText(address);
+
+    await page.goto("/work", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("body")).toContainText(footerHeadline);
+  } finally {
+    if (site?.id) {
+      await request.patch(`${API_BASE_URL}/admin/settings/${site.id}`, { headers, data: { value: site.value ?? {} } });
+    }
+    if (social?.id) {
+      await request.patch(`${API_BASE_URL}/admin/settings/${social.id}`, { headers, data: { value: social.value ?? {} } });
+    }
+    if (footer?.id) {
+      await request.patch(`${API_BASE_URL}/admin/settings/${footer.id}`, { headers, data: { value: footer.value ?? {} } });
     }
   }
 });

@@ -1,17 +1,16 @@
 import { existsSync, readdirSync, statSync } from "node:fs";
-import { extname, join } from "node:path";
+import { extname, join, resolve } from "node:path";
 import { config } from "dotenv";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import * as bcrypt from "bcryptjs";
 import { Prisma, PrismaClient } from "../src/generated/prisma/client";
-import { databaseUrl } from "../src/database-url";
+import { databasePoolConfig } from "../src/database-url";
 import { productionSeedValue } from "../src/env";
 
-config({ path: "apps/api/.env" });
-config();
+loadEnvFiles();
 
 const prisma = new PrismaClient({
-  adapter: new PrismaMariaDb(databaseUrl())
+  adapter: new PrismaMariaDb(databasePoolConfig())
 });
 
 const asset = (path: string) => `/template-assets/dark/assets/imgs/${path}`;
@@ -1329,3 +1328,16 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+function loadEnvFiles() {
+  const candidates = [
+    resolve(process.cwd(), "apps/api/.env"),
+    resolve(process.cwd(), ".env"),
+    resolve(process.cwd(), "../.env"),
+    resolve(process.cwd(), "../../.env")
+  ];
+
+  for (const path of Array.from(new Set(candidates))) {
+    if (existsSync(path)) config({ path, quiet: true });
+  }
+}

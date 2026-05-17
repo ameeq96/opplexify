@@ -429,6 +429,7 @@ export function applyHomeCms(
     .replace(/<p class="text">Opplexify is a full-stack web development agency[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(subtitle)}</p>`)
     .replace(/<span class="text">Remote web development team<\/span>/g, `<span class="text">${escapeHtml(siteSettings.address ?? "Remote web development team")}</span>`)
     .replace(/<a href="mailto:hello@opplexify\.com">hello@opplexify\.com<\/a>/g, `<a href="mailto:${escapeHtml(siteSettings.email ?? "hello@opplexify.com")}">${escapeHtml(siteSettings.email ?? "hello@opplexify.com")}</a>`)
+    .replace(/<a href="tel:\(505\)555-0125">\(505\) 555-0125<\/a>/g, `<a href="tel:${escapeHtml(siteSettings.phone ?? "(505) 555-0125")}">${escapeHtml(siteSettings.phone ?? "(505) 555-0125")}</a>`)
     .replace(/<a class="rr-btn-underline" href="\/portfolio">Browse all work<\/a>/g, `<a class="rr-btn-underline" href="${escapeHtml(stringValue(primary.href, "/portfolio"))}">${escapeHtml(stringValue(primary.label, "Browse all work"))}</a>`);
 
   if (metaItems.length >= 2) {

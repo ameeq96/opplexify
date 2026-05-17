@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { StaticTemplatePage } from "../../components/site/StaticTemplatePage";
 import { contactHtml } from "../../components/site/templateHtml";
-import { fetchApi, getSection, pageMetadata, type Page } from "../../lib/api";
+import { emptySite, fetchApi, getSection, pageMetadata, type Page, type SitePayload } from "../../lib/api";
 import { absoluteUrl, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
@@ -99,24 +99,84 @@ function escapeHtml(value: unknown) {
     .replace(/"/g, "&quot;");
 }
 
-function applyContactCms(html: string, page: Page | null) {
+function socialEntries(site: SitePayload) {
+  return Object.entries(site.settings.social ?? {}).filter(([, href]) => Boolean(href));
+}
+
+function socialIcon(name: string) {
+  const key = name.toLowerCase();
+  if (key.includes("facebook")) return "fa-facebook-f";
+  if (key.includes("twitter") || key === "x") return "fa-twitter";
+  if (key.includes("linkedin")) return "fa-linkedin-in";
+  if (key.includes("youtube")) return "fa-youtube";
+  return "fa-instagram";
+}
+
+function socialLabel(name: string) {
+  if (name.toLowerCase() === "linkedin") return "LinkedIn";
+  if (name.toLowerCase() === "x") return "X";
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+function renderSocialHtml(site: SitePayload) {
+  const entries = socialEntries(site);
+  if (!entries.length) return "";
+
+  return `<div class="socail-media">
+    ${entries
+      .map(
+        ([name, href]) => `<div class="socail-media__item">
+          <a href="${escapeHtml(href)}" class="icon"><i class="fa-brands ${escapeHtml(socialIcon(name))}"></i></a>
+          <div class="text"><a href="${escapeHtml(href)}">${escapeHtml(socialLabel(name))}</a><span>@opplexify</span></div>
+        </div>`
+      )
+      .join("")}
+  </div>`;
+}
+
+function applyContactCms(html: string, page: Page | null, site: SitePayload) {
   const intro = getSection(page, "contact-hero") ?? getSection(page, "hero");
+  const contactInfo = getSection(page, "contact-info");
+  const siteSettings = site.settings.site ?? {};
   const title = intro?.title ?? page?.title;
   const subtitle = intro?.subtitle ?? page?.summary;
+  const email = contactInfo?.content?.email ?? siteSettings.email;
+  const phone = contactInfo?.content?.phone ?? siteSettings.phone;
+  const address = contactInfo?.content?.address ?? siteSettings.address;
 
-  return html
+  let rendered = html
     .replace(/<h1 class="page-title ">[\s\S]*?<\/h1>/, title ? `<h1 class="page-title ">${escapeHtml(title)}</h1>` : "$&")
     .replace(/Tell us about your website, web app, SaaS platform, mobile app, admin dashboard, or backend API project\./, subtitle ? escapeHtml(subtitle) : "$&");
+
+  const socialHtml = renderSocialHtml(site);
+  if (socialHtml) {
+    rendered = rendered.replace(/<div class="socail-media">[\s\S]*?<div class="direct-contact">/, `${socialHtml}<div class="direct-contact">`);
+  }
+  if (email) {
+    rendered = rendered.replace(/infoO@opplexifycreative\.com|hello@opplexify\.com/g, escapeHtml(email));
+  }
+  if (phone) {
+    rendered = rendered.replace(/\(505\) 555-0125/g, escapeHtml(phone));
+  }
+  if (address) {
+    rendered = rendered.replace(/Remote <br> development team/g, "Project <br> contact");
+    rendered = rendered.replace(/SEO-friendly business websites, landing pages, and service pages built to convert visitors into leads\./, escapeHtml(address));
+  }
+
+  return rendered;
 }
 
 export default async function ContactPage() {
-  const page = await fetchApi<Page | null>("/public/pages/contact", null);
+  const [page, site] = await Promise.all([
+    fetchApi<Page | null>("/public/pages/contact", null),
+    fetchApi<SitePayload>("/public/site", emptySite)
+  ]);
   const jsonLd = { ...contactJsonLd, name: page?.title ?? contactJsonLd.name, description: page?.seoDescription ?? page?.summary ?? contactJsonLd.description };
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <StaticTemplatePage html={applyContactCms(contactPageHtml, page)} bodyClassName="body-about-us" />
+      <StaticTemplatePage html={applyContactCms(contactPageHtml, page, site)} bodyClassName="body-about-us" />
     </>
   );
 }

@@ -222,7 +222,7 @@ export class CmsService {
     if (query.status) where.status = query.status;
     if (q && config.search.length) {
       where.OR = config.search.map((field) => ({
-        [field]: { contains: q, mode: "insensitive" }
+        [field]: { contains: q }
       }));
     }
 
