@@ -5,7 +5,7 @@ Deploy this monorepo as one Hostinger Node.js app on `https://opplexify.com`.
 - Site: `https://opplexify.com`
 - API: same domain, using existing paths like `/health`, `/auth/*`, `/public/*`, `/admin/*`, and `/uploads/*`
 - Database: Hostinger MySQL/MariaDB
-- Node.js: `22.x`
+- Node.js: `26.1.0`
 
 Do not create or use a separate `api.opplexify.com` app for production.
 
@@ -33,7 +33,7 @@ Create one Node.js app:
 | --- | --- |
 | Domain | `opplexify.com` |
 | Framework | `Other` or `Next.js` |
-| Node version | `22.x` |
+| Node version | `26.1.0` |
 | App root | Repository root |
 | Build command | `npm run hostinger:build` |
 | Start command | `npm run hostinger:start` |

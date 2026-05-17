@@ -12,6 +12,13 @@ Production-ready full-stack conversion scaffold for the Opplexify dark agency te
 
 ## Setup
 
+Use Node.js `26.1.0` before installing dependencies. With nvm:
+
+```bash
+nvm install
+nvm use
+```
+
 1. Install dependencies:
 
 ```bash
@@ -68,7 +75,7 @@ The app is prepared for Hostinger Business Web Hosting as one managed Node.js ap
 
 - Site and API: `https://opplexify.com`
 - Database: Hostinger MySQL/MariaDB
-- Node.js: `22.x`
+- Node.js: `26.1.0`
 
 Production scripts:
 
