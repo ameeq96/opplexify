@@ -5,9 +5,9 @@ Deploy this monorepo as one Hostinger Node.js app on `https://opplexify.com`.
 - Site: `https://opplexify.com`
 - API: same domain, using existing paths like `/health`, `/auth/*`, `/public/*`, `/admin/*`, and `/uploads/*`
 - Database: Hostinger MySQL/MariaDB
-- Node.js: `26.1.0`
+- Node.js: `24.6.0` or newer on Node 24/26
 
-If `npm ci` fails with `nodenv: version '26.1.0' is not installed`, install/select Node `26.1.0` in Plesk first. If an old `.node-version` file exists on the server from a previous deploy, delete it after pulling the latest code.
+If `npm ci` fails with an unsupported engine error, select Node `24.6.0` or newer in Plesk first. If an old `.node-version` file exists on the server from a previous deploy, delete it after pulling the latest code.
 
 Do not create or use a separate `api.opplexify.com` app for production.
 
@@ -35,7 +35,7 @@ Create one Node.js app:
 | --- | --- |
 | Domain | `opplexify.com` |
 | Framework | `Other` or `Next.js` |
-| Node version | `26.1.0` |
+| Node version | `24.6.0` or newer |
 | App root | Repository root |
 | Build command | `npm run hostinger:build` |
 | Start command | `npm run hostinger:start` |
