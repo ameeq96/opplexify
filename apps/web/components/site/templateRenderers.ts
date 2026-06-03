@@ -128,6 +128,15 @@ export function renderTemplateFooterHtml(site: SitePayload) {
           <h2 class="title">Services</h2>
           <ul class="footer-nav-list">${serviceLinksHtml}</ul>
         </div>
+        <div class="footer-widget-box">
+          <h2 class="title">Legal</h2>
+          <ul class="footer-nav-list">
+            <li><a href="/pricing">Pricing</a></li>
+            <li><a href="/terms">Terms of Service</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/refund-policy">Refund Policy</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

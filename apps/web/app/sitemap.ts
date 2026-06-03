@@ -15,7 +15,11 @@ const staticRoutes: Array<Pick<SitemapEntry, "url" | "changeFrequency" | "priori
   { url: absoluteUrl("/blog"), changeFrequency: "weekly", priority: 0.7 },
   { url: absoluteUrl("/work"), changeFrequency: "weekly", priority: 0.7 },
   { url: absoluteUrl("/team"), changeFrequency: "monthly", priority: 0.6 },
-  { url: absoluteUrl("/faq"), changeFrequency: "monthly", priority: 0.6 }
+  { url: absoluteUrl("/faq"), changeFrequency: "monthly", priority: 0.6 },
+  { url: absoluteUrl("/pricing"), changeFrequency: "monthly", priority: 0.85 },
+  { url: absoluteUrl("/terms"), changeFrequency: "yearly", priority: 0.3 },
+  { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.3 },
+  { url: absoluteUrl("/refund-policy"), changeFrequency: "yearly", priority: 0.3 }
 ];
 
 function route(path: string, priority: number, changeFrequency: SitemapEntry["changeFrequency"] = "monthly"): SitemapEntry {
