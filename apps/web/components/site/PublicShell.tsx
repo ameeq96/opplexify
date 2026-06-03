@@ -41,7 +41,7 @@ function SideInfo({ site }: { site: SitePayload }) {
   const settings = site.settings.site ?? {};
   const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-dark.svg`);
   const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`);
-  const email = settings.email ?? "hello@opplexify.com";
+  const email = settings.email ?? "admin@opplexify.com";
   const phone = settings.phone ?? "(505) 555-0125";
   const address = settings.address ?? "Remote web development team";
 

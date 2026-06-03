@@ -14,7 +14,7 @@ export function normalizeTemplateHtml(html: string, site: SitePayload = emptySit
   const dynamicMenuHtml = renderMenuHtml(getMenu(site, "header"));
   const dynamicFooterMenuHtml = renderFooterMenuHtml(getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header"));
   const settings = site.settings.site ?? {};
-  const email = escapeHtml(settings.email ?? "hello@opplexify.com");
+  const email = escapeHtml(settings.email ?? "admin@opplexify.com");
   const phone = escapeHtml(settings.phone ?? "(505) 555-0125");
   const address = escapeHtml(settings.address ?? "Remote web development team");
 

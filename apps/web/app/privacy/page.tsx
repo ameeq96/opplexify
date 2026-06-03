@@ -129,7 +129,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Depending on your location, you may have the right to access, correct, update, or delete the personal information we hold about you, to object to or restrict certain processing, and to withdraw consent where processing is based on consent. To exercise any of these rights, contact us at hello@opplexify.com and we will respond within a reasonable time."
+        text: "Depending on your location, you may have the right to access, correct, update, or delete the personal information we hold about you, to object to or restrict certain processing, and to withdraw consent where processing is based on consent. To exercise any of these rights, contact us at admin@opplexify.com and we will respond within a reasonable time."
       }
     ]
   },
@@ -156,7 +156,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If you have any questions or requests regarding this Privacy Policy or your personal information, contact us at hello@opplexify.com."
+        text: "If you have any questions or requests regarding this Privacy Policy or your personal information, contact us at admin@opplexify.com."
       }
     ]
   }

@@ -151,7 +151,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If you have any questions about these Terms, contact us at hello@opplexify.com."
+        text: "If you have any questions about these Terms, contact us at admin@opplexify.com."
       }
     ]
   }

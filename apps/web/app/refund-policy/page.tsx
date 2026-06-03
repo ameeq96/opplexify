@@ -74,7 +74,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If you wish to cancel a project or request consideration of a refund, email us at hello@opplexify.com with your project details and the reason for your request. We will review each request individually and in good faith, assess the work completed to date, and respond promptly."
+        text: "If you wish to cancel a project or request consideration of a refund, email us at admin@opplexify.com with your project details and the reason for your request. We will review each request individually and in good faith, assess the work completed to date, and respond promptly."
       }
     ]
   },
@@ -110,7 +110,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If you have any questions about this Refund Policy, contact us at hello@opplexify.com."
+        text: "If you have any questions about this Refund Policy, contact us at admin@opplexify.com."
       }
     ]
   }

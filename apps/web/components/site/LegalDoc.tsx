@@ -46,7 +46,7 @@ export function LegalDoc({
         ))}
         <p>
           Questions about this document? Email us at{" "}
-          <a href="mailto:hello@opplexify.com">hello@opplexify.com</a>.
+          <a href="mailto:admin@opplexify.com">admin@opplexify.com</a>.
         </p>
       </div>
     </section>

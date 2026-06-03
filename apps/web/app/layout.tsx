@@ -57,7 +57,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     legalName: "Opplexify",
     url: siteUrl(),
     logo: absoluteUrl("/template-assets/dark/assets/imgs/logo/opplexify-logo-light.svg"),
-    email: "hello@opplexify.com",
+    email: "admin@opplexify.com",
     description: DEFAULT_DESCRIPTION,
     sameAs: ["https://www.instagram.com/", "https://www.facebook.com/", "https://x.com/", "https://www.linkedin.com/"],
     knowsAbout: [

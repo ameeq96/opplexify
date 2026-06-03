@@ -86,7 +86,7 @@ const contactJsonLd = {
     "@type": "ProfessionalService",
     name: "Opplexify",
     url: siteUrl(),
-    email: "hello@opplexify.com",
+    email: "admin@opplexify.com",
     areaServed: "Worldwide"
   }
 };

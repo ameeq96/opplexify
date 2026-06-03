@@ -84,7 +84,7 @@ const homeHtml = String.raw`
             </div>
             <div class="contact-item">
               <span class="icon"><i class="fa-solid fa-envelope"></i></span>
-              <span class="text"><a href="mailto:hello@opplexify.com">hello@opplexify.com</a></span>
+              <span class="text"><a href="mailto:admin@opplexify.com">admin@opplexify.com</a></span>
             </div>
             <div class="contact-item">
               <span class="icon"><i class="fa-solid fa-phone"></i></span>

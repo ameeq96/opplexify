@@ -134,7 +134,7 @@ async function seedSettings() {
         title: "Opplexify",
         description:
           "Full-stack web development agency for SEO-friendly websites, Next.js web apps, SaaS platforms, mobile apps, admin dashboards, and backend systems.",
-        email: "hello@opplexify.com",
+        email: "admin@opplexify.com",
         phone: "+1 555 014 928",
         address: "Remote web development team serving clients worldwide",
         logoDark: asset("logo/opplexify-logo-dark.svg"),

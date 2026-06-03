@@ -238,7 +238,7 @@ export const emptySite: SitePayload = {
       description: DEFAULT_DESCRIPTION,
       logoLight: "/template-assets/dark/assets/imgs/logo/opplexify-logo-light.svg",
       logoDark: "/template-assets/dark/assets/imgs/logo/opplexify-logo-dark.svg",
-      email: "hello@opplexify.com"
+      email: "admin@opplexify.com"
     },
     footer: { text: "Opplexify builds SEO-friendly websites, SaaS platforms, mobile apps, admin dashboards, and backend systems for serious product launches." },
     social: {}

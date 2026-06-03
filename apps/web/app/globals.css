@@ -2553,13 +2553,21 @@ video {
   text-transform: uppercase;
 }
 
-/* Pricing page cards */
-.pricing-cards .card {
+/* Pricing page cards.
+   Scoped under the page wrapper so the dark background beats the template's
+   Bootstrap `.card` rule (white) that loads after globals.css. */
+.opplexify-template-page .pricing-cards .card,
+.digital-agency-template .pricing-cards .card {
   display: flex;
   flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text);
 }
 
-.pricing-cards .card.card-featured {
+.opplexify-template-page .pricing-cards .card.card-featured,
+.digital-agency-template .pricing-cards .card.card-featured {
   border-color: var(--accent);
   background: rgba(223, 255, 92, 0.06);
 }
