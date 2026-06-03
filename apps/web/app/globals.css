@@ -2629,3 +2629,9 @@ video {
   grid-template-columns: 1fr auto auto auto auto;
   column-gap: clamp(40px, 5vw, 120px);
 }
+
+/* Remove the vertical divider line running through the footer. */
+.opplexify-template-page .footer-area .footer-widget-wrapper-box::before,
+.digital-agency-template .footer-area .footer-widget-wrapper-box::before {
+  display: none;
+}
