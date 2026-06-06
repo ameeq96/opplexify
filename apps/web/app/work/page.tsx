@@ -31,7 +31,7 @@ export default async function WorkPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(workJsonLd) }} />
       <PageHero title={intro?.title ?? page?.title ?? "Case studies for websites, SaaS products and apps"} subtitle={intro?.subtitle ?? page?.summary ?? "Explore project work across business websites, full-stack web apps, SaaS platforms, mobile apps, admin dashboards, and backend systems."} eyebrow="Case studies" />
       <section className="section">
-        <div className="container">
+        <div className="container rr-container-1650">
           <ProjectGrid projects={projects} />
         </div>
       </section>

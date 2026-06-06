@@ -55,7 +55,7 @@ export default async function BlogDetailPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
       <PageHero title={post.title} subtitle={post.excerpt} eyebrow={post.category?.name ?? "Journal"} />
       <section className="section">
-        <div className="container detail-layout">
+        <div className="container rr-container-1650 detail-layout">
           <div>
             <img src={assetUrl(post.featuredImage)} alt={post.title} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
             <p className="detail-copy">{post.content}</p>

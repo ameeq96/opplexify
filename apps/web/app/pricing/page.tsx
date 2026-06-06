@@ -79,7 +79,7 @@ export default async function PricingPage() {
         subtitle="Transparent starting packages for SEO-friendly websites, full-stack web applications, SaaS platforms, admin dashboards, and complete product builds. Final quotes are confirmed after a short scoping call."
       />
       <section className="section">
-        <div className="container">
+        <div className="container rr-container-1650">
           <div className="grid pricing-cards">
             {packages.map((pkg) => (
               <article className={pkg.featured ? "card card-featured" : "card"} key={pkg.title}>

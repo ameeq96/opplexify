@@ -126,7 +126,7 @@ export default async function PortfolioGridPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(portfolioJsonLd) }} />
       <main>
         <section className="opplexify-portfolio-hero mb-4">
-          <div className="container">
+          <div className="container rr-container-1650">
             <div className="opplexify-portfolio-hero__inner">
               <div className="opplexify-portfolio-hero__content fade-anim">
                 <span className="section-subtitle">Portfolio</span>
@@ -183,7 +183,7 @@ export default async function PortfolioGridPage() {
         </section>
 
         <section className="portfolio-area-16">
-          <div className="container">
+          <div className="container rr-container-1650">
             <div className="portfolio-16-inner">
               <div className="works-16-wrapper-box opplexify-portfolio-wrapper-box">
                 <PortfolioGridScroller items={portfolioItems} filters={filters} batchSize={9} />
@@ -194,7 +194,7 @@ export default async function PortfolioGridPage() {
 
         {videos.length > 0 ? (
           <section className="portfolio-video-area section-spacing-bottom-150">
-            <div className="container">
+            <div className="container rr-container-1650">
               <div className="portfolio-video-head">
                 <span className="section-subtitle">Motion</span>
                 <h2 className="section-title rr_title_anim">Product launch and app demo videos</h2>

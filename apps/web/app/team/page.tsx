@@ -31,7 +31,7 @@ export default async function TeamPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(teamJsonLd) }} />
       <PageHero title={intro?.title ?? page?.title ?? "Full-stack development team for product launches"} subtitle={intro?.subtitle ?? page?.summary ?? "Designers, frontend developers, backend engineers, and launch-focused builders for websites, SaaS platforms, mobile apps, and dashboards."} eyebrow="Team" />
       <section className="section">
-        <div className="container">
+        <div className="container rr-container-1650">
           <TeamGrid team={team} />
         </div>
       </section>

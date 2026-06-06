@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const servicesAreaHtml = String.raw`
                 <!-- service area start  -->
                 <section class="page-title-area">
-                    <div class="container large">
+                    <div class="container rr-container-1650">
                         <div class="page-title-area-inner section-spacing-top">
                             <div class="page-title-wrapper">
                                 <h1 class="page-title fade-anim">Web development <br>
@@ -30,7 +30,7 @@ const servicesAreaHtml = String.raw`
                     </div>
                 </section>
                 <section class="service-2">
-                    <div class="container large">
+                    <div class="container rr-container-1650">
                         <div class="service-2-inner">
                             <div class="section-header fade-anim">
                                 <div class="section-title-wrapper">
@@ -231,7 +231,7 @@ function renderServicesArea(services: Service[], page: Page | null) {
   return String.raw`
                 <!-- service area start  -->
                 <section class="page-title-area">
-                    <div class="container large">
+                    <div class="container rr-container-1650">
                         <div class="page-title-area-inner section-spacing-top">
                             <div class="page-title-wrapper">
                                 <h1 class="page-title fade-anim">${escapeHtml(title)}</h1>
@@ -240,7 +240,7 @@ function renderServicesArea(services: Service[], page: Page | null) {
                     </div>
                 </section>
                 <section class="service-2">
-                    <div class="container large">
+                    <div class="container rr-container-1650">
                         <div class="service-2-inner">
                             <div class="section-header fade-anim">
                                 <div class="section-title-wrapper">

@@ -16,7 +16,7 @@ export default function NotFound() {
   return (
     <PublicShell>
       <section className="page-hero">
-        <div className="container">
+        <div className="container rr-container-1650">
           <p className="eyebrow">404</p>
           <h1>Page not found</h1>
           <p>The requested page is not published in the CMS.</p>

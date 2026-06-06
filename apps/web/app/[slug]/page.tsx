@@ -25,7 +25,7 @@ export default async function DynamicPage({ params }: Props) {
       <SectionRenderer sections={page.sections} />
       {page.pageType === "portfolio" || slug.includes("portfolio") ? (
         <section className="section">
-          <div className="container">
+          <div className="container rr-container-1650">
             <ProjectGrid projects={projects} />
           </div>
         </section>

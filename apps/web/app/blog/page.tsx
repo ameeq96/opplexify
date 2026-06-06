@@ -31,7 +31,7 @@ export default async function BlogPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
       <PageHero title={intro?.title ?? page?.title ?? "Web development, SaaS and SEO insights"} subtitle={intro?.subtitle ?? page?.summary ?? "Practical articles about SEO-friendly websites, Next.js web apps, SaaS products, mobile apps, dashboards, backend systems, and product launch strategy."} eyebrow="Blog" />
       <section className="section">
-        <div className="container">
+        <div className="container rr-container-1650">
           <BlogGrid posts={posts} />
         </div>
       </section>

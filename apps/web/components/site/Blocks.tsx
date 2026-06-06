@@ -22,7 +22,7 @@ export function PageHero({
 }) {
   return (
     <section className="page-hero">
-      <div className="container">
+      <div className="container rr-container-1650">
         {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
         <h1>{title}</h1>
         {subtitle ? <p>{subtitle}</p> : null}
@@ -216,7 +216,7 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
           if (section.type === "pricing" && stats.length) {
             return (
               <section className="section" key={section.id}>
-                <div className="container">
+                <div className="container rr-container-1650">
                   <SectionHead title={section.title ?? "Pricing"} subtitle={section.subtitle ?? undefined} />
                   <div className="grid">
                     {stats.map((item, index) => (
@@ -246,7 +246,7 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
           if (section.type === "capability-list" && stats.length) {
             return (
               <section className="section" key={section.id}>
-                <div className="container">
+                <div className="container rr-container-1650">
                   <SectionHead title={section.title ?? "Capabilities"} subtitle={section.subtitle ?? undefined} />
                   <div className="grid">
                     {stats.map((item, index) => (
@@ -264,7 +264,7 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
           if (section.type === "logo-strip" && recordItems(content.logos).length) {
             return (
               <section className="section" key={section.id}>
-                <div className="container">
+                <div className="container rr-container-1650">
                   <SectionHead title={section.title ?? "Partners"} subtitle={section.subtitle ?? undefined} />
                   <div className="logo-strip-grid">
                     {recordItems(content.logos).map((logo, index) => (
@@ -279,7 +279,7 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
           if (section.type === "contact-info") {
             return (
               <section className="section" key={section.id}>
-                <div className="container">
+                <div className="container rr-container-1650">
                   <SectionHead title={section.title ?? "Contact"} subtitle={section.subtitle ?? undefined} />
                   <div className="grid">
                     {["email", "phone", "address"].map((key) =>
@@ -322,7 +322,7 @@ export function SectionRenderer({ sections }: { sections: Section[] }) {
 
           return (
             <section className="section" key={section.id}>
-              <div className="container">
+              <div className="container rr-container-1650">
                 <SectionHead title={section.title ?? section.key} subtitle={section.subtitle ?? undefined} />
               </div>
             </section>
