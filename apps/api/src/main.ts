@@ -17,7 +17,12 @@ export function createApiApp() {
   const allowedOrigins = new Set([webOrigin, "http://localhost:3000", "http://127.0.0.1:3000"]);
 
   app.disable("x-powered-by");
-  app.use(helmet({ crossOriginResourcePolicy: false }));
+  // This Express app is mounted in front of Next.js (see root main.js), so any
+  // header set here also lands on the HTML pages. Helmet's default CSP is
+  // `script-src 'self'`, which blocks Next.js's inline bootstrap/hydration
+  // scripts and breaks the site. Disable CSP (keep the other helmet headers);
+  // add a nonce-based CSP later if stricter protection is needed.
+  app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: false }));
   app.use(
     cors({
       credentials: true,
