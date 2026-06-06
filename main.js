@@ -42,7 +42,11 @@ async function start() {
   const server = express();
   server.disable("x-powered-by");
   server.use(createApiApp());
-  server.use((req, res) => handle(req, res));
+  server.use((req, res) => {
+    res.removeHeader("Content-Security-Policy");
+    res.removeHeader("Content-Security-Policy-Report-Only");
+    handle(req, res);
+  });
 
   const listener = server.listen(port, host, () => {
     log(`Opplexify app listening on ${host}:${port}`);
