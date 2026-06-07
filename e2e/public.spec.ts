@@ -65,6 +65,7 @@ test("header, footer and social links are limited to approved navigation", async
 async function assertPortfolioExperience(page: Page, viewport: { width: number; height: number }) {
   await page.setViewportSize(viewport);
   await page.goto("/portfolio", { waitUntil: "domcontentloaded" });
+  await expect(page.locator(".loader-wrap")).toHaveCount(0);
   await expect(page.locator(".opplexify-portfolio-hero")).toContainText(/\d+ 4K visuals/);
   const collageImages = page.locator(".opplexify-portfolio-hero__collage img");
   await expect(collageImages).toHaveCount(3);

@@ -61,7 +61,11 @@ function readPublicAssets(folder: string, extensions: Set<string>): PublicSeedAs
 }
 
 function portfolioImages() {
-  cachedPortfolioImages ??= readPublicAssets("portfolio/images", imageExtensions);
+  if (!cachedPortfolioImages) {
+    const thumbnails = readPublicAssets("portfolio/thumbs", imageExtensions);
+    cachedPortfolioImages = thumbnails.length ? thumbnails : readPublicAssets("portfolio/images", imageExtensions);
+  }
+
   return cachedPortfolioImages;
 }
 
@@ -71,7 +75,7 @@ function portfolioVideos() {
 }
 
 function portfolioImage(index: number) {
-  return portfolioImages()[index]?.url ?? "/portfolio/images/ChatGPT%20Image%20May%208%2C%202026%2C%2006_53_16%20PM.png";
+  return portfolioImages()[index]?.url ?? "/portfolio/thumbs/portfolio-001.webp";
 }
 
 function mimeTypeFor(name: string) {

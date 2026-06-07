@@ -9,6 +9,7 @@ import { absoluteUrl, siteUrl } from "../../lib/seo";
 export const revalidate = 300;
 
 const portfolioImageFolder = "portfolio/images";
+const portfolioThumbnailFolder = "portfolio/thumbs";
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/portfolio", null);
   return pageMetadata(page, "Portfolio - Website Design, SaaS UI, Web App & Mobile App Work", "/portfolio");
@@ -61,9 +62,10 @@ function projectTitle(index: number) {
 }
 
 function fallbackImages() {
-  return readPublicAssets(portfolioImageFolder, imageExtensions).filter(
-    (image) => !hiddenPortfolioImages.has(image.name)
-  );
+  const thumbnails = readPublicAssets(portfolioThumbnailFolder, imageExtensions);
+  if (thumbnails.length) return thumbnails;
+
+  return readPublicAssets(portfolioImageFolder, imageExtensions).filter((image) => !hiddenPortfolioImages.has(image.name));
 }
 
 function portfolioAssetName(src: string) {
@@ -71,6 +73,14 @@ function portfolioAssetName(src: string) {
     return decodeURIComponent(src.split("/").pop() ?? src);
   } catch {
     return src.split("/").pop() ?? src;
+  }
+}
+
+function isLegacyPortfolioImage(src: string) {
+  try {
+    return new URL(src, "https://opplexify.local").pathname.startsWith(`/${portfolioImageFolder}/`);
+  } catch {
+    return src.startsWith(`/${portfolioImageFolder}/`);
   }
 }
 
@@ -82,15 +92,16 @@ export default async function PortfolioGridPage() {
   const visibleCmsItems = cmsItems.filter((item) => !hiddenPortfolioImages.has(portfolioAssetName(item.mediaUrl)));
   const cmsImages = visibleCmsItems.filter((item) => item.mediaType !== "video");
   const cmsVideos = visibleCmsItems.filter((item) => item.mediaType === "video");
+  const localImages = fallbackImages();
   const images: PublicAsset[] = cmsImages.length
-    ? cmsImages.map((item) => ({
-        name: portfolioAssetName(item.mediaUrl),
-        src: assetUrl(item.mediaUrl),
+    ? cmsImages.map((item, index) => ({
+        name: localImages[index]?.name ?? portfolioAssetName(item.mediaUrl),
+        src: isLegacyPortfolioImage(item.mediaUrl) && localImages[index] ? localImages[index].src : assetUrl(item.mediaUrl),
         title: item.title,
         tag: item.tag ?? undefined,
         alt: item.alt
       }))
-    : fallbackImages();
+    : localImages;
   const videos: PublicAsset[] = cmsVideos.length
     ? cmsVideos.map((item) => ({
         name: portfolioAssetName(item.mediaUrl),
@@ -122,7 +133,7 @@ export default async function PortfolioGridPage() {
   const intro = getSection(page, "intro");
 
   return (
-    <PublicShell smooth={false}>
+    <PublicShell smooth={false} showLoader={false}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(portfolioJsonLd) }} />
       <main>
         <section className="opplexify-portfolio-hero mb-4">

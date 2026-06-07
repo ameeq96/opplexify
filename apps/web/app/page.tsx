@@ -12,7 +12,7 @@ import {
   type SitePayload,
   type TeamMember
 } from "../lib/api";
-import { absoluteUrl, siteUrl } from "../lib/seo";
+import { absoluteUrl, DEFAULT_OG_IMAGE, siteUrl } from "../lib/seo";
 
 export const revalidate = 300;
 
@@ -552,7 +552,7 @@ export default async function HomePage() {
     "@type": "ProfessionalService",
     name: site.settings.site?.title ?? "Opplexify",
     url: siteUrl(),
-    image: absoluteUrl(page?.ogImage ?? site.settings.seo?.ogImage ?? "/portfolio/images/ChatGPT%20Image%20May%208%2C%202026%2C%2006_53_16%20PM.png"),
+    image: absoluteUrl(page?.ogImage ?? site.settings.seo?.ogImage ?? DEFAULT_OG_IMAGE),
     description:
       page?.seoDescription ??
       page?.summary ??

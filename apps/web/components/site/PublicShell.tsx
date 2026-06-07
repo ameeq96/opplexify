@@ -7,7 +7,7 @@ function renderLoaderLetters(text = "Opplexify") {
   return text.split("").map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>);
 }
 
-function CursorAndLoader({ site }: { site: SitePayload }) {
+function CursorAndLoader({ site, showLoader }: { site: SitePayload; showLoader: boolean }) {
   const loaderText = site.settings.theme?.loaderText ?? site.settings.site?.title ?? "Opplexify";
 
   return (
@@ -16,17 +16,19 @@ function CursorAndLoader({ site }: { site: SitePayload }) {
         <img src={`${A}/imgs/cursor/cursor-2-xs.svg`} alt="cursor" id="cursorImg" decoding="async" />
       </div>
 
-      <div className="loader-wrap">
-        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
-          <path id="svg" d="M0,1005S175,995,500,995s500,5,500,5V0H0Z" />
-        </svg>
+      {showLoader ? (
+        <div className="loader-wrap">
+          <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+            <path id="svg" d="M0,1005S175,995,500,995s500,5,500,5V0H0Z" />
+          </svg>
 
-        <div className="loader-wrap-heading">
-          <div className="load-text">
-            {renderLoaderLetters(loaderText)}
+          <div className="loader-wrap-heading">
+            <div className="load-text">
+              {renderLoaderLetters(loaderText)}
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="progress-wrap">
         <svg className="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
@@ -245,7 +247,15 @@ function HomepageFooter({ site }: { site: SitePayload }) {
   );
 }
 
-export async function PublicShell({ children, smooth = true }: { children: React.ReactNode; smooth?: boolean }) {
+export async function PublicShell({
+  children,
+  smooth = true,
+  showLoader = true
+}: {
+  children: React.ReactNode;
+  smooth?: boolean;
+  showLoader?: boolean;
+}) {
   const site = await fetchApi<SitePayload>("/public/site", emptySite);
 
   return (
@@ -254,7 +264,7 @@ export async function PublicShell({ children, smooth = true }: { children: React
         <link key={file} rel="stylesheet" href={`${A}/css/${file}`} />
       ))}
       <div className="opplexify-template-page body-wrapper dark">
-        <CursorAndLoader site={site} />
+        <CursorAndLoader site={site} showLoader={showLoader} />
         <SideInfo site={site} />
         <div className={smooth ? "has-smooth" : undefined} id="has_smooth" />
         <div id="smooth-wrapper">

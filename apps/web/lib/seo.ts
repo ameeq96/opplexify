@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const SITE_NAME = "Opplexify";
 export const DEFAULT_DESCRIPTION =
   "Opplexify is a full-stack web development agency building SEO-friendly websites, SaaS platforms, mobile apps, admin dashboards, and scalable backend systems.";
-export const DEFAULT_OG_IMAGE = "/portfolio/images/ChatGPT%20Image%20May%208%2C%202026%2C%2006_53_16%20PM.png";
+export const DEFAULT_OG_IMAGE = "/portfolio/thumbs/portfolio-001.webp";
 export const DEFAULT_KEYWORDS = [
   "web development agency",
   "website development services",

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DEFAULT_DESCRIPTION, SITE_NAME, seoMetadata } from "./seo";
+import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_NAME, seoMetadata } from "./seo";
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
 
@@ -204,6 +204,11 @@ export async function fetchApi<T>(path: string, fallback: T, init: FetchApiInit 
 
 export function assetUrl(src?: string | null) {
   if (!src) return "/template-assets/dark/assets/imgs/project/image-s-4.webp";
+  try {
+    if (new URL(src, "https://opplexify.local").pathname.startsWith("/portfolio/images/")) return DEFAULT_OG_IMAGE;
+  } catch {
+    if (src.startsWith("/portfolio/images/")) return DEFAULT_OG_IMAGE;
+  }
   if (src.startsWith("http") || src.startsWith("/template-assets")) return src;
   if (src.startsWith("/uploads")) return `${API_URL}${src}`;
   return src;
