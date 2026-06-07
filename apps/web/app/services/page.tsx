@@ -38,7 +38,7 @@ const servicesAreaHtml = String.raw`
                                         <span class="section-subtitle">Services</span>
                                     </div>
                                     <div class="title-wrapper">
-                                        <img src="/services/services-overview.png" alt="Opplexify web development services overview">
+                                        <img src="/services/services-overview.webp" alt="Opplexify web development services overview">
                                         <p class="designation">Full-stack services for professional digital product delivery. <span>Each service is planned around business objectives, maintainable architecture, and a user experience that supports real operational needs.</span></p>
                                     </div>
                                 </div>
@@ -46,7 +46,7 @@ const servicesAreaHtml = String.raw`
                             <div class="service-2-wrapper section-spacing-150">
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/web-applications.png" alt="Web applications"></a>
+                                        <a href="/contact"><img src="/services/web-applications.webp" alt="Web applications"></a>
                                     </div>
                                     <div class="content">
                                         <h2 class="title"><a href="/contact">Web Applications</a></h2>
@@ -68,7 +68,7 @@ const servicesAreaHtml = String.raw`
                                 </div>
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/business-websites.png" alt="Business websites"></a>
+                                        <a href="/contact"><img src="/services/business-websites.webp" alt="Business websites"></a>
                                     </div>
                                     <div class="content">
                                         <h2 class="title"><a href="/contact">Business Websites</a></h2>
@@ -90,7 +90,7 @@ const servicesAreaHtml = String.raw`
                                 </div>
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/saas-platforms.png" alt="SaaS platforms"></a>
+                                        <a href="/contact"><img src="/services/saas-platforms.webp" alt="SaaS platforms"></a>
                                     </div>
                                     <div class="content">
                                         <h2 class="title"><a href="/contact">SaaS Platforms</a></h2>
@@ -112,7 +112,7 @@ const servicesAreaHtml = String.raw`
                                 </div>
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/mobile-apps.png" alt="Mobile apps"></a>
+                                        <a href="/contact"><img src="/services/mobile-apps.webp" alt="Mobile apps"></a>
                                     </div>
                                     <div class="content">
                                         <h2 class="title"><a href="/contact">Mobile Apps</a></h2>
@@ -134,7 +134,7 @@ const servicesAreaHtml = String.raw`
                                 </div>
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/admin-dashboards.png" alt="Admin dashboards"></a>
+                                        <a href="/contact"><img src="/services/admin-dashboards.webp" alt="Admin dashboards"></a>
                                     </div>
                                     <div class="content">
                                         <h2 class="title"><a href="/contact">Admin Dashboards</a></h2>
@@ -156,7 +156,7 @@ const servicesAreaHtml = String.raw`
                                 </div>
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/backend-systems.png" alt="Backend systems"></a>
+                                        <a href="/contact"><img src="/services/backend-systems.webp" alt="Backend systems"></a>
                                     </div>
                                     <div class="content">
                                         <h2 class="title"><a href="/contact">Backend Systems</a></h2>
@@ -199,7 +199,7 @@ function renderServicesArea(services: Service[], page: Page | null) {
     intro?.subtitle ??
     page?.summary ??
     "Full-stack services for professional digital product delivery. Each service is planned around business objectives, maintainable architecture, and user experience.";
-  const overviewImage = assetUrl((intro?.content?.image as string | undefined) ?? "/services/services-overview.png");
+  const overviewImage = assetUrl((intro?.content?.image as string | undefined) ?? "/services/services-overview.webp");
   const cards = services
     .map((service) => {
       const image = assetUrl(service.image);

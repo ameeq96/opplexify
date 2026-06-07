@@ -77,9 +77,9 @@ const aboutPageHtml = keepFirstThreeAboutTeamMembers(
   .replace(/<p>crafted digital products<\/p>/g, "<p>websites, apps and dashboards</p>")
   .replace(/<p>skilled team players<\/p>/g, "<p>full-stack delivery skills</p>")
   .replace(/<span class="section-subtitle">Why choose us<\/span>/g, `<span class="section-subtitle">Why choose Opplexify</span>`)
-  .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-1.webp"/g, `src="/team/ameeq-khan.png"`)
-  .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-2.webp"/g, `src="/team/atiq-khan.png"`)
-  .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-3.webp"/g, `src="/team/emmad-khan.png"`)
+  .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-1.webp"/g, `src="/team/ameeq-khan.webp"`)
+  .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-2.webp"/g, `src="/team/atiq-khan.webp"`)
+  .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-3.webp"/g, `src="/team/emmad-khan.webp"`)
   .replace(
     /<h2 class="section-title rr_title_anim">Mee the <span>squad<\/span> <br>[\s\S]*?<\/h2>/,
     `<h2 class="section-title rr_title_anim">A development team for <span>websites</span>, <br>

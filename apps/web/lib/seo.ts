@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 
 export const SITE_NAME = "Opplexify";
+export const DEFAULT_TITLE = "Opplexify - Web Development Agency for Websites, SaaS & Apps";
 export const DEFAULT_DESCRIPTION =
   "Opplexify is a full-stack web development agency building SEO-friendly websites, SaaS platforms, mobile apps, admin dashboards, and scalable backend systems.";
 export const DEFAULT_OG_IMAGE = "/portfolio/thumbs/portfolio-001.webp";
+export const DEFAULT_OG_IMAGE_ALT = "Opplexify web development portfolio preview";
+export const SITE_LOCALE = "en_US";
+export const THEME_COLOR = "#050505";
 export const DEFAULT_KEYWORDS = [
   "web development agency",
   "website development services",
@@ -28,6 +32,10 @@ export function absoluteUrl(path = "/") {
   return `${siteUrl()}${normalizedPath}`;
 }
 
+export function metadataBaseUrl() {
+  return new URL(siteUrl());
+}
+
 type SeoMetadataOptions = {
   title: string;
   description?: string | null;
@@ -38,6 +46,31 @@ type SeoMetadataOptions = {
   noIndex?: boolean;
   keywords?: string[];
 };
+
+function robots(noIndex: boolean): Metadata["robots"] {
+  if (noIndex) {
+    return {
+      index: false,
+      follow: false,
+      googleBot: {
+        index: false,
+        follow: false
+      }
+    };
+  }
+
+  return {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1
+    }
+  };
+}
 
 export function seoMetadata({
   title,
@@ -58,15 +91,14 @@ export function seoMetadata({
     description: resolvedDescription,
     keywords,
     alternates: { canonical: canonicalUrl },
-    robots: noIndex
-      ? { index: false, follow: false, googleBot: { index: false, follow: false } }
-      : { index: true, follow: true, googleBot: { index: true, follow: true } },
+    robots: robots(noIndex),
     openGraph: {
       title,
       description: resolvedDescription,
       url: canonicalUrl,
       siteName: SITE_NAME,
-      images: [{ url: imageUrl }],
+      images: [{ url: imageUrl, alt: DEFAULT_OG_IMAGE_ALT }],
+      locale: SITE_LOCALE,
       type
     },
     twitter: {

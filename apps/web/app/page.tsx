@@ -138,7 +138,7 @@ const homeHtml = String.raw`
       <main>
         <section class="hero-area">
           <div class="area-bg">
-            <video class="hero-video" loop muted autoplay playsinline>
+            <video class="hero-video" loop muted autoplay playsinline preload="auto">
               <source src="${A}/video/wavy-layer.mp4" type="video/mp4">
             </video>
           </div>
@@ -409,9 +409,9 @@ const homeHtml = String.raw`
               </div>
               <div class="team-wrapper-box">
                 <div class="team-wrapper fade-anim">
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/ameeq-khan"><img src="/team/ameeq-khan.png" alt="Ameeq Khan Opplexify full-stack product lead"></a></div><div class="content"><h3 class="name"><a href="/team/ameeq-khan">Ameeq Khan</a></h3><span class="post">Full-Stack Product Lead</span></div></div>
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/atiq-khan"><img src="/team/atiq-khan.png" alt="Atiq Khan Opplexify SEO planning and launch support"></a></div><div class="content"><h3 class="name"><a href="/team/atiq-khan">Atiq Khan</a></h3><span class="post">SEO Planning and Launch Support</span></div></div>
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/emmad-khan"><img src="/team/emmad-khan.png" alt="Emmad Khan Opplexify UI UX and frontend design"></a></div><div class="content"><h3 class="name"><a href="/team/emmad-khan">Emmad Khan</a></h3><span class="post">UI/UX and Frontend Design</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/ameeq-khan"><img src="/team/ameeq-khan.webp" alt="Ameeq Khan Opplexify full-stack product lead"></a></div><div class="content"><h3 class="name"><a href="/team/ameeq-khan">Ameeq Khan</a></h3><span class="post">Full-Stack Product Lead</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/atiq-khan"><img src="/team/atiq-khan.webp" alt="Atiq Khan Opplexify SEO planning and launch support"></a></div><div class="content"><h3 class="name"><a href="/team/atiq-khan">Atiq Khan</a></h3><span class="post">SEO Planning and Launch Support</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/emmad-khan"><img src="/team/emmad-khan.webp" alt="Emmad Khan Opplexify UI UX and frontend design"></a></div><div class="content"><h3 class="name"><a href="/team/emmad-khan">Emmad Khan</a></h3><span class="post">UI/UX and Frontend Design</span></div></div>
                 </div>
               </div>
             </div>

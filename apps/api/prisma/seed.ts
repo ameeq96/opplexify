@@ -490,7 +490,7 @@ async function seedPages() {
         title: "Web development services for growth",
         subtitle:
           "Full-stack services for professional digital product delivery, planned around business objectives, maintainable architecture, and user experience.",
-        content: { image: "/services/services-overview.png" }
+        content: { image: "/services/services-overview.webp" }
       }
     ]),
     pageSeed("Case Studies", "work", "work", [
@@ -734,7 +734,7 @@ async function seedServices() {
       description:
         "Opplexify builds responsive business websites, service pages, landing pages, and portfolio websites with clean page structure, strong calls to action, fast loading assets, technical SEO foundations, and an admin-friendly content model.",
       icon: asset("icon/icon-s-1.webp"),
-      image: "/services/business-websites.png",
+      image: "/services/business-websites.webp",
       gallery: ["Responsive pages", "Service presentation", "Lead capture", "SEO structure", "Conversion paths"],
       featured: true,
       sortOrder: 1,
@@ -747,7 +747,7 @@ async function seedServices() {
       slug: "web-application-development",
       shortDescription: "Custom full-stack web apps with authentication, dashboards, workflows, APIs, and database integration.",
       icon: asset("icon/icon-s-2.webp"),
-      image: "/services/web-applications.png",
+      image: "/services/web-applications.webp",
       gallery: ["Custom portals", "Dashboards", "Booking systems", "Internal tools", "Business workflows"],
       featured: true,
       sortOrder: 2,
@@ -764,7 +764,7 @@ async function seedServices() {
       description:
         "Opplexify builds SaaS products with authentication, user roles, admin dashboards, product workflows, billing-ready structure, relational database models, API architecture, onboarding screens, and maintainable UI systems.",
       icon: asset("icon/icon-s-3.webp"),
-      image: "/services/saas-platforms.png",
+      image: "/services/saas-platforms.webp",
       gallery: ["Authentication", "Database models", "Admin views", "Scalable APIs", "Subscription-ready flows"],
       featured: true,
       sortOrder: 3,
@@ -779,7 +779,7 @@ async function seedServices() {
       description:
         "We design and build mobile app experiences for customers, teams, and product workflows, connecting each app to secure backend APIs, admin dashboards, push notification-ready foundations, and business data.",
       icon: asset("icon/icon-s-4.webp"),
-      image: "/services/mobile-apps.png",
+      image: "/services/mobile-apps.webp",
       gallery: ["Mobile UI", "Secure API connection", "Admin workflows", "Push notification-ready", "Product launch support"],
       featured: true,
       sortOrder: 4,
@@ -794,7 +794,7 @@ async function seedServices() {
       description:
         "Opplexify builds admin dashboards and control rooms with role-based access, content management, reporting, filters, search, data tables, forms, notifications, and API-connected operational workflows.",
       icon: asset("icon/icon-s-5.webp"),
-      image: "/services/admin-dashboards.png",
+      image: "/services/admin-dashboards.webp",
       gallery: ["Content management", "User management", "Requests and orders", "Business reporting", "Role-based access"],
       featured: true,
       sortOrder: 5,
@@ -809,7 +809,7 @@ async function seedServices() {
       description:
         "We build backend systems with NestJS APIs, Prisma data models, MySQL databases, authentication, authorization, validation, file uploads, Swagger documentation, pagination, filtering, and clean service structure.",
       icon: asset("icon/icon-s-5.webp"),
-      image: "/services/backend-systems.png",
+      image: "/services/backend-systems.webp",
       gallery: ["NestJS APIs", "Prisma schemas", "Relational databases", "JWT authentication", "Maintainable structure"],
       featured: true,
       sortOrder: 6,
@@ -1126,7 +1126,7 @@ async function seedTeam() {
       role: "Full-Stack Product Lead",
       bio:
         "Leads Opplexify website development, SaaS planning, mobile app workflows, admin dashboard architecture, backend API structure, and launch strategy.",
-      image: "/team/ameeq-khan.png",
+      image: "/team/ameeq-khan.webp",
       socialLinks: { linkedin: "https://linkedin.com" },
       skills: ["Next.js", "NestJS", "SaaS", "SEO", "Admin Dashboards"],
       sortOrder: 1,
@@ -1140,7 +1140,7 @@ async function seedTeam() {
       role: "SEO Planning and Launch Support",
       bio:
         "Plans on-page SEO structure, launch checklists, content alignment, quality assurance, and deployment support for websites, SaaS products, mobile apps, and dashboards.",
-      image: "/team/atiq-khan.png",
+      image: "/team/atiq-khan.webp",
       socialLinks: { linkedin: "https://linkedin.com" },
       skills: ["On-page SEO", "Launch Planning", "QA", "Content Structure"],
       sortOrder: 2,
@@ -1154,7 +1154,7 @@ async function seedTeam() {
       role: "UI/UX and Frontend Design",
       bio:
         "Designs responsive website interfaces, SaaS dashboards, mobile app screens, conversion paths, product components, and frontend experiences that are clear and fast.",
-      image: "/team/emmad-khan.png",
+      image: "/team/emmad-khan.webp",
       socialLinks: { linkedin: "https://linkedin.com" },
       skills: ["UI/UX", "Responsive Design", "Conversion Design", "Design Systems"],
       sortOrder: 3,
@@ -1307,8 +1307,8 @@ async function seedMedia(userId: string) {
     },
     {
       url: portfolioImage(0),
-      filename: portfolioImages()[0]?.name ?? "portfolio-preview.png",
-      originalName: portfolioImages()[0]?.name ?? "portfolio-preview.png",
+      filename: portfolioImages()[0]?.name ?? "portfolio-preview.webp",
+      originalName: portfolioImages()[0]?.name ?? "portfolio-preview.webp",
       mimeType: portfolioImages()[0]?.mimeType ?? "image/png",
       size: portfolioImages()[0]?.size ?? 0,
       alt: "SEO-friendly website development portfolio image",

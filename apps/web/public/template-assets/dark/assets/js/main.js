@@ -123,9 +123,9 @@
     fadeArray.forEach((item, i) => {
       var fade_direction = "bottom"
       var onscroll_value = 1
-      var duration_value = 1.15
+      var duration_value = 0.65
       var fade_offset = 50
-      var delay_value = 0.15
+      var delay_value = 0
       var ease_value = "power2.out"
       if (item.getAttribute("data-offset")) {
         fade_offset = item.getAttribute("data-offset");
@@ -227,13 +227,13 @@
     $(document).ready(function () {
       setTimeout(function () {
         $('#container').addClass('loaded');
-      }, 500);
+      }, 100);
 
       setTimeout(function () {
-        $('.loader-wrap').fadeOut(1000, function () {
+        $('.loader-wrap').fadeOut(180, function () {
           $(this).remove();
         });
-      }, 3000);
+      }, 450);
 
       $('.odometer').waypoint(function (direction) {
         if (direction === 'down') {
@@ -252,18 +252,18 @@
     const flat = "M0 2S175 1 500 1s500 1 500 1V0H0Z";
 
     tl.to(".loader-wrap-heading .load-text , .loader-wrap-heading .cont", {
-      delay: 1.5,
+      delay: 0.1,
       y: -100,
       opacity: 0,
     });
     tl.to(svg, {
-      duration: 0.5,
+      duration: 0.2,
       attr: {
         d: curve
       },
       ease: "power2.easeIn",
     }).to(svg, {
-      duration: 0.5,
+      duration: 0.2,
       attr: {
         d: flat
       },
@@ -271,6 +271,7 @@
     });
     tl.to(".loader-wrap", {
       y: -1500,
+      duration: 0.25,
     });
     tl.to(".loader-wrap", {
       zIndex: -1,
@@ -280,7 +281,7 @@
       "main", {
       y: 0,
       opacity: 0,
-      delay: 0.3,
+      delay: 0,
     },
       "-=1.5"
     );
@@ -472,8 +473,8 @@
         gsap.set(splitTextLine, { perspective: 400 });
         itemSplitted.split({ type: "lines" })
         tl.from(itemSplitted.lines, {
-          duration: 1,
-          delay: 0.3,
+          duration: 0.7,
+          delay: 0,
           opacity: 0,
           rotationX: -80,
           force3D: true,
@@ -494,8 +495,8 @@
       var translateX_value = false
       var translateY_value = false
       var onscroll_value = 1
-      var data_delay = 0.1
-      var data_duration = 0.75
+      var data_delay = 0
+      var data_duration = 0.6
 
       if (word_anim_item.getAttribute("data-stagger")) {
         stagger_value = word_anim_item.getAttribute("data-stagger");
@@ -1857,4 +1858,3 @@
   });
 
 })(jQuery);
-

@@ -1070,7 +1070,7 @@ function MediaValueInput({
   return (
     <div className="media-field">
       <div className="media-picker-row">
-        <input value={value ?? ""} placeholder="/uploads/file.png or https://..." onChange={(event) => onChange(event.target.value)} />
+        <input value={value ?? ""} placeholder="/uploads/file.webp or https://..." onChange={(event) => onChange(event.target.value)} />
         <select value={value ?? ""} onChange={(event) => onChange(event.target.value)}>
           <option value="">Media library</option>
           {mediaItems.map((item) => (

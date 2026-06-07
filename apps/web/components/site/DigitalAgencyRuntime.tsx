@@ -11,6 +11,7 @@ declare global {
       get?: () => { kill?: () => void } | undefined;
     };
     __opplexifyDigitalAgencyScripts?: Set<string>;
+    __opplexifyDigitalAgencyScriptLoads?: Partial<Record<string, Promise<void>>>;
   }
 }
 
@@ -27,7 +28,10 @@ function loadTemplateScript(file: string) {
     return Promise.resolve();
   }
 
-  return new Promise<void>((resolve, reject) => {
+  window.__opplexifyDigitalAgencyScriptLoads ??= {};
+  if (window.__opplexifyDigitalAgencyScriptLoads[file]) return window.__opplexifyDigitalAgencyScriptLoads[file];
+
+  const loadPromise = new Promise<void>((resolve, reject) => {
     const script = document.createElement("script");
 
     script.src = src;
@@ -40,6 +44,26 @@ function loadTemplateScript(file: string) {
     script.onerror = () => reject(new Error(`Unable to load ${src}`));
 
     document.body.appendChild(script);
+  });
+
+  window.__opplexifyDigitalAgencyScriptLoads[file] = loadPromise;
+  return loadPromise;
+}
+
+function preloadTemplateScripts() {
+  templateScriptFiles.forEach((file) => {
+    const href = `${TEMPLATE_ASSET_BASE}/js/${file}`;
+    const existing = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="preload"][as="script"]')).some((link) =>
+      link.href.endsWith(href)
+    );
+    if (existing || findLoadedScript(href)) return;
+
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "script";
+    link.href = href;
+    link.dataset.opplexifyDigitalAgency = "true";
+    document.head.appendChild(link);
   });
 }
 
@@ -120,18 +144,19 @@ function bindContactForm() {
   });
 }
 
-function dismissStaleLoader(delay = 4200) {
+function dismissLoader(delay = 0) {
   return window.setTimeout(() => {
     const loader = document.querySelector<HTMLElement>(".loader-wrap");
     if (!loader) return;
 
-    loader.style.transition = "opacity 280ms ease, visibility 280ms ease";
+    loader.style.transition = "opacity 180ms ease, visibility 180ms ease";
     loader.style.opacity = "0";
     loader.style.visibility = "hidden";
+    loader.style.pointerEvents = "none";
 
     window.setTimeout(() => {
       loader.remove();
-    }, 320);
+    }, 220);
   }, delay);
 }
 
@@ -144,7 +169,9 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
     const bodyClasses = ["body-wrapper", "dark", ...bodyClassName.split(" ").filter(Boolean)];
 
     window.__opplexifyDigitalAgencyScripts ??= new Set<string>();
+    window.__opplexifyDigitalAgencyScriptLoads ??= {};
     document.body.classList.add(...bodyClasses);
+    preloadTemplateScripts();
 
     const syncSmoother = () => {
       const smoother = window.ScrollSmoother?.get?.();
@@ -193,14 +220,15 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
     });
 
     bindContactForm();
-    const hadMainScript = Boolean(findLoadedScript(`${TEMPLATE_ASSET_BASE}/js/main.js`)) || window.__opplexifyDigitalAgencyScripts.has("main.js");
-    loaderFallbackTimeout = dismissStaleLoader(hadMainScript ? 700 : 4200);
+    loaderFallbackTimeout = dismissLoader(550);
 
     templateScriptFiles
       .reduce((promise, file) => promise.then(() => loadTemplateScript(file)), Promise.resolve())
       .then(() => {
         if (!mounted) return;
 
+        if (loaderFallbackTimeout) window.clearTimeout(loaderFallbackTimeout);
+        loaderFallbackTimeout = dismissLoader();
         fixCursorPath();
         bindContactForm();
         refreshRuntime();
