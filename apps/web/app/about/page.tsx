@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata(page, "About Opplexify LLC - Custom Software Development Company", "/about");
 }
 
-const capabilityCategories = ["Websites", "Web Apps", "SaaS", "Mobile Apps", "Dashboards"];
+const capabilityCategories = ["Websites", "Web Apps", "SaaS", "SEO Planning", "UI/UX Design"];
 
 function findDivEnd(html: string, startIndex: number) {
   const divTag = /<\/?div\b[^>]*>/g;
@@ -49,6 +49,21 @@ function cleanAboutArtifacts(html: string) {
   return html
     .replace(/<!-- choose-us area start  -->[\s\S]*?<!-- choose-us area end  -->/g, "")
     .replace(/<span class="year">[^<]*<\/span>/g, "");
+}
+
+function keepFirstTeamCard(html: string) {
+  const wrapperStart = html.indexOf('<div class="team-wrapper fade-anim">');
+  const wrapperEnd = wrapperStart === -1 ? -1 : findDivEnd(html, wrapperStart);
+  if (wrapperStart === -1 || wrapperEnd === -1) return html;
+
+  const wrapper = html.slice(wrapperStart, wrapperEnd);
+  const cardStart = wrapper.indexOf('<div class="team-box-1 fade-anim">');
+  const cardEnd = cardStart === -1 ? -1 : findDivEnd(wrapper, cardStart);
+  if (cardStart === -1 || cardEnd === -1) return html;
+
+  return `${html.slice(0, wrapperStart)}<div class="team-wrapper fade-anim">
+    ${wrapper.slice(cardStart, cardEnd)}
+  </div>${html.slice(wrapperEnd)}`;
 }
 
 const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
@@ -101,11 +116,11 @@ const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
     })()
   )
   .replace(/We make brand big and bolder/g, "Custom websites, SaaS platforms, dashboards, mobile apps, APIs and automations")
-  .replace(/3x creative <br> agency of the day/g, "SEO-friendly <br> website development")
+  .replace(/3x creative <br> agency of the day/g, "Custom website <br> development")
   .replace(/1x agency of <br> the year/g, "Full-stack <br> web applications")
   .replace(/5x honorable <br> mentioned/g, "SaaS platform <br> development")
-  .replace(/2x Featured <br> design of the week/g, "Mobile app <br> development")
-  .replace(/8x Best design <br> of the day/g, "Admin dashboard <br> development")
+  .replace(/2x Featured <br> design of the week/g, "SEO planning <br> and structure")
+  .replace(/8x Best design <br> of the day/g, "UI/UX and <br> frontend design")
   .replace(/Help to brands growing up and show their\s*success stories to the world/g, "Helping businesses plan and build custom software through written scopes and milestones")
   .replace(/We <span>learn<\/span> and[\s\S]*?together\./, "We <span>scope</span> and <span>build</span> <br> <span>custom</span> software")
 ));
@@ -225,7 +240,7 @@ function applyAboutCms(html: string, page: Page | null, team: TeamMember[]) {
   const capabilityHtml = renderCapabilities(capabilities);
   if (capabilityHtml) rendered = replaceDivBlock(rendered, '<div class="award-wrapper fade-anim">', capabilityHtml);
 
-  return cleanAboutArtifacts(rendered);
+  return cleanAboutArtifacts(keepFirstTeamCard(rendered));
 }
 
 export default async function AboutPage() {

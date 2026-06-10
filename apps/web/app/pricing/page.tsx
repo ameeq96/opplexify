@@ -24,37 +24,59 @@ type Package = {
 
 const packages: Package[] = [
   {
-    label: "Starter",
-    title: "Simple Website",
-    price: "$149",
-    timeline: "3-5 days",
+    label: "5 Page Presence",
+    title: "Custom Website",
+    price: "$750+",
+    timeline: "1-3 weeks",
     description:
-      "A clean starter website for a small business, portfolio, or service page with a professional first impression.",
-    features: ["Responsive landing page", "Core content sections", "Contact CTA", "Mobile-friendly layout"],
-    ctaLabel: "Request Package",
+      "A focused business website with responsive pages, contact routing, basic SEO setup, and service content structure.",
+    features: ["Written scope", "Responsive pages", "Contact form", "Foundational SEO", "One revision round"],
+    ctaLabel: "Request a Quote",
     href: "/contact"
   },
   {
-    label: "Business",
-    title: "Business Website",
-    price: "$499",
-    timeline: "1-2 weeks",
+    label: "Full-Stack App",
+    title: "Complete Web Application",
+    price: "$3,500+",
+    timeline: "3-8 weeks",
     description:
-      "A stronger business website with multiple pages, clear service presentation, and a proper contact flow.",
-    features: ["Up to 5 pages", "Contact form", "Basic SEO setup", "Performance-focused structure"],
-    ctaLabel: "Request Package",
+      "A custom web app with database-backed workflows, authentication, dashboards, and backend API development.",
+    features: ["Project proposal", "Authentication", "User dashboard", "Backend API", "Milestone billing"],
+    ctaLabel: "Request a Quote",
+    href: "/contact"
+  },
+  {
+    label: "Subscription-Ready",
+    title: "Complete SaaS Solution",
+    price: "$6,500+",
+    timeline: "6-12 weeks",
+    description:
+      "A SaaS platform foundation with product workflows, account roles, admin controls, data models, and API architecture.",
+    features: ["SaaS workflows", "Admin dashboard", "Database and API", "Launch handover", "Milestone invoices"],
+    ctaLabel: "Request a Quote",
     href: "/contact",
     featured: true
   },
   {
-    label: "Pro",
-    title: "Custom Website + Dashboard",
-    price: "$999",
-    timeline: "2-4 weeks",
+    label: "App Plus Control Room",
+    title: "Mobile App with Admin Dashboard",
+    price: "$4,500+",
+    timeline: "5-10 weeks",
     description:
-      "A custom website package with more advanced UI, backend-ready structure, or a lightweight dashboard workflow.",
-    features: ["Custom UI sections", "Admin/dashboard starter", "Backend/API setup", "Launch handover"],
-    ctaLabel: "Request Package",
+      "A mobile app experience connected to a backend API and admin dashboard for managing real project workflows.",
+    features: ["Mobile screens", "Admin dashboard", "Backend API", "Testing pass", "Revision terms"],
+    ctaLabel: "Request a Quote",
+    href: "/contact"
+  },
+  {
+    label: "Complete Product Suite",
+    title: "Complete Mobile App + Web App",
+    price: "$9,500+",
+    timeline: "8-16 weeks",
+    description:
+      "A larger scoped build with web app, mobile app, backend API, database, admin dashboard, and handover support.",
+    features: ["Written proposal", "Contract and invoices", "Milestone delivery", "Defined revisions", "Final handover"],
+    ctaLabel: "Request a Quote",
     href: "/contact"
   }
 ];
@@ -70,11 +92,11 @@ export default function PricingPage() {
                 <span className="section-subtitle">Pricing</span>
                 <div className="pricing-title-wrap">
                   <h1 className="pricing-title rr_title_anim">
-                    Website development pricing.
+                    Website, SaaS, mobile app and software development pricing.
                   </h1>
                   <p>
-                    Simple starting packages for websites and small web projects. Final pricing can change after scope,
-                    content, and delivery requirements are reviewed.
+                    Starting ranges for custom software work. Final quotes depend on scope, integrations, content,
+                    revisions, and delivery requirements.
                   </p>
                 </div>
               </div>
