@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { opplexifyCompany } from "@adon/shared";
 import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_NAME, seoMetadata } from "./seo";
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
@@ -214,7 +215,7 @@ export function assetUrl(src?: string | null) {
   return src;
 }
 
-export function pageMetadata(page?: Partial<Page> | null, fallbackTitle = SITE_NAME, path = "/"): Metadata {
+export function pageMetadata(page?: Partial<Page> | null, fallbackTitle: string = SITE_NAME, path = "/"): Metadata {
   const title = page?.seoTitle ?? page?.title ?? fallbackTitle;
   const description = page?.seoDescription ?? page?.summary ?? DEFAULT_DESCRIPTION;
   const image = assetUrl(page?.ogImage);
@@ -243,10 +244,12 @@ export const emptySite: SitePayload = {
       description: DEFAULT_DESCRIPTION,
       logoLight: "/template-assets/dark/assets/imgs/logo/opplexify-logo-light.svg",
       logoDark: "/template-assets/dark/assets/imgs/logo/opplexify-logo-dark.svg",
-      email: "admin@opplexify.com"
+      email: opplexifyCompany.email,
+      phone: opplexifyCompany.phone,
+      address: opplexifyCompany.mailingAddress
     },
-    footer: { text: "Opplexify builds SEO-friendly websites, SaaS platforms, mobile apps, admin dashboards, and backend systems for serious product launches." },
-    social: {}
+    footer: { text: opplexifyCompany.description },
+    social: { linkedin: opplexifyCompany.linkedin }
   },
   menus: [
     {
@@ -256,7 +259,9 @@ export const emptySite: SitePayload = {
         { id: "about", label: "About", url: "/about", sortOrder: 2 },
         { id: "portfolio", label: "Portfolio", url: "/portfolio", sortOrder: 3 },
         { id: "services", label: "Services", url: "/services", sortOrder: 4 },
-        { id: "contact", label: "Contact Us", url: "/contact", sortOrder: 5 }
+        { id: "pricing", label: "Pricing", url: "/pricing", sortOrder: 5 },
+        { id: "faq", label: "FAQ", url: "/faq", sortOrder: 6 },
+        { id: "contact", label: "Contact", url: "/contact", sortOrder: 7 }
       ]
     }
   ]

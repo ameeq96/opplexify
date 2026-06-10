@@ -1398,7 +1398,7 @@ function SectionContentEditor({
           label="Logos"
           items={asArray(content.logos)}
           mediaItems={mediaItems}
-          blankItem={{ image: "", lightImage: "", alt: "Client logo" }}
+          blankItem={{ image: "", lightImage: "", alt: "Logo placeholder" }}
           fields={[
             { name: "image", label: "Dark mode image", type: "media" },
             { name: "lightImage", label: "Light mode image", type: "media" },

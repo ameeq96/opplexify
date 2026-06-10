@@ -1,3 +1,4 @@
+import { opplexifyCompany } from "@adon/shared";
 import { assetUrl, emptySite, getMenu, type MenuItem, type SitePayload } from "../../lib/api";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
 
@@ -6,14 +7,14 @@ type FooterServiceLink = {
   href: string;
 };
 
-const defaultServiceLinks: FooterServiceLink[] = [
-  { label: "Website Development", href: "/services" },
-  { label: "SaaS Development", href: "/services" },
-  { label: "Mobile Apps", href: "/services" },
-  { label: "Admin Dashboards", href: "/services" }
-];
+const allowedMenuUrls = new Set(["/", "/about", "/portfolio", "/services", "/pricing", "/faq", "/contact"]);
 
-const socialOrder = ["instagram", "facebook", "twitter", "linkedin"];
+const defaultServiceLinks: FooterServiceLink[] = [
+  { label: "Custom Website Development", href: "/services/custom-website-development" },
+  { label: "SaaS Platform Development", href: "/services/saas-platform-development" },
+  { label: "Dashboard & Admin Panel Development", href: "/services/dashboard-admin-panel-development" },
+  { label: "Backend/API Development", href: "/services/backend-api-development" }
+];
 
 export function escapeHtml(value: unknown) {
   return String(value ?? "")
@@ -28,29 +29,20 @@ export function socialLabel(name: string) {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-export function orderedSocialLinks(social?: Record<string, unknown>) {
-  return Object.entries(social ?? {})
-    .filter(([, href]) => Boolean(href))
-    .sort(([a], [b]) => socialRank(a) - socialRank(b))
-    .map(([name, href]) => [name, String(href)] as const);
+export function orderedSocialLinks(_social?: Record<string, unknown>) {
+  return [["linkedin", opplexifyCompany.linkedin] as const];
 }
 
-export function footerServiceLinks(footer?: Record<string, unknown>): FooterServiceLink[] {
-  if (!Array.isArray(footer?.serviceLinks)) return defaultServiceLinks;
+export function footerServiceLinks(_footer?: Record<string, unknown>): FooterServiceLink[] {
+  return defaultServiceLinks;
+}
 
-  return footer.serviceLinks
-    .map((item) => {
-      const record = item && typeof item === "object" && !Array.isArray(item) ? (item as Record<string, unknown>) : {};
-      return {
-        label: String(record.label ?? "Service"),
-        href: String(record.href ?? "/services")
-      };
-    })
-    .filter((item) => item.label.trim() && item.href.trim());
+function visibleLinks(items: MenuItem[]) {
+  return (items.length ? items : emptySite.menus[0].items).filter((item) => allowedMenuUrls.has(item.url));
 }
 
 export function renderMenuHtml(items: MenuItem[]) {
-  const links = items.length ? items : emptySite.menus[0].items;
+  const links = visibleLinks(items);
   return `<nav class="main-menu">
   <ul>
     ${links.map((item) => `<li><a href="${escapeHtml(item.url)}"${item.target ? ` target="${escapeHtml(item.target)}"` : ""}>${escapeHtml(item.label)}</a></li>`).join("")}
@@ -59,7 +51,7 @@ export function renderMenuHtml(items: MenuItem[]) {
 }
 
 export function renderFooterMenuHtml(items: MenuItem[]) {
-  const links = items.length ? items : emptySite.menus[0].items;
+  const links = visibleLinks(items);
   return `<ul class="footer-nav-list">
     ${links.map((item) => `<li><a href="${escapeHtml(item.url)}"${item.target ? ` target="${escapeHtml(item.target)}"` : ""}>${escapeHtml(item.label)}</a></li>`).join("")}
   </ul>`;
@@ -73,7 +65,7 @@ export function renderTemplateHeaderHtml(site: SitePayload) {
       <div class="header-area__inner">
         <div class="header__logo">
           <a href="/">
-            <img src="${escapeHtml(logoLight)}" class="normal-logo" alt="Opplexify logo" decoding="async">
+            <img src="${escapeHtml(logoLight)}" class="normal-logo" alt="Opplexify LLC logo" decoding="async">
           </a>
         </div>
         <div class="header__shape">
@@ -96,13 +88,11 @@ export function renderTemplateHeaderHtml(site: SitePayload) {
 }
 
 export function renderTemplateFooterHtml(site: SitePayload) {
-  const footer = site.settings.footer ?? {};
   const companyItems = getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header");
-  const socialLinks = orderedSocialLinks(site.settings.social);
-  const socialHtml = (socialLinks.length ? socialLinks : [["linkedin", "https://www.linkedin.com/"] as const])
-    .map(([name, href]) => `<li><a href="${escapeHtml(href)}">${escapeHtml(socialLabel(String(name)))}</a></li>`)
+  const socialHtml = orderedSocialLinks()
+    .map(([name, href]) => `<li><a href="${escapeHtml(href)}">${escapeHtml(socialLabel(name))}</a></li>`)
     .join("");
-  const serviceLinksHtml = footerServiceLinks(footer)
+  const serviceLinksHtml = footerServiceLinks()
     .map((item) => `<li><a href="${escapeHtml(item.href)}">${escapeHtml(item.label)}</a></li>`)
     .join("");
 
@@ -112,9 +102,9 @@ export function renderTemplateFooterHtml(site: SitePayload) {
       <div class="footer-widget-wrapper">
         <div class="footer-widget-box content">
           <div class="title-wrapper">
-            <h2 class="title rr_title_anim">${escapeHtml(footer.headline ?? "Build a website,")} <br> ${escapeHtml(footer.headlineLine2 ?? "app or SaaS product")} <br> ${escapeHtml(footer.headlineLine3 ?? "that converts")}</h2>
+            <h2 class="title rr_title_anim">Plan, build, <br> and maintain <br> business software</h2>
           </div>
-          <a href="/contact" class="rr-btn-underline">${escapeHtml(footer.ctaLabel ?? "Get a development quote")}</a>
+          <a href="/contact" class="rr-btn-underline">Request a Quote</a>
         </div>
         <div class="footer-widget-box">
           <h2 class="title">Company</h2>
@@ -143,14 +133,9 @@ export function renderTemplateFooterHtml(site: SitePayload) {
   <div class="copyright-area">
     <div class="copyright-area-inner">
       <div class="copyright-text">
-        <p class="text">${escapeHtml(footer.copyright ?? "© 2026 Opplexify. All rights reserved.")}</p>
+        <p class="text">${escapeHtml(`Copyright 2026 ${opplexifyCompany.legalName}. All rights reserved.`)}</p>
       </div>
     </div>
   </div>
 </footer>`;
-}
-
-function socialRank(name: string) {
-  const index = socialOrder.indexOf(name);
-  return index === -1 ? socialOrder.length : index;
 }

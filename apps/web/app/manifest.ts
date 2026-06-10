@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
-import { DEFAULT_DESCRIPTION, SITE_NAME, THEME_COLOR } from "../lib/seo";
+import { opplexifyCompany } from "@adon/shared";
+import { DEFAULT_DESCRIPTION, THEME_COLOR } from "../lib/seo";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Opplexify - Web Development Agency",
-    short_name: SITE_NAME,
+    name: `${opplexifyCompany.legalName} - Software Development Services`,
+    short_name: opplexifyCompany.brandName,
     description: DEFAULT_DESCRIPTION,
     start_url: "/",
     scope: "/",

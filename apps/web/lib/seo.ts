@@ -1,25 +1,23 @@
 import type { Metadata } from "next";
+import { opplexifyCompany } from "@adon/shared";
 
-export const SITE_NAME = "Opplexify";
-export const DEFAULT_TITLE = "Opplexify - Web Development Agency for Websites, SaaS & Apps";
+export const SITE_NAME = opplexifyCompany.legalName;
+export const DEFAULT_TITLE = "Opplexify LLC - Custom Websites, SaaS Platforms & Business Software";
 export const DEFAULT_DESCRIPTION =
-  "Opplexify is a full-stack web development agency building SEO-friendly websites, SaaS platforms, mobile apps, admin dashboards, and scalable backend systems.";
+  "Opplexify LLC helps businesses plan, design, and build websites, SaaS platforms, dashboards, backend systems, APIs, mobile apps, and workflow automations.";
 export const DEFAULT_OG_IMAGE = "/portfolio/thumbs/portfolio-001.webp";
-export const DEFAULT_OG_IMAGE_ALT = "Opplexify web development portfolio preview";
+export const DEFAULT_OG_IMAGE_ALT = "Opplexify LLC software development portfolio preview";
 export const SITE_LOCALE = "en_US";
 export const THEME_COLOR = "#050505";
 export const DEFAULT_KEYWORDS = [
-  "web development agency",
-  "website development services",
-  "Next.js development",
-  "full-stack web application development",
-  "SaaS development company",
+  "Opplexify LLC",
+  "custom website development",
+  "SaaS platform development",
+  "dashboard development",
   "mobile app development",
-  "admin dashboard development",
-  "NestJS backend development",
-  "Prisma development",
-  "SEO-friendly websites",
-  "Opplexify"
+  "backend API development",
+  "automation services",
+  "business software development"
 ];
 
 export function siteUrl() {

@@ -11,6 +11,8 @@ const dev = process.env.NODE_ENV !== "production";
 const webDir = path.join(__dirname, "apps/web");
 const nextApp = next({ dev, dir: webDir });
 const handle = nextApp.getRequestHandler();
+const canonicalHost = (process.env.CANONICAL_HOST || "opplexify.com").toLowerCase();
+const canonicalOrigin = `https://${canonicalHost}`;
 
 function log(message, extra) {
   const line = `[${new Date().toISOString()}] ${message}${extra ? ` ${JSON.stringify(extra)}` : ""}`;
@@ -41,6 +43,25 @@ async function start() {
 
   const server = express();
   server.disable("x-powered-by");
+  server.use((req, res, nextMiddleware) => {
+    if (dev) {
+      nextMiddleware();
+      return;
+    }
+
+    const host = String(req.headers.host || "").toLowerCase();
+    const forwardedProto = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim().toLowerCase();
+    const forwardedSsl = String(req.headers["x-forwarded-ssl"] || "").toLowerCase();
+    const forwardedPort = String(req.headers["x-forwarded-port"] || "");
+    const isHttps = forwardedProto === "https" || forwardedSsl === "on" || forwardedPort === "443" || req.secure;
+
+    if (host === canonicalHost && isHttps) {
+      nextMiddleware();
+      return;
+    }
+
+    res.redirect(301, `${canonicalOrigin}${req.originalUrl}`);
+  });
   server.use(createApiApp());
   server.use((req, res) => {
     res.removeHeader("Content-Security-Policy");

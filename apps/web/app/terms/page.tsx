@@ -1,157 +1,142 @@
 import type { Metadata } from "next";
+import { opplexifyCompany } from "@adon/shared";
 import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
 import { seoMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
-  title: "Terms of Service - Opplexify",
-  description:
-    "The terms and conditions governing the use of Opplexify's web development services and website.",
+  title: "Terms of Service - Opplexify LLC",
+  description: "Terms governing Opplexify LLC custom software development services and website use.",
   path: "/terms"
 });
 
 const sections: LegalSection[] = [
   {
-    heading: "1. Acceptance of these terms",
+    heading: "1. Company identity",
     blocks: [
       {
         type: "p",
-        text: "These Terms of Service (the \"Terms\") govern your use of the Opplexify website and the web, mobile, SaaS, and backend development services we provide (the \"Services\"). By accessing our website, requesting a quote, or engaging us for a project, you agree to be bound by these Terms. If you do not agree, please do not use our website or Services."
+        text: `${opplexifyCompany.legalName} is a ${opplexifyCompany.legalDescription}. Business email: ${opplexifyCompany.email}. Business phone: ${opplexifyCompany.phone}. ${opplexifyCompany.mailingAddressLabel}: ${opplexifyCompany.mailingAddress}.`
       }
     ]
   },
   {
-    heading: "2. Our services",
+    heading: "2. Acceptance of these terms",
     blocks: [
       {
         type: "p",
-        text: "Opplexify is a full-stack web development agency. We design and build SEO-friendly websites, Next.js web applications, SaaS platforms, mobile apps, admin dashboards, and backend systems. Services are delivered as custom project work, scoped individually for each client. The packages and starting prices shown on our Pricing page are indicative; the final scope, deliverables, timeline, and price for your project are confirmed in a written quote or proposal before work begins."
+        text: "These Terms of Service govern your use of the Opplexify LLC website and any custom software development services you request or purchase from Opplexify LLC. By using the website, requesting a quote, approving a proposal, or paying an invoice, you agree to these terms."
       }
     ]
   },
   {
-    heading: "3. Quotes, proposals, and project scope",
+    heading: "3. Services",
     blocks: [
       {
         type: "p",
-        text: "Each engagement is defined by a written quote or proposal that sets out the agreed scope, deliverables, milestones, timeline, and fees. Work outside that agreed scope (\"change requests\") may require an additional quote and may affect the timeline. We will not begin chargeable work until the scope and deposit are confirmed."
+        text: "Opplexify LLC provides project-based software development services, including custom website development, SaaS platform development, dashboard and admin panel development, mobile app development, backend/API development, and automation/integration work."
+      },
+      {
+        type: "p",
+        text: "Each project is scoped individually. The final deliverables, timeline, fees, payment schedule, revision terms, and delivery terms are confirmed in a written proposal, contract, statement of work, or invoice before paid work begins."
       }
     ]
   },
   {
-    heading: "4. Fees, payments, and deposits",
+    heading: "4. Quotes, scope, and change requests",
     blocks: [
       {
         type: "p",
-        text: "Prices are quoted and payable in US dollars (USD) unless otherwise agreed in writing. Projects typically require an upfront deposit to reserve your start date and cover discovery and setup, with the remaining balance invoiced against agreed milestones."
+        text: "Quotes are based on the information available at the time of scoping. If project requirements change, Opplexify LLC may provide a revised quote, adjust the timeline, or treat the request as additional scope."
       },
       {
         type: "list",
         items: [
-          "The deposit is required before work begins and is non-refundable.",
-          "Milestone payments are due as set out in your quote or proposal.",
-          "Final deliverables, source code, and handover are provided after the final invoice is paid in full.",
-          "Late or missed payments may pause work and affect agreed timelines."
-        ]
-      },
-      {
-        type: "p",
-        text: "Refund eligibility is governed by our Refund Policy, available at /refund-policy."
-      }
-    ]
-  },
-  {
-    heading: "5. Client responsibilities",
-    blocks: [
-      {
-        type: "p",
-        text: "Timely delivery depends on your cooperation. You agree to provide accurate information and to supply content, assets, credentials, approvals, and feedback within reasonable timeframes."
-      },
-      {
-        type: "list",
-        items: [
-          "Provide complete and accurate project requirements and content.",
-          "Respond to requests for feedback and approvals promptly.",
-          "Ensure you own or are licensed to use any materials you supply to us.",
-          "Maintain the security of any accounts and credentials you control."
+          "The client is responsible for providing accurate requirements, content, assets, credentials, and feedback.",
+          "Work outside the approved scope may require written approval and additional payment.",
+          "Delays in client feedback, content, access, or approvals may affect delivery dates."
         ]
       }
     ]
   },
   {
-    heading: "6. Intellectual property and handover",
+    heading: "5. Payments and milestones",
     blocks: [
       {
         type: "p",
-        text: "Upon full payment for a project, ownership of the final, paid-for deliverables created specifically for you transfers to you. Until full payment is received, all work product remains the property of Opplexify."
+        text: "Projects may require a deposit, milestone payments, or full payment depending on the scope. Payment terms are stated in the written proposal or invoice."
+      },
+      {
+        type: "list",
+        items: [
+          "Deposits reserve project time and may cover discovery, planning, and setup work.",
+          "Milestone invoices are due according to the agreed payment schedule.",
+          "Opplexify LLC may pause work if an invoice is overdue.",
+          "Final source files, production handover, or deployment support may depend on full payment of agreed invoices."
+        ]
+      }
+    ]
+  },
+  {
+    heading: "6. Revisions and approvals",
+    blocks: [
+      {
+        type: "p",
+        text: "Revision terms are defined in the project proposal. Revisions apply to agreed deliverables within the approved scope. New features, major design changes, or changes after approval may require a separate estimate."
+      }
+    ]
+  },
+  {
+    heading: "7. Third-party services and costs",
+    blocks: [
+      {
+        type: "p",
+        text: "Projects may use third-party services such as hosting providers, domains, app stores, APIs, payment processors, analytics tools, software libraries, or licensed assets. Third-party costs and terms are separate unless the written proposal says otherwise."
+      }
+    ]
+  },
+  {
+    heading: "8. Intellectual property",
+    blocks: [
+      {
+        type: "p",
+        text: "After full payment, the client receives rights to the final custom deliverables created specifically for that client, subject to any third-party licenses, open-source licenses, and any written exceptions in the proposal."
       },
       {
         type: "p",
-        text: "We retain the right to reuse general knowledge, techniques, and non-client-specific components, and to display non-confidential work in our portfolio unless you ask us in writing not to. Third-party components, open-source libraries, and licensed assets remain subject to their own licenses."
+        text: "Opplexify LLC may reuse general know-how, workflows, non-client-specific code patterns, and internal tools. Confidential client information will not be published without permission."
       }
     ]
   },
   {
-    heading: "7. Third-party services",
+    heading: "9. Cancellations and refunds",
     blocks: [
       {
         type: "p",
-        text: "Our Services may rely on third-party platforms such as hosting providers, payment processors, analytics tools, and software libraries. We are not responsible for the availability, performance, or policies of third-party services, and your use of them may be subject to their own terms."
+        text: "Cancellations and refunds are handled according to the Refund Policy. Deposits, completed milestones, approved delivered work, in-progress work, and third-party costs may be non-refundable."
       }
     ]
   },
   {
-    heading: "8. Warranties and disclaimer",
+    heading: "10. Warranty disclaimer and limitation of liability",
     blocks: [
       {
         type: "p",
-        text: "We perform our Services with reasonable skill and care. Except as expressly stated in your quote or proposal, the Services and website are provided \"as is\" and \"as available\" without warranties of any kind, whether express or implied, including any implied warranties of merchantability, fitness for a particular purpose, or non-infringement."
+        text: "Opplexify LLC aims to provide services with reasonable care and skill. Unless a written proposal states otherwise, the website and services are provided without guarantees of specific business results, revenue, search rankings, funding, payment approval, or regulatory approval."
+      },
+      {
+        type: "p",
+        text: "To the maximum extent allowed by law, Opplexify LLC is not liable for indirect, incidental, special, consequential, or punitive damages. Total liability for a project is limited to the fees paid to Opplexify LLC for that project."
       }
     ]
   },
   {
-    heading: "9. Limitation of liability",
+    heading: "11. Contact",
     blocks: [
       {
         type: "p",
-        text: "To the maximum extent permitted by law, Opplexify will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any loss of profits, revenue, data, or goodwill. Our total aggregate liability arising out of or relating to a project will not exceed the total fees actually paid to us for that project."
-      }
-    ]
-  },
-  {
-    heading: "10. Termination",
-    blocks: [
-      {
-        type: "p",
-        text: "Either party may terminate an engagement in writing. If you terminate, you remain responsible for fees for work completed up to the termination date, and the deposit remains non-refundable. We may suspend or terminate work for non-payment or material breach of these Terms."
-      }
-    ]
-  },
-  {
-    heading: "11. Changes to these terms",
-    blocks: [
-      {
-        type: "p",
-        text: "We may update these Terms from time to time. The current version is always available on this page, and the \"Last updated\" date reflects the most recent change. Continued use of our website or Services after changes take effect constitutes acceptance of the revised Terms."
-      }
-    ]
-  },
-  {
-    heading: "12. Governing law and disputes",
-    blocks: [
-      {
-        type: "p",
-        text: "Opplexify operates as a remote team serving clients worldwide. We aim to resolve any dispute amicably and in good faith. Where a dispute cannot be resolved informally, it will be handled in the jurisdiction of Opplexify's principal place of business, unless otherwise required by applicable law. These Terms are interpreted in accordance with generally accepted commercial principles and applicable mandatory consumer protections."
-      }
-    ]
-  },
-  {
-    heading: "13. Contact us",
-    blocks: [
-      {
-        type: "p",
-        text: "If you have any questions about these Terms, contact us at admin@opplexify.com."
+        text: `Questions about these terms can be sent to ${opplexifyCompany.email}. ${opplexifyCompany.complianceNote}`
       }
     ]
   }
@@ -163,9 +148,9 @@ export default async function TermsPage() {
       <PageHero
         eyebrow="Legal"
         title="Terms of Service"
-        subtitle="The agreement between you and Opplexify when you use our website or engage our development services."
+        subtitle="The terms that apply when you use the Opplexify LLC website or engage Opplexify LLC for custom software development services."
       />
-      <LegalDoc lastUpdated="June 3, 2026" sections={sections} />
+      <LegalDoc lastUpdated="June 10, 2026" sections={sections} />
     </PublicShell>
   );
 }

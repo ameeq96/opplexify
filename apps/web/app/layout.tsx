@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { opplexifyCompany, opplexifyServices } from "@adon/shared";
 import {
   absoluteUrl,
   DEFAULT_DESCRIPTION,
@@ -81,48 +82,48 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const configuredSocialLinks = [
-    process.env.NEXT_PUBLIC_INSTAGRAM_URL,
-    process.env.NEXT_PUBLIC_FACEBOOK_URL,
-    process.env.NEXT_PUBLIC_X_URL,
-    process.env.NEXT_PUBLIC_LINKEDIN_URL
-  ].filter((url): url is string => Boolean(url && /^https?:\/\//i.test(url)));
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: SITE_NAME,
-    legalName: "Opplexify",
+    name: opplexifyCompany.brandName,
+    legalName: opplexifyCompany.legalName,
+    description: DEFAULT_DESCRIPTION,
     url: siteUrl(),
     logo: absoluteUrl("/template-assets/dark/assets/imgs/logo/opplexify-logo-light.svg"),
-    email: "admin@opplexify.com",
-    description: DEFAULT_DESCRIPTION,
-    ...(configuredSocialLinks.length ? { sameAs: configuredSocialLinks } : {}),
+    email: opplexifyCompany.email,
+    telephone: opplexifyCompany.phone,
+    foundingDate: "2026-05-28",
+    sameAs: [opplexifyCompany.linkedin],
+    address: {
+      "@type": "PostalAddress",
+      name: opplexifyCompany.mailingAddressLabel,
+      streetAddress: opplexifyCompany.streetAddress,
+      addressLocality: opplexifyCompany.addressLocality,
+      addressRegion: opplexifyCompany.addressRegion,
+      postalCode: opplexifyCompany.postalCode,
+      addressCountry: opplexifyCompany.addressCountry
+    },
     contactPoint: {
       "@type": "ContactPoint",
-      contactType: "customer support",
-      email: "admin@opplexify.com",
+      contactType: "business inquiries",
+      email: opplexifyCompany.email,
+      telephone: opplexifyCompany.phone,
       areaServed: "Worldwide",
       availableLanguage: ["English"]
     },
-    knowsAbout: [
-      "Next.js web development",
-      "SaaS platform development",
-      "mobile app development",
-      "admin dashboard development",
-      "NestJS API development"
-    ],
-    makesOffer: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Website development services" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Full-stack web application development" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "SaaS platform development" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobile app development" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Admin dashboard development" } }
-    ]
+    makesOffer: opplexifyServices.map((service) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: service.title,
+        description: service.shortDescription
+      }
+    }))
   };
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: SITE_NAME,
+    name: opplexifyCompany.legalName,
     url: siteUrl(),
     description: DEFAULT_DESCRIPTION,
     inLanguage: "en"

@@ -1,73 +1,50 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHero } from "../../components/site/Blocks";
+import { opplexifyCompany } from "@adon/shared";
+import { PageHero, SectionHead } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { seoMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
-  title: "Pricing - Website, Web App, SaaS & Mobile App Development | Opplexify",
+  title: "Pricing - Custom Software Development Quotes | Opplexify LLC",
   description:
-    "Transparent starting packages for SEO-friendly websites, full-stack web applications, SaaS platforms, mobile apps, admin dashboards, and complete product builds.",
+    "Pricing information for Opplexify LLC custom website, SaaS, dashboard, mobile app, backend/API, and automation development services.",
   path: "/pricing"
 });
 
-type Package = {
-  label: string;
-  title: string;
-  price: string;
-  time: string;
-  description: string;
-  features: string[];
-  featured?: boolean;
-};
-
-const packages: Package[] = [
+const packages = [
   {
-    label: "5 Page Presence",
-    title: "Simple Website",
-    price: "$149",
-    time: "4-7 days",
-    description:
-      "A concise, responsive, SEO-friendly business website designed for credibility, lead capture, and clear service presentation.",
-    features: ["5 responsive pages", "Contact form", "Foundational SEO", "Performance-focused structure"]
+    label: "Website Project",
+    title: "Custom Website Development",
+    price: "Custom quote",
+    time: "Typical timeline: 1-4 weeks",
+    description: "For business websites, service pages, landing pages, and contact-focused web presence work.",
+    features: ["Written scope", "Responsive pages", "Contact form setup", "Basic technical SEO", "Launch support"]
   },
   {
-    label: "Full-Stack App",
-    title: "Complete Web Application",
-    price: "$499",
-    time: "2-3 weeks",
-    description:
-      "A full-stack web application with authentication, dashboards, APIs, database integration, and structured workflows.",
-    features: ["Authentication", "User dashboard", "Backend API", "Database integration"]
-  },
-  {
-    label: "Subscription-Ready",
-    title: "Complete SaaS Solution",
-    price: "$999",
-    time: "3-5 weeks",
-    description:
-      "A scalable SaaS development foundation with product workflows, admin controls, database models, and subscription-ready architecture.",
-    features: ["SaaS platform", "Admin dashboard", "Subscription-ready structure", "Database and API"],
+    label: "Software Build",
+    title: "SaaS, Dashboard or Web App",
+    price: "Custom quote",
+    time: "Typical timeline: 4-12+ weeks",
+    description: "For product workflows, user accounts, dashboards, APIs, admin panels, and database-backed systems.",
+    features: ["Discovery and planning", "Milestone delivery", "Backend/API work", "Admin controls", "Handover notes"],
     featured: true
   },
   {
-    label: "App Plus Control Room",
-    title: "Mobile App with Admin Dashboard",
-    price: "$1200",
-    time: "4-6 weeks",
-    description:
-      "A mobile application connected to a secure backend API and an operational admin dashboard for real business workflows.",
-    features: ["Mobile app", "Admin dashboard", "Backend API", "Push notification-ready"]
-  },
-  {
-    label: "Complete Product Suite",
-    title: "Complete Mobile App + Web App",
-    price: "$1699",
-    time: "6-8 weeks",
-    description:
-      "A coordinated mobile app, web app, API, database, and admin dashboard system for a complete digital product launch.",
-    features: ["Mobile app", "Web app", "Admin dashboard", "Complete full-stack solution"]
+    label: "App or Integration",
+    title: "Mobile App, Backend or Automation",
+    price: "Custom quote",
+    time: "Timeline depends on scope",
+    description: "For mobile app workflows, API integrations, backend systems, and business process automation.",
+    features: ["Feature scope", "API connection", "Testing", "Revision terms", "Deployment support"]
   }
+];
+
+const notes = [
+  "Final pricing depends on project scope, feature complexity, content readiness, integrations, and delivery timeline.",
+  "Opplexify LLC can provide written proposals, invoices, contracts, and milestone-based billing.",
+  "Deposits, milestone payments, revision terms, cancellation terms, and delivery terms are confirmed in writing before work begins.",
+  "Third-party costs such as hosting, paid APIs, domains, app store fees, or licensed assets are separate unless included in the written proposal."
 ];
 
 export default async function PricingPage() {
@@ -75,8 +52,8 @@ export default async function PricingPage() {
     <PublicShell>
       <PageHero
         eyebrow="Pricing"
-        title="Website, web app, SaaS and mobile app development pricing"
-        subtitle="Transparent starting packages for SEO-friendly websites, full-stack web applications, SaaS platforms, admin dashboards, and complete product builds. Final quotes are confirmed after a short scoping call."
+        title="Custom Software Development Pricing"
+        subtitle="Opplexify LLC prices custom work after reviewing scope. The goal is to confirm a realistic project plan before development begins."
       />
       <section className="section">
         <div className="container rr-container-1650">
@@ -87,7 +64,7 @@ export default async function PricingPage() {
                 <h3>{pkg.title}</h3>
                 <p>{pkg.description}</p>
                 <strong>
-                  {pkg.price} <span className="price-note">starting</span>
+                  {pkg.price} <span className="price-note">after scope review</span>
                 </strong>
                 <p className="price-note">{pkg.time}</p>
                 <ul>
@@ -96,8 +73,21 @@ export default async function PricingPage() {
                   ))}
                 </ul>
                 <Link className="btn secondary" href="/contact">
-                  Request Package
+                  Request a Quote
                 </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container rr-container-1650">
+          <SectionHead title="Payment and Scope Notes" subtitle={opplexifyCompany.complianceNote} />
+          <div className="grid">
+            {notes.map((note) => (
+              <article className="card" key={note}>
+                <p>{note}</p>
               </article>
             ))}
           </div>

@@ -40,7 +40,7 @@ export default async function BlogDetailPage({ params }: Props) {
     datePublished: post.publishedAt,
     author: {
       "@type": "Person",
-      name: post.author?.name ?? "Opplexify Team"
+      name: post.author?.name ?? "Opplexify LLC"
     },
     publisher: {
       "@type": "Organization",
@@ -63,7 +63,7 @@ export default async function BlogDetailPage({ params }: Props) {
           <aside className="meta-panel">
             <div className="meta-row">
               <span>Author</span>
-              <strong>{post.author?.name ?? "Opplexify Team"}</strong>
+              <strong>{post.author?.name ?? "Opplexify LLC"}</strong>
             </div>
             <div className="meta-row">
               <span>Published</span>
