@@ -9,6 +9,8 @@ const port = Number(process.env.PORT || process.env.APP_PORT || process.env.NODE
 const host = process.env.HOST || "0.0.0.0";
 const dev = process.env.NODE_ENV !== "production";
 const webDir = path.join(__dirname, "apps/web");
+const preferredHost = "opplexify.com";
+const localHosts = new Set(["localhost", "127.0.0.1", "::1"]);
 
 process.env.INTERNAL_API_URL = process.env.INTERNAL_API_URL || `http://127.0.0.1:${port}`;
 
@@ -44,6 +46,22 @@ async function start() {
 
   const server = express();
   server.disable("x-powered-by");
+  server.set("trust proxy", true);
+  server.use((req, res, nextMiddleware) => {
+    const host = String(req.headers.host || "").split(":")[0].toLowerCase();
+    if (!host || localHosts.has(host)) return nextMiddleware();
+
+    const forwardedProto = String(req.headers["x-forwarded-proto"] || req.protocol || "")
+      .split(",")[0]
+      .trim()
+      .toLowerCase();
+    const shouldRedirectHost = host === `www.${preferredHost}`;
+    const shouldRedirectProtocol = forwardedProto === "http";
+
+    if (!shouldRedirectHost && !shouldRedirectProtocol) return nextMiddleware();
+
+    return res.redirect(301, `https://${preferredHost}${req.originalUrl || req.url}`);
+  });
   server.use(createApiApp());
   server.use((req, res) => {
     res.removeHeader("Content-Security-Policy");

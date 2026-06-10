@@ -12,7 +12,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const capabilityCategories = ["Websites", "Web Apps", "SaaS", "Mobile Apps", "Dashboards"];
-let capabilityCategoryIndex = 0;
 
 function findDivEnd(html: string, startIndex: number) {
   const divTag = /<\/?div\b[^>]*>/g;
@@ -46,15 +45,13 @@ function keepFounderAboutTeamMember(html: string) {
   );
 }
 
-function sequenceCapabilityYears(html: string) {
-  let index = 0;
-  return html.replace(/<span class="year">[^<]*<\/span>/g, () => {
-    index += 1;
-    return `<span class="year">${String(index).padStart(2, "0")}</span>`;
-  });
+function cleanAboutArtifacts(html: string) {
+  return html
+    .replace(/<!-- choose-us area start  -->[\s\S]*?<!-- choose-us area end  -->/g, "")
+    .replace(/<span class="year">[^<]*<\/span>/g, "");
 }
 
-const aboutPageHtml = sequenceCapabilityYears(keepFounderAboutTeamMember(
+const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
   aboutHtml
   .replace(
     /<p class="text">— We help <br>[\s\S]*?<\/p>/,
@@ -87,8 +84,6 @@ const aboutPageHtml = sequenceCapabilityYears(keepFounderAboutTeamMember(
   .replace(/<!-- choose-us area start  -->[\s\S]*?<!-- choose-us area end  -->/g, "")
   .replace(/<span class="section-subtitle">Why choose us<\/span>/g, `<span class="section-subtitle">Why choose Opplexify LLC</span>`)
   .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-1.webp"/g, `src="/team/emmad-khan.webp"`)
-  .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-2.webp"/g, `src="/team/atiq-khan.webp"`)
-  .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-3.webp"/g, `src="/team/emmad-khan.webp"`)
   .replace(
     /<h2 class="section-title rr_title_anim">Mee the <span>squad<\/span> <br>[\s\S]*?<\/h2>/,
     `<h2 class="section-title rr_title_anim">Founder-led software development <br>
@@ -96,21 +91,14 @@ const aboutPageHtml = sequenceCapabilityYears(keepFounderAboutTeamMember(
                                     </h2>`
   )
   .replace(/CEO & Founder/g, "Founder and Owner")
-  .replace(/Lead Designer/g, "SEO Planning and Launch Support")
-  .replace(/Lead Developer/g, "UI/UX and Frontend Design")
-  .replace(/Head of Marketing/g, "SEO Planning and Launch Support")
-  .replace(/WP Developer/g, "Backend Development")
-  .replace(/Brand Designer/g, "Launch Support")
   .replace(/Cristian Vargas/g, "Muhammad Emmad Khan")
-  .replace(/Joey Dello Russo/g, "Muhammad Emmad Khan")
-  .replace(/Michelle Gasparov/g, "Muhammad Emmad Khan")
-  .replace(/Courtney Gayer/g, "Muhammad Emmad Khan")
-  .replace(/Bruno Larry Vargas/g, "Muhammad Emmad Khan")
-  .replace(/Sara Lenartowicz/g, "Muhammad Emmad Khan")
   .replace(/Awards/g, "Capabilities")
   .replace(
     /<span class="category">[^<]+<\/span>/g,
-    () => `<span class="category">${capabilityCategories[capabilityCategoryIndex++] ?? "Launch Support"}</span>`
+    (() => {
+      let index = 0;
+      return () => `<span class="category">${capabilityCategories[index++] ?? "Launch Support"}</span>`;
+    })()
   )
   .replace(/We make brand big and bolder/g, "Custom websites, SaaS platforms, dashboards, mobile apps, APIs and automations")
   .replace(/3x creative <br> agency of the day/g, "SEO-friendly <br> website development")
@@ -162,20 +150,19 @@ function replaceDivBlock(html: string, marker: string, replacement: string) {
   return html.slice(0, start) + replacement + html.slice(end);
 }
 
-function renderTeam(section: Section | undefined, team: TeamMember[]) {
-  const limit = Number(section?.content?.limit ?? 3);
-  const members = team.slice(0, Number.isFinite(limit) && limit > 0 ? limit : 3);
-  if (!members.length) return null;
+function renderTeam(_section: Section | undefined, team: TeamMember[]) {
+  const founder =
+    team.find((member) => /founder|owner/i.test(member.role)) ??
+    team.find((member) => /emmad|muhammad/i.test(`${member.name} ${member.slug}`)) ??
+    team[0];
+  if (!founder) return null;
+  const role = /founder|owner/i.test(founder.role) ? founder.role : "Founder and Owner";
 
   return `<div class="team-wrapper fade-anim">
-    ${members
-      .map(
-        (member) => `<div class="team-box-1 fade-anim">
-          <div class="thumb"><a href="/team/${escapeHtml(member.slug)}"><img src="${escapeHtml(assetUrl(member.image))}" alt="${escapeHtml(member.name)}"></a></div>
-          <div class="content"><h3 class="name"><a href="/team/${escapeHtml(member.slug)}">${escapeHtml(member.name)}</a></h3><span class="post">${escapeHtml(member.role)}</span></div>
-        </div>`
-      )
-      .join("")}
+    <div class="team-box-1 fade-anim">
+      <div class="thumb"><a href="/team/${escapeHtml(founder.slug)}"><img src="${escapeHtml(assetUrl(founder.image))}" alt="${escapeHtml(founder.name)}"></a></div>
+      <div class="content"><h3 class="name"><a href="/team/${escapeHtml(founder.slug)}">${escapeHtml(founder.name)}</a></h3><span class="post">${escapeHtml(role)}</span></div>
+    </div>
   </div>`;
 }
 
@@ -185,12 +172,11 @@ function renderCapabilities(section?: Section) {
 
   return `<div class="award-wrapper fade-anim">
     ${items
-      .map((item, index) => {
+      .map((item) => {
         const record = asRecord(item);
         return `<div class="award-box">
           <span class="category">${escapeHtml(record.category ?? "Capability")}</span>
           <p class="award">${escapeHtml(record.text ?? record.title ?? "")}</p>
-          <span class="year">${String(index + 1).padStart(2, "0")}</span>
         </div>`;
       })
       .join("")}
@@ -219,12 +205,10 @@ function applyAboutCms(html: string, page: Page | null, team: TeamMember[]) {
     );
   }
 
-  if (teamSection?.title) {
-    rendered = rendered.replace(
-      /<h2 class="section-title rr_title_anim">Founder-led software development[\s\S]*?<\/h2>/,
-      `<h2 class="section-title rr_title_anim">${escapeHtml(teamSection.title)}</h2>`
-    );
-  }
+  rendered = rendered.replace(
+    /<h2 class="section-title rr_title_anim">Founder-led software development[\s\S]*?<\/h2>/,
+    `<h2 class="section-title rr_title_anim">Founder-led software development</h2>`
+  );
   const teamHtml = renderTeam(teamSection, team);
   if (teamHtml) rendered = replaceDivBlock(rendered, '<div class="team-wrapper fade-anim">', teamHtml);
 
@@ -234,14 +218,14 @@ function applyAboutCms(html: string, page: Page | null, team: TeamMember[]) {
 
   if (capabilities?.title) {
     rendered = rendered.replace(
-      /<h2 class="section-title rr_title_anim">We <span>plan<\/span>[\s\S]*?<\/h2>/,
+      /<h2 class="section-title rr_title_anim">We <span>(?:plan|scope)<\/span>[\s\S]*?<\/h2>/,
       `<h2 class="section-title rr_title_anim">${escapeHtml(capabilities.title)}</h2>`
     );
   }
   const capabilityHtml = renderCapabilities(capabilities);
   if (capabilityHtml) rendered = replaceDivBlock(rendered, '<div class="award-wrapper fade-anim">', capabilityHtml);
 
-  return rendered;
+  return cleanAboutArtifacts(rendered);
 }
 
 export default async function AboutPage() {

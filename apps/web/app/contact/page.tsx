@@ -136,22 +136,41 @@ function replaceDivBlock(html: string, marker: string, replacement: string) {
   return html.slice(0, start) + replacement + html.slice(end);
 }
 
-function renderContactInfoHtml(email: string, phone: string, address: string) {
-  const cleanAddress = address.replace(/^Business mailing address:\s*/i, "");
-  const tel = phone.replace(/[^\d+]/g, "") || "+13074435144";
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
-  return `<div class="contact-us__info">
-    <div class="contact-us__item">
+function cleanBusinessAddress(address: string, email: string, phone: string) {
+  return address
+    .replace(/^Business mailing address:\s*/i, "")
+    .replace(new RegExp(escapeRegExp(email), "gi"), "")
+    .replace(/\badmin@opplexify\.com\b/gi, "")
+    .replace(new RegExp(escapeRegExp(phone), "gi"), "")
+    .replace(/\+?1?\s*\(?307\)?[\s-]*443[\s-]*5144\.?/gi, "")
+    .replace(/\b(?:Email|Phone):\s*/gi, "")
+    .replace(/\s*\|\s*/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+,/g, ",")
+    .trim();
+}
+
+function renderContactInfoHtml(email: string, phone: string, address: string) {
+  const cleanAddress = cleanBusinessAddress(address, email, phone);
+  const digits = phone.replace(/[^\d]/g, "");
+  const tel = digits ? `+${digits}` : "+13074435144";
+
+  return `<div class="contact-us__info opplexify-contact-cards">
+    <div class="contact-us__item opplexify-contact-card">
       <h3 class="title">Business Mailing Address</h3>
-      <p class="location">${escapeHtml(cleanAddress)}</p>
+      <p class="contact-value">${escapeHtml(cleanAddress)}</p>
     </div>
-    <div class="contact-us__item">
+    <div class="contact-us__item opplexify-contact-card">
       <h3 class="title">Business Email</h3>
-      <a class="location" href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>
+      <a class="contact-value" href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>
     </div>
-    <div class="contact-us__item">
+    <div class="contact-us__item opplexify-contact-card">
       <h3 class="title">Business Phone</h3>
-      <a class="phone" href="tel:${escapeHtml(tel)}">${escapeHtml(phone)}</a>
+      <a class="contact-value" href="tel:${escapeHtml(tel)}">${escapeHtml(phone)}</a>
     </div>
   </div>`;
 }

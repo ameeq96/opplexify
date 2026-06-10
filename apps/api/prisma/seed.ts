@@ -596,8 +596,9 @@ async function seedPages() {
       {
         key: "intro",
         type: "portfolio",
-        title: "Website, SaaS, app and dashboard portfolio",
-        subtitle: "Selected private client work is available upon request. Public portfolio visuals show the types of websites, SaaS interfaces, mobile app screens, dashboards, and business software Opplexify LLC can build."
+        title: "Private client work available upon request",
+        subtitle:
+          "Opplexify LLC keeps private client names, dashboards, source code, business data, and project results confidential unless a client approves public sharing. Service categories show the types of work available for review during project scoping."
       }
     ]),
     pageSeed("Agency Portfolio", "agency-portfolio", "portfolio", [
@@ -985,8 +986,8 @@ async function seedPortfolioItems(userId: string) {
   const videos = portfolioVideos();
 
   for (const [index, item] of images.entries()) {
-    const title = `Private client work sample ${String(index + 1).padStart(2, "0")}`;
     const tag = portfolioTags[index % portfolioTags.length];
+    const title = `Private ${tag} category reference`;
 
     await prisma.portfolioItem.upsert({
       where: { mediaUrl: item.url },
@@ -1016,7 +1017,7 @@ async function seedPortfolioItems(userId: string) {
   }
 
   for (const [index, item] of videos.entries()) {
-    const title = `Private portfolio video sample ${String(index + 1).padStart(2, "0")}`;
+    const title = "Private interface motion reference";
 
     await prisma.portfolioItem.upsert({
       where: { mediaUrl: item.url },

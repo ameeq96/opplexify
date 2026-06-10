@@ -1058,6 +1058,83 @@ video {
   color: #050505;
 }
 
+.opplexify-portfolio-simple {
+  max-width: 880px;
+}
+
+.opplexify-portfolio-simple h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(42px, 5vw, 82px);
+  font-weight: 600;
+  line-height: 1.04;
+}
+
+.opplexify-portfolio-simple p,
+.portfolio-category-head p,
+.portfolio-category-card p {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.opplexify-portfolio-simple p {
+  max-width: 760px;
+  margin: 28px 0 0;
+}
+
+.portfolio-category-area {
+  padding: 36px 0 116px;
+}
+
+.portfolio-category-head {
+  display: grid;
+  gap: 14px;
+  max-width: 820px;
+  margin-bottom: 34px;
+}
+
+.portfolio-category-head h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(34px, 4vw, 58px);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.portfolio-category-head p,
+.portfolio-category-card p {
+  margin: 0;
+}
+
+.portfolio-category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.portfolio-category-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.portfolio-category-card h3 {
+  margin: 0 0 12px;
+  color: var(--text);
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 1.16;
+}
+
+@media (max-width: 900px) {
+  .portfolio-category-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .portfolio-editorial-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2784,6 +2861,42 @@ video {
 .pricing-cards .card.card-featured .btn:hover {
   background: transparent;
   color: var(--accent);
+}
+
+/* Contact page: one clean value per business contact card. */
+.opplexify-template-page .opplexify-contact-cards {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px !important;
+  align-items: stretch;
+  justify-content: stretch !important;
+}
+
+.opplexify-template-page .opplexify-contact-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.opplexify-template-page .opplexify-contact-card .title {
+  margin-bottom: 14px !important;
+}
+
+.opplexify-template-page .opplexify-contact-card .contact-value {
+  display: block;
+  margin: 0;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 991px) {
+  .opplexify-template-page .opplexify-contact-cards {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Footer: 5 columns to accommodate the Contact and Legal groups (desktop only;
