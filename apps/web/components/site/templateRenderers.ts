@@ -37,8 +37,8 @@ export function footerServiceLinks(_footer?: Record<string, unknown>): FooterSer
   return defaultServiceLinks;
 }
 
-function visibleLinks(items: MenuItem[]) {
-  return (items.length ? items : emptySite.menus[0].items).filter((item) => allowedMenuUrls.has(item.url));
+function visibleLinks(_items: MenuItem[]) {
+  return emptySite.menus[0].items.filter((item) => allowedMenuUrls.has(item.url));
 }
 
 export function renderMenuHtml(items: MenuItem[]) {

@@ -108,9 +108,9 @@ function SideInfo({ site }: { site: SitePayload }) {
   );
 }
 
-function MainMenu({ items }: { items: MenuItem[] }) {
+function MainMenu({ items: _items }: { items: MenuItem[] }) {
   const allowedUrls = new Set(["/", "/about", "/portfolio", "/services", "/pricing", "/faq", "/contact"]);
-  const links = (items.length ? items : emptySite.menus[0].items).filter((item) => allowedUrls.has(item.url));
+  const links = emptySite.menus[0].items.filter((item) => allowedUrls.has(item.url));
 
   return (
     <nav className="main-menu">
@@ -165,7 +165,7 @@ function HomepageHeader({ site }: { site: SitePayload }) {
 
 function HomepageFooter({ site }: { site: SitePayload }) {
   const allowedUrls = new Set(["/", "/about", "/portfolio", "/services", "/pricing", "/faq", "/contact"]);
-  const companyItems = (getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header")).filter((item) => allowedUrls.has(item.url));
+  const companyItems = emptySite.menus[0].items.filter((item) => allowedUrls.has(item.url));
   const socialLinks = orderedSocialLinks(site.settings.social);
   const serviceLinks = footerServiceLinks();
 
