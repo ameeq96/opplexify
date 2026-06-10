@@ -6,8 +6,6 @@ Deploy this monorepo as one Hostinger Node.js app on `https://opplexify.com`.
 - API: same domain, using existing paths like `/health`, `/auth/*`, `/public/*`, `/admin/*`, and `/uploads/*`
 - Database: Hostinger MySQL/MariaDB
 - Node.js: `24.6.0` or newer on Node 24/26
-- Preferred public domain: `https://opplexify.com`
-- Canonical redirect target: `https://opplexify.com`
 
 If `npm ci` fails with an unsupported engine error, select Node `24.6.0` or newer in Plesk first. If an old `.node-version` file exists on the server from a previous deploy, delete it after pulling the latest code.
 
@@ -62,7 +60,6 @@ JWT_SECRET="replace-with-a-long-random-production-secret"
 JWT_EXPIRES_IN="365d"
 WEB_ORIGIN="https://opplexify.com"
 NEXT_PUBLIC_SITE_URL="https://opplexify.com"
-CANONICAL_HOST="opplexify.com"
 ADMIN_EMAIL="admin@opplexify.com"
 ADMIN_PASSWORD="replace-with-a-strong-temporary-admin-password"
 ```
@@ -75,15 +72,10 @@ After deploy/restart, verify:
 
 ```text
 https://opplexify.com
-https://www.opplexify.com
-http://opplexify.com
-http://www.opplexify.com
 https://opplexify.com/health
 https://opplexify.com/docs
 https://opplexify.com/public/site
 https://opplexify.com/admin/login
-https://opplexify.com/robots.txt
-https://opplexify.com/sitemap.xml
 ```
 
 Expected health response:
@@ -91,31 +83,6 @@ Expected health response:
 ```json
 {"ok":true,"service":"opplexify-api"}
 ```
-
-Expected redirect behavior:
-
-```text
-http://opplexify.com        -> 301 https://opplexify.com
-http://www.opplexify.com    -> 301 https://opplexify.com
-https://www.opplexify.com   -> 301 https://opplexify.com
-https://opplexify.com       -> 200 live website
-```
-
-If `https://www.opplexify.com` returns `200` instead of redirecting, set the `www` domain alias in Hostinger/Plesk to point to the same Node.js app and enable permanent redirect to the preferred domain. If the Plesk default page appears, remove any separate document-root hosting for the domain or alias and make sure the domain is attached to the Node.js app.
-
-SSL checklist:
-
-- Enable SSL for both `opplexify.com` and `www.opplexify.com`.
-- Force HTTPS in Hostinger/Plesk.
-- Confirm the Node app receives `X-Forwarded-Proto: https`; otherwise canonical redirects can loop behind a proxy.
-- Keep `NEXT_PUBLIC_SITE_URL`, `WEB_ORIGIN`, and `CANONICAL_HOST` set to the apex domain shown above.
-
-Content checklist after deploy:
-
-- Header/footer/contact/legal pages show only `admin@opplexify.com`, `+1 (307) 443-5144`, and `Business mailing address: 525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States`.
-- LinkedIn is `https://www.linkedin.com/company/opplexify-llc/`.
-- No fake clients, testimonials, stats, team members, office locations, generic social links, crypto/payment wording, or placeholder portfolio labels appear.
-- `/team`, `/team/*`, `/work`, `/work/*`, and `/portfolio-grid` redirect to safe public pages.
 
 ## 4. Notes
 

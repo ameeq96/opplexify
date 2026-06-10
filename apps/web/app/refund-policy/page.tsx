@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
-import { opplexifyCompany } from "@adon/shared";
 import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
 import { seoMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
-  title: "Refund Policy - Opplexify LLC",
+  title: "Refund Policy - Opplexify",
   description:
-    "Refund, deposit, milestone, revision, cancellation, completed work, and delivery terms for Opplexify LLC custom software services.",
+    "Opplexify's refund policy for custom, project-based web, app, and SaaS development work, including deposits and milestone payments.",
   path: "/refund-policy"
 });
 
@@ -18,95 +17,100 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Opplexify LLC provides custom, project-based software development services. Because custom work is planned and built for a specific client, refunds depend on the stage of the project, the work completed, and the written proposal or contract."
-      },
-      {
-        type: "p",
-        text: `${opplexifyCompany.legalName} is a ${opplexifyCompany.legalDescription}. ${opplexifyCompany.mailingAddressLabel}: ${opplexifyCompany.mailingAddress}.`
+        text: "Opplexify provides custom, project-based development services. Because each project is bespoke work performed specifically for a client, this Refund Policy explains when payments are and are not refundable. By engaging our services and paying a deposit or invoice, you agree to this policy. It should be read together with our Terms of Service."
       }
     ]
   },
   {
-    heading: "2. Deposits",
+    heading: "2. Deposits are non-refundable",
     blocks: [
       {
         type: "p",
-        text: "A deposit may be required before work begins. Deposits reserve project time and may cover discovery, planning, setup, scheduling, and initial work."
+        text: "Most projects begin with an upfront deposit. The deposit reserves your start date in our schedule and covers the initial discovery, planning, and setup work we carry out before development begins."
       },
       {
         type: "list",
         items: [
-          "Deposits are generally non-refundable once work has been scheduled or started.",
-          "If cancellation occurs before any work begins, Opplexify LLC may review the request in good faith.",
-          "Any approved refund may deduct time already spent, administrative costs, and third-party costs."
+          "The deposit is non-refundable once work has been scheduled or started.",
+          "If you cancel before any work has begun, we may, at our discretion, refund part of the deposit after deducting time already spent on discovery and planning.",
+          "The deposit is applied toward the total project fee."
         ]
       }
     ]
   },
   {
-    heading: "3. Milestone payments",
+    heading: "3. Milestone-based payments",
     blocks: [
       {
         type: "p",
-        text: "Larger projects may be billed by milestone. Each milestone covers an agreed stage of work, such as planning, design, development, testing, deployment, or handover."
+        text: "Larger projects are invoiced in milestones, as set out in your quote or proposal. Each milestone payment covers a defined stage of completed work."
       },
       {
         type: "list",
         items: [
-          "Completed milestones are non-refundable.",
-          "Approved delivered work is non-refundable.",
-          "Work in progress at the time of cancellation may be billed based on work performed.",
-          "Unstarted milestones are not charged unless the written proposal says otherwise."
+          "Payments for completed and delivered milestones are non-refundable.",
+          "Work that is in progress at the time of cancellation is chargeable for the effort already performed.",
+          "Any unstarted milestones that have not yet been invoiced are not charged if you cancel before they begin."
         ]
       }
     ]
   },
   {
-    heading: "4. Revisions",
+    heading: "4. What is not refundable",
     blocks: [
       {
-        type: "p",
-        text: "Revision terms are defined in the written proposal. Revisions apply to agreed deliverables within scope. New features, major changes after approval, or changes outside the approved scope may require a separate quote."
+        type: "list",
+        items: [
+          "Work that has already been completed, delivered, or is in progress.",
+          "Deposits, once a project is scheduled or started.",
+          "Third-party costs we have paid on your behalf (for example domains, licenses, hosting, or paid plugins).",
+          "Change requests or additional scope that has already been delivered."
+        ]
       }
     ]
   },
   {
-    heading: "5. Cancellations",
+    heading: "5. How to request a refund or cancellation",
     blocks: [
       {
         type: "p",
-        text: `To cancel a project or request review of a payment, email ${opplexifyCompany.email} with your name, project details, invoice reference if available, and the reason for the request. Opplexify LLC will review the request based on completed work, scheduled work, third-party costs, and the written project terms.`
+        text: "If you wish to cancel a project or request consideration of a refund, email us at admin@opplexify.com with your project details and the reason for your request. We will review each request individually and in good faith, assess the work completed to date, and respond promptly."
       }
     ]
   },
   {
-    heading: "6. Completed work and delivery",
+    heading: "6. Disputes and chargebacks",
     blocks: [
       {
         type: "p",
-        text: "Final delivery may include deployment support, source files, documentation, handover notes, or access transfer depending on the written scope. Final delivery may be delayed until all agreed invoices are paid."
-      },
-      {
-        type: "p",
-        text: "Completed work, delivered files, approved milestones, and third-party costs are not refundable unless the written agreement states otherwise."
+        text: "If you are unhappy with any part of your project, please contact us first. We are committed to resolving concerns fairly and will work with you to find a reasonable solution. Filing a payment dispute or chargeback before contacting us can delay resolution; we ask that you raise any issue with us directly so we have the opportunity to address it."
       }
     ]
   },
   {
-    heading: "7. Third-party costs",
+    heading: "7. Refund processing",
     blocks: [
       {
         type: "p",
-        text: "Third-party costs such as hosting, domains, paid APIs, app store fees, licensed assets, plugins, tools, or external services are non-refundable once purchased or committed."
+        text: "Where a refund is approved, it will be issued using the original payment method where possible. Once processed, refunds are typically completed within a reasonable period, subject to the timelines of our payment processor and your bank."
       }
     ]
   },
   {
-    heading: "8. Contact",
+    heading: "8. Changes to this policy",
     blocks: [
       {
         type: "p",
-        text: `Refund or cancellation questions can be sent to ${opplexifyCompany.email}. ${opplexifyCompany.complianceNote}`
+        text: "We may update this Refund Policy from time to time. The current version is always available on this page, and the \"Last updated\" date reflects the most recent change. The policy in effect at the time you engage us applies to your project."
+      }
+    ]
+  },
+  {
+    heading: "9. Contact us",
+    blocks: [
+      {
+        type: "p",
+        text: "If you have any questions about this Refund Policy, contact us at admin@opplexify.com."
       }
     ]
   }
@@ -118,9 +122,9 @@ export default async function RefundPolicyPage() {
       <PageHero
         eyebrow="Legal"
         title="Refund Policy"
-        subtitle="How deposits, milestones, revisions, cancellations, completed work, and delivery terms are handled for custom software services."
+        subtitle="How refunds, deposits, and cancellations work for our custom, project-based development services."
       />
-      <LegalDoc lastUpdated="June 10, 2026" sections={sections} />
+      <LegalDoc lastUpdated="June 3, 2026" sections={sections} />
     </PublicShell>
   );
 }

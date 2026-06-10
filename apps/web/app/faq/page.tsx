@@ -1,22 +1,26 @@
 import type { Metadata } from "next";
-import { opplexifyCompany, opplexifyFaqs } from "@adon/shared";
 import { FaqList, PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
-import { seoMetadata } from "../../lib/seo";
+import { fetchApi, getSection, pageMetadata, type Faq, type Page } from "../../lib/api";
+import { absoluteUrl } from "../../lib/seo";
 
-export const metadata: Metadata = seoMetadata({
-  title: "FAQ - Opplexify LLC Software Development Services",
-  description:
-    "Answers about Opplexify LLC services, registration, remote work, project start, invoices, milestone billing, revisions, refunds, and compliance contact.",
-  path: "/faq"
-});
+export const revalidate = 300;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await fetchApi<Page | null>("/public/pages/faq", null);
+  return pageMetadata(page, "Web Development FAQ - Pricing, Process, SaaS, Apps & SEO", "/faq");
+}
 
 export default async function FaqPage() {
-  const faqs = opplexifyFaqs.map((faq, index) => ({ ...faq, id: String(index + 1) }));
+  const [page, faqs] = await Promise.all([
+    fetchApi<Page | null>("/public/pages/faq", null),
+    fetchApi<Faq[]>("/public/faqs", [])
+  ]);
+  const intro = getSection(page, "faq-intro");
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: opplexifyFaqs.map((faq) => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question",
       name: faq.question,
       acceptedAnswer: {
@@ -24,17 +28,12 @@ export default async function FaqPage() {
         text: faq.answer
       }
     })),
-    url: `${opplexifyCompany.website}/faq`
+    url: absoluteUrl("/faq")
   };
-
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-      <PageHero
-        eyebrow="FAQ"
-        title="Frequently Asked Questions"
-        subtitle="Clear answers about Opplexify LLC, project process, billing, revisions, refunds, and compliance contact."
-      />
+      <PageHero title={intro?.title ?? page?.title ?? "Web development questions about pricing, timelines and SEO"} subtitle={intro?.subtitle ?? page?.summary ?? "Answers about websites, full-stack web applications, SaaS development, mobile apps, admin dashboards, backend APIs, and launch workflows."} eyebrow="FAQ" />
       <section className="section">
         <div className="container rr-container-1650">
           <FaqList faqs={faqs} />

@@ -1,5 +1,4 @@
 import { DigitalAgencyRuntime } from "./DigitalAgencyRuntime";
-import { opplexifyCompany } from "@adon/shared";
 import { assetUrl, emptySite, fetchApi, getMenu, type MenuItem, type SitePayload } from "../../lib/api";
 import { TEMPLATE_ASSET_BASE as A, templateCssFiles } from "./templateAssets";
 import { footerServiceLinks, orderedSocialLinks, socialLabel } from "./templateRenderers";
@@ -44,9 +43,9 @@ function SideInfo({ site }: { site: SitePayload }) {
   const settings = site.settings.site ?? {};
   const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-dark.svg`);
   const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`);
-  const email = opplexifyCompany.email;
-  const phone = opplexifyCompany.phone;
-  const address = opplexifyCompany.mailingAddress;
+  const email = settings.email ?? "admin@opplexify.com";
+  const phone = settings.phone ?? "(505) 555-0125";
+  const address = settings.address ?? "Remote web development team";
 
   return (
     <>
@@ -80,7 +79,7 @@ function SideInfo({ site }: { site: SitePayload }) {
                   <span className="icon">
                     <i className="fa-solid fa-location-dot" />
                   </span>
-                  <span className="text">{opplexifyCompany.mailingAddressLabel}: {address}</span>
+                  <span className="text">{address}</span>
                 </div>
                 <div className="contact-item">
                   <span className="icon">
@@ -95,7 +94,7 @@ function SideInfo({ site }: { site: SitePayload }) {
                     <i className="fa-solid fa-phone" />
                   </span>
                   <span className="text">
-                    <a href={`tel:${opplexifyCompany.phoneHref}`}>{phone}</a>
+                    <a href={`tel:${phone.replace(/[^\d+]/g, "")}`}>{phone}</a>
                   </span>
                 </div>
               </div>
@@ -108,9 +107,8 @@ function SideInfo({ site }: { site: SitePayload }) {
   );
 }
 
-function MainMenu({ items: _items }: { items: MenuItem[] }) {
-  const allowedUrls = new Set(["/", "/about", "/portfolio", "/services", "/pricing", "/faq", "/contact"]);
-  const links = emptySite.menus[0].items.filter((item) => allowedUrls.has(item.url));
+function MainMenu({ items }: { items: MenuItem[] }) {
+  const links = items.length ? items : emptySite.menus[0].items;
 
   return (
     <nav className="main-menu">
@@ -164,10 +162,10 @@ function HomepageHeader({ site }: { site: SitePayload }) {
 }
 
 function HomepageFooter({ site }: { site: SitePayload }) {
-  const allowedUrls = new Set(["/", "/about", "/portfolio", "/services", "/pricing", "/faq", "/contact"]);
-  const companyItems = emptySite.menus[0].items.filter((item) => allowedUrls.has(item.url));
+  const companyItems = getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header");
+  const footer = site.settings.footer ?? {};
   const socialLinks = orderedSocialLinks(site.settings.social);
-  const serviceLinks = footerServiceLinks();
+  const serviceLinks = footerServiceLinks(footer);
 
   return (
     <footer className="footer-area">
@@ -177,11 +175,11 @@ function HomepageFooter({ site }: { site: SitePayload }) {
             <div className="footer-widget-box content">
               <div className="title-wrapper">
                 <h2 className="title rr_title_anim">
-                  Plan, build, <br /> and maintain <br /> business software
+                  {footer.headline ?? "Build a website,"} <br /> {footer.headlineLine2 ?? "app or SaaS product"} <br /> {footer.headlineLine3 ?? "that converts"}
                 </h2>
               </div>
               <a href="/contact" className="rr-btn-underline">
-                Request a Quote
+                {footer.ctaLabel ?? "Get a development quote"}
               </a>
             </div>
             <div className="footer-widget-box">
@@ -199,7 +197,7 @@ function HomepageFooter({ site }: { site: SitePayload }) {
             <div className="footer-widget-box">
               <h2 className="title">Social</h2>
               <ul className="footer-nav-list">
-                {socialLinks.map(([name, href]) => (
+                {(socialLinks.length ? socialLinks : [["linkedin", "https://www.linkedin.com/"]]).map(([name, href]) => (
                   <li key={name}>
                     <a href={String(href)}>{socialLabel(String(name))}</a>
                   </li>
@@ -240,7 +238,7 @@ function HomepageFooter({ site }: { site: SitePayload }) {
         <div className="copyright-area-inner">
           <div className="copyright-text">
             <p className="text">
-              {`Copyright 2026 ${opplexifyCompany.legalName}. All rights reserved.`}
+              {footer.copyright ?? "© 2026 Opplexify. All rights reserved."}
             </p>
           </div>
         </div>

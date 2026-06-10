@@ -100,7 +100,7 @@ export function createPublicRouter(cms = new CmsService()) {
   router.get(
     "/testimonials",
     asyncHandler(async (_req, res) => {
-      res.json([]);
+      res.json(await cms.listPublicTestimonials());
     })
   );
 

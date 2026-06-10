@@ -7,7 +7,8 @@ import {
   type Project,
   type Section,
   type Service,
-  type TeamMember
+  type TeamMember,
+  type Testimonial
 } from "../../lib/api";
 
 export function PageHero({
@@ -142,6 +143,24 @@ export function TeamGrid({ team }: { team: TeamMember[] }) {
           <h3>{member.name}</h3>
           <p>{member.role}</p>
         </Link>
+      ))}
+    </div>
+  );
+}
+
+export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
+  return (
+    <div className="grid">
+      {testimonials.map((item) => (
+        <article className="card" key={item.id}>
+          <p>{item.reviewText}</p>
+          <div>
+            <h3>{item.clientName}</h3>
+            <p>
+              {item.position} {item.company ? `at ${item.company}` : ""}
+            </p>
+          </div>
+        </article>
       ))}
     </div>
   );

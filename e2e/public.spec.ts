@@ -1,36 +1,22 @@
 import { API_BASE_URL, ADMIN_EMAIL, ADMIN_PASSWORD, assertNoHorizontalOverflow, assertNoNextOverlay, authHeaders, expect, test, waitForApi } from "./fixtures";
 import type { Page } from "@playwright/test";
 
-const companyEmail = "admin@opplexify.com";
-const companyPhone = "+1 (307) 443-5144";
-const companyAddress = "525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States";
-const companyLinkedIn = "https://www.linkedin.com/company/opplexify-llc/";
-
 const publicRoutes = [
-  { path: "/", marker: /Custom Websites, SaaS Platforms & Business Software Development/i },
-  { path: "/about", marker: /Wyoming-formed limited liability company/i },
-  { path: "/portfolio", marker: /Selected private client work is available upon request/i },
-  { path: "/services", marker: /Software Development Services/i },
-  { path: "/services/custom-website-development", marker: /Custom Website Development/i },
-  { path: "/pricing", marker: /Custom Software Development Pricing/i },
-  { path: "/contact", marker: /Request a Quote or Business Verification Contact/i },
+  { path: "/", marker: /Opplexify|SaaS|dashboard/i },
+  { path: "/about", marker: /A full-stack development team|websites, Next\.js web apps/i },
+  { path: "/portfolio", marker: /4K visuals|Web development portfolio/i },
+  { path: "/services", marker: /Web development services|Business Websites/i },
+  { path: "/contact", marker: /Hire Opplexify|Development Project Contact/i },
   { path: "/blog", marker: /Web development, SaaS and SEO insights/i },
-  { path: "/faq", marker: /Frequently Asked Questions/i },
-  { path: "/terms", marker: /Terms of Service/i },
-  { path: "/privacy", marker: /Privacy Policy/i },
-  { path: "/refund-policy", marker: /Refund Policy/i }
+  { path: "/faq", marker: /Web development FAQ|pricing, timelines and SEO/i },
+  { path: "/team", marker: /Full-stack development team/i },
+  { path: "/work", marker: /Case studies for websites/i },
+  { path: "/portfolio-grid", marker: /4K visuals|Web development portfolio/i },
+  { path: "/service", marker: /Web development services|Business Websites/i },
+  { path: "/team/ameeq-khan", marker: /Ameeq Khan|Full-Stack Product Lead/i },
+  { path: "/team/atiq-khan", marker: /Atiq Khan|SEO Planning/i },
+  { path: "/team/emmad-khan", marker: /Emmad Khan|Frontend Design/i }
 ];
-
-const redirectRoutes = [
-  { path: "/team", target: /\/about$/ },
-  { path: "/team/example", target: /\/about$/ },
-  { path: "/work", target: /\/portfolio$/ },
-  { path: "/work/example", target: /\/portfolio$/ },
-  { path: "/portfolio-grid", target: /\/portfolio$/ }
-];
-
-const forbiddenPublicText =
-  /since 2017|120\+|7\+|24\/7|Portfolio Visual|principal place of business|Website Client|SaaS Founder|Client logo|support@opplexify\.com|\+1 \(639\) 390-3194|\(505\) 555-0125|Cryptomus|crypto payments|ProfessionalService|LocalBusiness/i;
 
 const viewports = [
   { name: "desktop", width: 1440, height: 900 },
@@ -52,7 +38,6 @@ for (const viewport of viewports) {
       await page.waitForLoadState("load", { timeout: 15_000 }).catch(() => undefined);
 
       await expect(page.locator("body"), `${route.path} should show expected page content`).toContainText(route.marker);
-      await expect(page.locator("body"), `${route.path} should not show forbidden credibility claims`).not.toContainText(forbiddenPublicText);
       await assertNoNextOverlay(page);
       await assertNoHorizontalOverflow(page);
 
@@ -66,79 +51,38 @@ for (const viewport of viewports) {
   }
 }
 
-for (const route of redirectRoutes) {
-  test(`legacy route ${route.path} redirects`, async ({ page }) => {
-    await page.goto(route.path, { waitUntil: "domcontentloaded" });
-    await expect.poll(() => page.url(), { timeout: 10_000 }).toMatch(route.target);
-  });
-}
-
-test("contact details, social links and legal identity are consistent", async ({ page }) => {
+test("header, footer and social links are limited to approved navigation", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await expect(page.locator("header nav.main-menu a:visible")).toHaveText([
-    "Home",
-    "About",
-    "Portfolio",
-    "Services",
-    "Pricing",
-    "FAQ",
-    "Contact"
-  ]);
+  await expect(page.locator("header nav.main-menu a:visible")).toHaveText(["Home", "About", "Portfolio", "Services", "Contact Us"]);
 
   const socialLinks = page.locator(".footer-widget-box", { hasText: "Social" }).locator("a");
-  await expect(socialLinks).toHaveText(["LinkedIn"]);
-  await expect(socialLinks.first()).toHaveAttribute("href", companyLinkedIn);
-
-  await expect(page.locator("body")).toContainText("Opplexify LLC");
-  await expect(page.locator("body")).toContainText(companyEmail);
-  await expect(page.locator("body")).toContainText(companyPhone);
-  await expect(page.locator("body")).toContainText("Business mailing address");
-  await expect(page.locator("body")).toContainText(companyAddress);
-});
-
-test("schema, robots and sitemap use verification-safe public data", async ({ page, request }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  const schemaText = await page.locator('script[type="application/ld+json"]').allTextContents();
-  const schema = schemaText.join("\n");
-  expect(schema).toContain("Organization");
-  expect(schema).toContain("Opplexify LLC");
-  expect(schema).toContain(companyEmail);
-  expect(schema).toContain(companyPhone);
-  expect(schema).toContain(companyLinkedIn);
-  expect(schema).not.toContain("LocalBusiness");
-  expect(schema).not.toContain("ProfessionalService");
-
-  const robots = await request.get("/robots.txt");
-  expect(robots.ok()).toBeTruthy();
-  const robotsText = await robots.text();
-  expect(robotsText).toContain("Sitemap:");
-  expect(robotsText).toContain("Disallow: /team");
-  expect(robotsText).toContain("Disallow: /work");
-
-  const sitemap = await request.get("/sitemap.xml");
-  expect(sitemap.ok()).toBeTruthy();
-  const sitemapText = await sitemap.text();
-  expect(sitemapText).toContain("https://opplexify.com/services/custom-website-development");
-  expect(sitemapText).not.toContain("/team");
-  expect(sitemapText).not.toContain("/work");
+  await expect(socialLinks).toContainText(["Instagram", "Facebook", "Twitter", "LinkedIn"]);
+  await expect(page.locator("body")).not.toContainText(/Awwwards|Envato|Behance|Dribbble|YouTube/i);
 });
 
 async function assertPortfolioExperience(page: Page, viewport: { width: number; height: number }) {
   await page.setViewportSize(viewport);
   await page.goto("/portfolio", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".loader-wrap")).toHaveCount(0);
-  await expect(page.locator("body")).toContainText("Selected private client work is available upon request");
-  await expect(page.locator("body")).not.toContainText(/Portfolio Visual|Website Client|SaaS Founder|4K visuals/i);
+  await expect(page.locator(".opplexify-portfolio-hero")).toContainText(/\d+ 4K visuals/);
+  const collageImages = page.locator(".opplexify-portfolio-hero__collage img");
+  await expect(collageImages).toHaveCount(3);
+  const collageImagesLoaded = await collageImages.evaluateAll((images: HTMLImageElement[]) =>
+    images.every((image) => image.complete && image.naturalWidth > 0)
+  );
+  expect(collageImagesLoaded).toBeTruthy();
   await assertNoHorizontalOverflow(page);
 
   const filterButtons = page.locator(".portfolio-filter-bar button");
   await expect(filterButtons.first()).toHaveText("All");
   await expect(filterButtons.first()).toHaveAttribute("aria-pressed", "true");
 
-  const cards = page.locator(".opplexify-portfolio-wrapper-box .card-wrap, .portfolio-editorial-card");
-  await expect.poll(async () => cards.count(), { timeout: 10_000 }).toBeGreaterThan(0);
+  const cards = page.locator(".opplexify-portfolio-wrapper-box .card-wrap");
+  await expect(cards).toHaveCount(9);
+  await expect(page.locator('[data-image*="33-0041"], [data-image*="33-0042"]')).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText(/Friends Port|Repo Management/i);
 
   const firstImageLoaded = await cards
     .first()
@@ -146,17 +90,86 @@ async function assertPortfolioExperience(page: Page, viewport: { width: number; 
     .evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0);
   expect(firstImageLoaded).toBeTruthy();
 
+  const firstTagButton = filterButtons.nth(1);
+  const firstTag = (await firstTagButton.textContent())?.trim() ?? "";
+  await firstTagButton.click();
+  await expect(firstTagButton).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(async () => cards.count(), { timeout: 10_000 }).toBeGreaterThan(0);
+  const hasMismatchedTag = await cards.evaluateAll(
+    (nodes, tag) => nodes.some((node) => node.getAttribute("data-tag") !== tag),
+    firstTag
+  );
+  expect(hasMismatchedTag).toBe(false);
+  await assertNoHorizontalOverflow(page);
+
+  await filterButtons.first().click();
+  await expect(filterButtons.first()).toHaveAttribute("aria-pressed", "true");
+  await expect(cards).toHaveCount(9);
+  await assertNoHorizontalOverflow(page);
+  await page.locator(".portfolio-scroll-pagination").scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: /load more work/i }).click();
+  await expect.poll(async () => cards.count(), { timeout: 15_000 }).toBeGreaterThan(9);
+  await assertNoHorizontalOverflow(page);
+
   const brokenImages = await page.evaluate(() =>
     Array.from(document.images)
       .filter((image) => image.complete && image.naturalWidth === 0)
       .map((image) => image.currentSrc || image.src)
   );
   expect(brokenImages).toEqual([]);
+  await expect(page.locator(".portfolio-video-item video").first()).toBeVisible();
 }
 
-test("portfolio grid uses neutral labels across viewports", async ({ page }) => {
+test("portfolio grid scroll pagination, filters and media work across viewports", async ({ page }) => {
   for (const viewport of viewports) {
     await assertPortfolioExperience(page, { width: viewport.width, height: viewport.height });
+  }
+});
+
+test("team portraits render as non-stretched circles on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/team", { waitUntil: "domcontentloaded" });
+
+  const gridPortrait = page.locator(".team-grid .card-media").first();
+  await expect(gridPortrait).toBeVisible();
+  const gridStyle = await gridPortrait.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = window.getComputedStyle(element);
+    const imageStyle = window.getComputedStyle(element.querySelector("img")!);
+    return {
+      width: rect.width,
+      height: rect.height,
+      radius: Number.parseFloat(style.borderTopLeftRadius),
+      objectFit: imageStyle.objectFit,
+      objectPosition: imageStyle.objectPosition
+    };
+  });
+  expect(Math.abs(gridStyle.width - gridStyle.height)).toBeLessThanOrEqual(2);
+  expect(gridStyle.radius).toBeGreaterThanOrEqual(gridStyle.width / 2 - 2);
+  expect(gridStyle.objectFit).toBe("cover");
+  expect(gridStyle.objectPosition).toMatch(/top|0%/i);
+
+  for (const route of ["/team/ameeq-khan", "/team/atiq-khan", "/team/emmad-khan"]) {
+    await page.goto(route, { waitUntil: "domcontentloaded" });
+    const portrait = page.locator(".team-detail-portrait");
+    await expect(portrait).toBeVisible();
+    const detailStyle = await portrait.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = window.getComputedStyle(element);
+      const imageStyle = window.getComputedStyle(element.querySelector("img")!);
+      return {
+        width: rect.width,
+        height: rect.height,
+        radius: Number.parseFloat(style.borderTopLeftRadius),
+        objectFit: imageStyle.objectFit,
+        objectPosition: imageStyle.objectPosition
+      };
+    });
+    expect(Math.abs(detailStyle.width - detailStyle.height)).toBeLessThanOrEqual(2);
+    expect(detailStyle.radius).toBeGreaterThanOrEqual(detailStyle.width / 2 - 2);
+    expect(detailStyle.objectFit).toBe("cover");
+    expect(detailStyle.objectPosition).toMatch(/top|0%/i);
+    await assertNoHorizontalOverflow(page);
   }
 });
 
@@ -169,17 +182,18 @@ test("contact form submits and creates an admin-visible message", async ({ page,
 
   await page.goto("/contact", { waitUntil: "domcontentloaded" });
   await expect(page.locator("#contact__form")).toBeVisible();
+  await page.waitForFunction(() => Boolean((document.getElementById("contact__form") as HTMLFormElement | null)?.dataset.opplexifyBound));
 
   await page.locator('#contact__form input[name="name"]').fill("QA Test User");
   await page.locator('#contact__form input[name="email"]').fill(email);
-  await page.locator('#contact__form input[name="phone"]').fill("+1 307 443 5144");
+  await page.locator('#contact__form input[name="phone"]').fill("+1 555 0199");
   await page.locator('#contact__form input[name="subject"]').fill(subject);
-  await page.locator('#contact__form textarea[name="message"]').fill("QA Test message submitted through the Playwright contact form.");
+  await page.locator('#contact__form input[name="message"]').fill("QA Test message submitted through the Playwright contact form.");
 
   const contactResponse = page.waitForResponse((response) => response.url().includes("/public/contact") && response.request().method() === "POST");
   await page.locator("#contact__form").evaluate((form: HTMLFormElement) => form.requestSubmit());
   expect((await contactResponse).ok()).toBeTruthy();
-  await expect(page.locator("#contact__form .notice")).toContainText("Message sent");
+  await expect(page.locator("#contact__form .ajax-response")).toContainText("Message sent successfully.");
 
   const login = await request.post(`${API_BASE_URL}/auth/login`, {
     data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD }

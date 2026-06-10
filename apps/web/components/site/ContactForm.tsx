@@ -39,7 +39,7 @@ export function ContactForm() {
 
       if (!response.ok) throw new Error("Unable to send message");
       setForm(initial);
-      setStatus("Message sent. Opplexify LLC will reply soon.");
+      setStatus("Message sent. The team will reply soon.");
     } catch {
       setStatus("Could not send right now. Check the API server and try again.");
     } finally {
@@ -48,15 +48,14 @@ export function ContactForm() {
   }
 
   return (
-    <form className="form" id="contact__form" onSubmit={submit}>
+    <form className="form" onSubmit={submit}>
       <label>
         Name
-        <input name="name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
+        <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
       </label>
       <label>
         Email
         <input
-          name="email"
           type="email"
           value={form.email}
           onChange={(event) => setForm({ ...form, email: event.target.value })}
@@ -65,16 +64,15 @@ export function ContactForm() {
       </label>
       <label>
         Phone
-        <input name="phone" value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} />
+        <input value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} />
       </label>
       <label>
         Subject
-        <input name="subject" value={form.subject} onChange={(event) => setForm({ ...form, subject: event.target.value })} />
+        <input value={form.subject} onChange={(event) => setForm({ ...form, subject: event.target.value })} />
       </label>
       <label>
         Message
         <textarea
-          name="message"
           value={form.message}
           onChange={(event) => setForm({ ...form, message: event.target.value })}
           required
