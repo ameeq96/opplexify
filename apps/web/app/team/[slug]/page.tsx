@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { PageHero } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
 import { assetUrl, fetchApi, pageMetadata, type TeamMember } from "../../../lib/api";
-import { absoluteUrl, siteUrl } from "../../../lib/seo";
+import { LEGAL_NAME, absoluteUrl, siteUrl } from "../../../lib/seo";
 
 export const revalidate = 300;
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props) {
           title: member.seoTitle ?? `${member.name} - ${member.role}`,
           summary:
             member.seoDescription ??
-            `${member.bio ?? member.role} Opplexify team member contributing to websites, SaaS platforms, mobile apps, dashboards, backend APIs, and digital product launches.`,
+            `${member.bio ?? member.role} Opplexify LLC profile for custom software development, websites, SaaS platforms, dashboards, mobile apps, APIs, and automations.`,
           ogImage: member.ogImage ?? member.image
         }
       : null,
@@ -40,6 +40,7 @@ export default async function TeamDetailPage({ params }: Props) {
     worksFor: {
       "@type": "Organization",
       name: "Opplexify",
+      legalName: LEGAL_NAME,
       url: siteUrl()
     },
     url: absoluteUrl(`/team/${member.slug}`)

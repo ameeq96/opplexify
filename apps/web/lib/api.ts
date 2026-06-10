@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
-import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_NAME, seoMetadata } from "./seo";
+import {
+  BUSINESS_EMAIL,
+  BUSINESS_MAILING_ADDRESS,
+  BUSINESS_PHONE,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+  LINKEDIN_URL,
+  SITE_NAME,
+  seoMetadata
+} from "./seo";
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
 
 function apiEndpoint(path: string) {
   if (typeof window !== "undefined") return `${API_URL}${path}`;
-  const internalBase = (process.env.INTERNAL_API_URL || API_URL || `http://127.0.0.1:${process.env.PORT || 4000}`).replace(/\/+$/, "");
+  const internalBase = (process.env.INTERNAL_API_URL || API_URL || `http://127.0.0.1:${process.env.API_PORT || 4000}`).replace(/\/+$/, "");
   return `${internalBase}${path}`;
 }
 
@@ -243,10 +252,15 @@ export const emptySite: SitePayload = {
       description: DEFAULT_DESCRIPTION,
       logoLight: "/template-assets/dark/assets/imgs/logo/opplexify-logo-light.svg",
       logoDark: "/template-assets/dark/assets/imgs/logo/opplexify-logo-dark.svg",
-      email: "admin@opplexify.com"
+      email: BUSINESS_EMAIL,
+      phone: BUSINESS_PHONE,
+      address: BUSINESS_MAILING_ADDRESS
     },
-    footer: { text: "Opplexify builds SEO-friendly websites, SaaS platforms, mobile apps, admin dashboards, and backend systems for serious product launches." },
-    social: {}
+    footer: {
+      text: DEFAULT_DESCRIPTION,
+      copyright: "Copyright 2026 Opplexify LLC."
+    },
+    social: { linkedin: LINKEDIN_URL }
   },
   menus: [
     {

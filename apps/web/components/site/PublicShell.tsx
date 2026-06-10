@@ -1,7 +1,8 @@
 import { DigitalAgencyRuntime } from "./DigitalAgencyRuntime";
 import { assetUrl, emptySite, fetchApi, getMenu, type MenuItem, type SitePayload } from "../../lib/api";
+import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE, BUSINESS_PHONE_TEL, LINKEDIN_URL } from "../../lib/seo";
 import { TEMPLATE_ASSET_BASE as A, templateCssFiles } from "./templateAssets";
-import { footerServiceLinks, orderedSocialLinks, socialLabel } from "./templateRenderers";
+import { footerContactInfo, footerCopyright, footerServiceLinks } from "./templateRenderers";
 
 function renderLoaderLetters(text = "Opplexify") {
   return text.split("").map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>);
@@ -43,9 +44,9 @@ function SideInfo({ site }: { site: SitePayload }) {
   const settings = site.settings.site ?? {};
   const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-dark.svg`);
   const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`);
-  const email = settings.email ?? "admin@opplexify.com";
-  const phone = settings.phone ?? "(505) 555-0125";
-  const address = settings.address ?? "Remote web development team";
+  const email = settings.email ?? BUSINESS_EMAIL;
+  const phone = settings.phone ?? BUSINESS_PHONE;
+  const address = settings.address ?? BUSINESS_MAILING_ADDRESS;
 
   return (
     <>
@@ -94,7 +95,7 @@ function SideInfo({ site }: { site: SitePayload }) {
                     <i className="fa-solid fa-phone" />
                   </span>
                   <span className="text">
-                    <a href={`tel:${phone.replace(/[^\d+]/g, "")}`}>{phone}</a>
+                    <a href={`tel:${phone.replace(/[^\d+]/g, "") || BUSINESS_PHONE_TEL}`}>{phone}</a>
                   </span>
                 </div>
               </div>
@@ -164,8 +165,8 @@ function HomepageHeader({ site }: { site: SitePayload }) {
 function HomepageFooter({ site }: { site: SitePayload }) {
   const companyItems = getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header");
   const footer = site.settings.footer ?? {};
-  const socialLinks = orderedSocialLinks(site.settings.social);
   const serviceLinks = footerServiceLinks(footer);
+  const contact = footerContactInfo(site);
 
   return (
     <footer className="footer-area">
@@ -175,7 +176,7 @@ function HomepageFooter({ site }: { site: SitePayload }) {
             <div className="footer-widget-box content">
               <div className="title-wrapper">
                 <h2 className="title rr_title_anim">
-                  {footer.headline ?? "Build a website,"} <br /> {footer.headlineLine2 ?? "app or SaaS product"} <br /> {footer.headlineLine3 ?? "that converts"}
+                  {footer.headline ?? "Custom software,"} <br /> {footer.headlineLine2 ?? "websites and SaaS"} <br /> {footer.headlineLine3 ?? "built clearly"}
                 </h2>
               </div>
               <a href="/contact" className="rr-btn-underline">
@@ -190,16 +191,6 @@ function HomepageFooter({ site }: { site: SitePayload }) {
                     <a href={item.url} target={item.target ?? undefined}>
                       {item.label}
                     </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="footer-widget-box">
-              <h2 className="title">Social</h2>
-              <ul className="footer-nav-list">
-                {(socialLinks.length ? socialLinks : [["linkedin", "https://www.linkedin.com/"]]).map(([name, href]) => (
-                  <li key={name}>
-                    <a href={String(href)}>{socialLabel(String(name))}</a>
                   </li>
                 ))}
               </ul>
@@ -231,6 +222,20 @@ function HomepageFooter({ site }: { site: SitePayload }) {
                 </li>
               </ul>
             </div>
+            <div className="footer-widget-box">
+              <h2 className="title">Contact</h2>
+              <ul className="footer-nav-list footer-contact-list">
+                <li>
+                  <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                </li>
+                <li>
+                  <a href={`tel:${contact.tel}`}>{contact.phone}</a>
+                </li>
+                <li>
+                  <span>{contact.address}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -238,9 +243,12 @@ function HomepageFooter({ site }: { site: SitePayload }) {
         <div className="copyright-area-inner">
           <div className="copyright-text">
             <p className="text">
-              {footer.copyright ?? "© 2026 Opplexify. All rights reserved."}
+              {footerCopyright(footer)}
             </p>
           </div>
+          <a className="copyright-social" href={LINKEDIN_URL} aria-label="Opplexify on LinkedIn">
+            <i className="fa-brands fa-linkedin-in" />
+          </a>
         </div>
       </div>
     </footer>

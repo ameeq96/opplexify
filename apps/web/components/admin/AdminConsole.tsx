@@ -1032,17 +1032,17 @@ function isEmptyContent(value: any) {
 function defaultSectionContent(type: string) {
   if (type === "hero") {
     return {
-      eyebrow: "Full-stack web development agency",
+      eyebrow: "Wyoming-formed software development company",
       headline: "Page headline",
-      primaryCta: { label: "Primary action", href: "/contact" },
-      secondaryCta: { label: "Secondary action", href: "/portfolio" },
+      primaryCta: { label: "Request a Quote", href: "/contact" },
+      secondaryCta: { label: "Book a Consultation", href: "/contact" },
       metaItems: []
     };
   }
   if (type === "pricing") return { eyebrow: "Pricing", items: [] };
   if (type === "work-showcase") return { eyebrow: "Portfolio videos", limit: 4, cta: { label: "Browse all work", href: "/portfolio" }, fallbackItems: [] };
-  if (type === "service-showcase") return { mockupLabel: "Development", mockupCta: { label: "Explore", href: "/services" } };
-  if (type === "team-showcase") return { limit: 3 };
+  if (type === "service-showcase") return { mockupLabel: "Development", mockupCta: { label: "Request a Quote", href: "/contact" } };
+  if (type === "team-showcase") return { limit: 1 };
   if (type === "logo-strip") return { logos: [] };
   if (type === "capability-list") return { items: [] };
   if (type === "stats") return { items: [] };
@@ -1398,7 +1398,7 @@ function SectionContentEditor({
           label="Logos"
           items={asArray(content.logos)}
           mediaItems={mediaItems}
-          blankItem={{ image: "", lightImage: "", alt: "Client logo" }}
+          blankItem={{ image: "", lightImage: "", alt: "Private project category" }}
           fields={[
             { name: "image", label: "Dark mode image", type: "media" },
             { name: "lightImage", label: "Light mode image", type: "media" },

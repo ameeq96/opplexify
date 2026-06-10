@@ -2,71 +2,52 @@ import type { Metadata } from "next";
 import { StaticTemplatePage } from "../../components/site/StaticTemplatePage";
 import { contactHtml } from "../../components/site/templateHtml";
 import { emptySite, fetchApi, getSection, pageMetadata, type Page, type SitePayload } from "../../lib/api";
-import { absoluteUrl, siteUrl } from "../../lib/seo";
+import {
+  BUSINESS_EMAIL,
+  BUSINESS_MAILING_ADDRESS,
+  BUSINESS_PHONE,
+  LEGAL_NAME,
+  LINKEDIN_URL,
+  absoluteUrl,
+  siteUrl
+} from "../../lib/seo";
 
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/contact", null);
-  return pageMetadata(page, "Contact Opplexify - Hire Web, SaaS & App Developers", "/contact");
+  return pageMetadata(page, "Contact Opplexify LLC - Software Development Inquiries", "/contact");
 }
 
 const contactPageHtml = contactHtml
   .replace(
     /<h2 class="page-title ">Let’s <span>talk<\/span><\/h2>/,
-    `<h1 class="page-title ">Hire <span>Opplexify</span></h1>`
+    `<h1 class="page-title ">Contact <span>Opplexify LLC</span></h1>`
   )
   .replace(
     /Let's work together\. feel free to drop ua line <br>\s*about your project\./,
-    "Tell us about your website, web app, SaaS platform, mobile app, admin dashboard, or backend API project."
+    "Tell us about your website, SaaS platform, mobile app, dashboard, backend API, or automation project. For business verification or compliance inquiries, contact admin@opplexify.com."
   )
-  .replace(/Direct Contact/g, "Development Project Contact")
+  .replace(/Direct Contact/g, "Business Contact")
   .replace(/The topic you want to talk/g, "Website, SaaS, mobile app, dashboard, or API project")
   .replace(/Write your message\*/g, "Share your goals, timeline, features, budget, and launch requirements")
-  .replace(/<h3 class="title"> Offices <br> world-wide\s*<\/h3>/, `<h3 class="title"> Remote <br> development team</h3>`)
-  .replace(/<h3 class="title">Montreal<\/h3>/g, `<h3 class="title">Website Development</h3>`)
-  .replace(/<h3 class="title">Toronto<\/h3>/g, `<h3 class="title">SaaS Development</h3>`)
-  .replace(/<h3 class="title">New York<\/h3>/g, `<h3 class="title">Mobile App Development</h3>`)
-  .replace(/438 McGill street #200[\s\S]*?H2Y 2G1/g, "SEO-friendly business websites, landing pages, and service pages built to convert visitors into leads.")
-  .replace(/67 Mowat Avenue #433[\s\S]*?M6K 3E3/g, "Subscription-ready SaaS platforms, admin dashboards, secure APIs, and database-backed workflows.")
-  .replace(/407 N\. Maple Drive, Ground 1[\s\S]*?90210/g, "Mobile apps, web apps, backend systems, launch support, and ongoing product improvements.")
+  .replace(/<h3 class="title"> Offices <br> world-wide\s*<\/h3>/, `<h3 class="title"> Business <br> contact</h3>`)
+  .replace(/<h3 class="title">Montreal<\/h3>/g, `<h3 class="title">Business Mailing Address</h3>`)
+  .replace(/<h3 class="title">Toronto<\/h3>/g, `<h3 class="title">Business Email</h3>`)
+  .replace(/<h3 class="title">New York<\/h3>/g, `<h3 class="title">Business Phone</h3>`)
+  .replace(/438 McGill street #200[\s\S]*?H2Y 2G1/g, BUSINESS_MAILING_ADDRESS)
+  .replace(/67 Mowat Avenue #433[\s\S]*?M6K 3E3/g, `Email: ${BUSINESS_EMAIL}`)
+  .replace(/407 N\. Maple Drive, Ground 1[\s\S]*?90210/g, `Phone: ${BUSINESS_PHONE}`)
   .replace(
     /<div class="socail-media">[\s\S]*?<div class="direct-contact">/,
     `<div class="socail-media">
                                             <div class="socail-media__item">
-                                                <a href="https://www.instagram.com/" class="icon">
-                                                    <i class="fa-brands fa-instagram"></i>
-                                                </a>
-                                                <div class="text">
-                                                    <a href="https://www.instagram.com/">Instagram</a>
-                                                    <span>@opplexify</span>
-                                                </div>
-                                            </div>
-                                            <div class="socail-media__item">
-                                                <a href="https://www.facebook.com/" class="icon">
-                                                    <i class="fa-brands fa-facebook-f"></i>
-                                                </a>
-                                                <div class="text">
-                                                    <a href="https://www.facebook.com/">Facebook</a>
-                                                    <span>@opplexify</span>
-                                                </div>
-                                            </div>
-                                            <div class="socail-media__item">
-                                                <a href="https://x.com/" class="icon">
-                                                    <i class="fa-brands fa-twitter"></i>
-                                                </a>
-                                                <div class="text">
-                                                    <a href="https://x.com/">Twitter</a>
-                                                    <span>@opplexify</span>
-                                                </div>
-                                            </div>
-                                            <div class="socail-media__item">
-                                                <a href="https://www.linkedin.com/" class="icon">
+                                                <a href="${LINKEDIN_URL}" class="icon">
                                                     <i class="fa-brands fa-linkedin-in"></i>
                                                 </a>
                                                 <div class="text">
-                                                    <a href="https://www.linkedin.com/">LinkedIn</a>
-                                                    <span>@opplexify</span>
+                                                    <a href="${LINKEDIN_URL}">LinkedIn</a>
+                                                    <span>Opplexify LLC</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -80,14 +61,17 @@ const contactJsonLd = {
   name: "Contact Opplexify",
   url: absoluteUrl("/contact"),
   description:
-    "Contact Opplexify to hire a full-stack development team for websites, SaaS platforms, mobile apps, admin dashboards, and backend APIs.",
+    "Contact Opplexify LLC for custom website, SaaS, mobile app, dashboard, backend API, and automation development inquiries.",
   isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() },
   mainEntity: {
-    "@type": "ProfessionalService",
+    "@type": "Organization",
     name: "Opplexify",
+    legalName: LEGAL_NAME,
     url: siteUrl(),
-    email: "admin@opplexify.com",
-    areaServed: "Worldwide"
+    email: BUSINESS_EMAIL,
+    telephone: BUSINESS_PHONE,
+    sameAs: [LINKEDIN_URL],
+    address: BUSINESS_MAILING_ADDRESS
   }
 };
 
@@ -100,16 +84,13 @@ function escapeHtml(value: unknown) {
 }
 
 function socialEntries(site: SitePayload) {
-  return Object.entries(site.settings.social ?? {}).filter(([, href]) => Boolean(href));
+  return Object.entries(site.settings.social ?? {}).filter(([name, href]) => name.toLowerCase() === "linkedin" && Boolean(href));
 }
 
 function socialIcon(name: string) {
   const key = name.toLowerCase();
-  if (key.includes("facebook")) return "fa-facebook-f";
-  if (key.includes("twitter") || key === "x") return "fa-twitter";
   if (key.includes("linkedin")) return "fa-linkedin-in";
-  if (key.includes("youtube")) return "fa-youtube";
-  return "fa-instagram";
+  return "fa-linkedin-in";
 }
 
 function socialLabel(name: string) {
@@ -120,14 +101,14 @@ function socialLabel(name: string) {
 
 function renderSocialHtml(site: SitePayload) {
   const entries = socialEntries(site);
-  if (!entries.length) return "";
+  const links = entries.length ? entries : [["linkedin", LINKEDIN_URL]];
 
   return `<div class="socail-media">
-    ${entries
+    ${links
       .map(
-        ([name, href]) => `<div class="socail-media__item">
-          <a href="${escapeHtml(href)}" class="icon"><i class="fa-brands ${escapeHtml(socialIcon(name))}"></i></a>
-          <div class="text"><a href="${escapeHtml(href)}">${escapeHtml(socialLabel(name))}</a><span>@opplexify</span></div>
+        ([name]) => `<div class="socail-media__item">
+          <a href="${escapeHtml(LINKEDIN_URL)}" class="icon"><i class="fa-brands ${escapeHtml(socialIcon(name))}"></i></a>
+          <div class="text"><a href="${escapeHtml(LINKEDIN_URL)}">${escapeHtml(socialLabel(name))}</a><span>Opplexify LLC</span></div>
         </div>`
       )
       .join("")}
@@ -140,9 +121,9 @@ function applyContactCms(html: string, page: Page | null, site: SitePayload) {
   const siteSettings = site.settings.site ?? {};
   const title = intro?.title ?? page?.title;
   const subtitle = intro?.subtitle ?? page?.summary;
-  const email = contactInfo?.content?.email ?? siteSettings.email;
-  const phone = contactInfo?.content?.phone ?? siteSettings.phone;
-  const address = contactInfo?.content?.address ?? siteSettings.address;
+  const email = contactInfo?.content?.email ?? siteSettings.email ?? BUSINESS_EMAIL;
+  const phone = contactInfo?.content?.phone ?? siteSettings.phone ?? BUSINESS_PHONE;
+  const address = contactInfo?.content?.address ?? siteSettings.address ?? BUSINESS_MAILING_ADDRESS;
 
   let rendered = html
     .replace(/<h1 class="page-title ">[\s\S]*?<\/h1>/, title ? `<h1 class="page-title ">${escapeHtml(title)}</h1>` : "$&")
@@ -160,7 +141,9 @@ function applyContactCms(html: string, page: Page | null, site: SitePayload) {
   }
   if (address) {
     rendered = rendered.replace(/Remote <br> development team/g, "Project <br> contact");
-    rendered = rendered.replace(/SEO-friendly business websites, landing pages, and service pages built to convert visitors into leads\./, escapeHtml(address));
+    rendered = rendered.replace(BUSINESS_MAILING_ADDRESS, escapeHtml(address));
+    rendered = rendered.replace(`Email: ${BUSINESS_EMAIL}`, `Email: ${escapeHtml(email)}`);
+    rendered = rendered.replace(`Phone: ${BUSINESS_PHONE}`, `Phone: ${escapeHtml(phone)}`);
   }
 
   return rendered;

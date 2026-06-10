@@ -1,11 +1,21 @@
 import type { Metadata, Viewport } from "next";
 import {
   absoluteUrl,
+  BUSINESS_ADDRESS_COUNTRY,
+  BUSINESS_ADDRESS_LOCALITY,
+  BUSINESS_ADDRESS_REGION,
+  BUSINESS_EMAIL,
+  BUSINESS_PHONE,
+  BUSINESS_POSTAL_CODE,
+  BUSINESS_STREET_ADDRESS,
+  COMPANY_DESCRIPTION,
   DEFAULT_DESCRIPTION,
   DEFAULT_KEYWORDS,
   DEFAULT_OG_IMAGE,
   DEFAULT_OG_IMAGE_ALT,
   DEFAULT_TITLE,
+  LEGAL_NAME,
+  LINKEDIN_URL,
   metadataBaseUrl,
   SITE_LOCALE,
   SITE_NAME,
@@ -81,42 +91,49 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const configuredSocialLinks = [
-    process.env.NEXT_PUBLIC_INSTAGRAM_URL,
-    process.env.NEXT_PUBLIC_FACEBOOK_URL,
-    process.env.NEXT_PUBLIC_X_URL,
-    process.env.NEXT_PUBLIC_LINKEDIN_URL
-  ].filter((url): url is string => Boolean(url && /^https?:\/\//i.test(url)));
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
-    legalName: "Opplexify",
+    legalName: LEGAL_NAME,
     url: siteUrl(),
     logo: absoluteUrl("/template-assets/dark/assets/imgs/logo/opplexify-logo-light.svg"),
-    email: "admin@opplexify.com",
-    description: DEFAULT_DESCRIPTION,
-    ...(configuredSocialLinks.length ? { sameAs: configuredSocialLinks } : {}),
+    email: BUSINESS_EMAIL,
+    telephone: BUSINESS_PHONE,
+    foundingDate: "2026-05-28",
+    description: COMPANY_DESCRIPTION,
+    sameAs: [LINKEDIN_URL],
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: BUSINESS_STREET_ADDRESS,
+      addressLocality: BUSINESS_ADDRESS_LOCALITY,
+      addressRegion: BUSINESS_ADDRESS_REGION,
+      postalCode: BUSINESS_POSTAL_CODE,
+      addressCountry: BUSINESS_ADDRESS_COUNTRY
+    },
     contactPoint: {
       "@type": "ContactPoint",
-      contactType: "customer support",
-      email: "admin@opplexify.com",
+      contactType: "business verification and project inquiries",
+      email: BUSINESS_EMAIL,
+      telephone: BUSINESS_PHONE,
       areaServed: "Worldwide",
       availableLanguage: ["English"]
     },
     knowsAbout: [
-      "Next.js web development",
+      "custom website development",
       "SaaS platform development",
       "mobile app development",
-      "admin dashboard development",
-      "NestJS API development"
+      "dashboard and admin panel development",
+      "backend API development",
+      "workflow automation"
     ],
     makesOffer: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Website development services" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Full-stack web application development" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom website development" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "SaaS platform development" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Dashboard and admin panel development" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobile app development" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Admin dashboard development" } }
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Backend API development" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Automation and integrations" } }
     ]
   };
   const websiteJsonLd = {

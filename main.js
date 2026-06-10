@@ -9,6 +9,9 @@ const port = Number(process.env.PORT || process.env.APP_PORT || process.env.NODE
 const host = process.env.HOST || "0.0.0.0";
 const dev = process.env.NODE_ENV !== "production";
 const webDir = path.join(__dirname, "apps/web");
+
+process.env.INTERNAL_API_URL = process.env.INTERNAL_API_URL || `http://127.0.0.1:${port}`;
+
 const nextApp = next({ dev, dir: webDir });
 const handle = nextApp.getRequestHandler();
 

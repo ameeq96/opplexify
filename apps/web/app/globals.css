@@ -2091,6 +2091,79 @@ video {
   overflow-wrap: anywhere;
 }
 
+.opplexify-template-page .footer-contact-list span,
+.digital-agency-template .footer-contact-list span {
+  display: block;
+  max-width: 300px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.opplexify-template-page .copyright-area-inner,
+.digital-agency-template .copyright-area-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: min(100% - 80px, 1650px);
+  margin-inline: auto;
+}
+
+.opplexify-template-page .copyright-text .text,
+.digital-agency-template .copyright-text .text {
+  margin: 0;
+  text-align: left;
+}
+
+.opplexify-template-page .copyright-social,
+.digital-agency-template .copyright-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.opplexify-template-page .copyright-social:hover,
+.digital-agency-template .copyright-social:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #050505;
+}
+
+/* Home page text alignment: keep template display text readable and inside viewport. */
+.digital-agency-template .hero-area .section-title {
+  max-width: min(100%, 880px);
+  font-size: clamp(72px, 6.4vw, 122px) !important;
+  line-height: 0.98 !important;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.digital-agency-template .hero-area .meta-list li,
+.digital-agency-template .hero-area .text {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.digital-agency-template .marquee-text-area .section-title {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+@media (max-width: 1180px) {
+  .digital-agency-template .hero-area .section-title {
+    font-size: clamp(54px, 8vw, 84px) !important;
+  }
+}
+
 @media (max-width: 760px) {
   .opplexify-template-page .page-title-area-inner {
     padding-top: clamp(92px, 20vw, 126px) !important;
@@ -2235,7 +2308,52 @@ video {
 
   .opplexify-template-page .copyright-area-inner,
   .digital-agency-template .copyright-area-inner {
-    width: min(100%, 100% - 0px) !important;
+    width: 100% !important;
+  }
+
+  .digital-agency-template .hero-area .section-title {
+    max-width: 100%;
+    font-size: clamp(34px, 9.4vw, 46px) !important;
+    line-height: 1.08 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-wrap: balance;
+  }
+
+  .digital-agency-template .hero-area .text {
+    font-size: clamp(17px, 4.7vw, 19px) !important;
+    line-height: 1.45 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .digital-agency-template .hero-area .meta-list li {
+    font-size: clamp(18px, 5.2vw, 22px) !important;
+    line-height: 1.1 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .digital-agency-template .award-area .title-wrapper,
+  .digital-agency-template .award-wrapper-box,
+  .digital-agency-template .award-wrapper,
+  .digital-agency-template .award-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+    transform: none !important;
+  }
+
+  .digital-agency-template .award-area .section-title {
+    font-size: clamp(34px, 9.8vw, 42px) !important;
+    line-height: 1.08 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .digital-agency-template .award-box {
+    left: auto !important;
+    right: auto !important;
   }
 }
 
@@ -2658,12 +2776,12 @@ video {
   color: var(--accent);
 }
 
-/* Footer: 5 columns to accommodate the Legal links group (desktop only;
+/* Footer: 5 columns to accommodate the Contact and Legal groups (desktop only;
    mobile/tablet keep the existing !important 2-col / 1-col overrides above). */
 .opplexify-template-page .footer-area .footer-widget-wrapper,
 .digital-agency-template .footer-area .footer-widget-wrapper {
-  grid-template-columns: 1fr auto auto auto auto;
-  column-gap: clamp(40px, 5vw, 120px);
+  grid-template-columns: minmax(320px, 1fr) auto auto auto minmax(250px, 320px);
+  column-gap: clamp(28px, 4vw, 84px);
 }
 
 /* Remove the vertical divider line running through the footer. */
@@ -2678,4 +2796,63 @@ video {
 .digital-agency-template .footer-widget-box.content .rr-btn-underline {
   justify-content: center;
   text-align: center;
+}
+
+/* Final home alignment overrides: keep long CMS text from scattering. */
+.digital-agency-template .section-title,
+.digital-agency-template .work-title,
+.digital-agency-template .pricing-title {
+  letter-spacing: 0 !important;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.digital-agency-template .hero-area .section-title {
+  max-width: min(100%, 980px);
+  font-size: clamp(64px, 5.2vw, 96px) !important;
+  line-height: 1 !important;
+  text-wrap: balance;
+}
+
+.digital-agency-template .hero-area .text,
+.digital-agency-template .hero-area .meta-list li {
+  letter-spacing: 0 !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+.digital-agency-template .marquee-text-area .section-title {
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .digital-agency-template .hero-area .section-title {
+    font-size: clamp(32px, 9vw, 40px) !important;
+    line-height: 1.08 !important;
+  }
+
+  .digital-agency-template .hero-area .text {
+    font-size: clamp(17px, 4.7vw, 19px) !important;
+    line-height: 1.45 !important;
+  }
+
+  .digital-agency-template .hero-area .meta-list li {
+    font-size: clamp(18px, 5.2vw, 22px) !important;
+    line-height: 1.12 !important;
+  }
+
+  .digital-agency-template .award-area .title-wrapper,
+  .digital-agency-template .award-wrapper-box,
+  .digital-agency-template .award-wrapper,
+  .digital-agency-template .award-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+    transform: none !important;
+  }
+
+  .digital-agency-template .award-area .section-title {
+    font-size: clamp(34px, 9.8vw, 42px) !important;
+    line-height: 1.08 !important;
+  }
 }

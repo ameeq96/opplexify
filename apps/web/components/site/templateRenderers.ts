@@ -1,4 +1,5 @@
 import { assetUrl, emptySite, getMenu, type MenuItem, type SitePayload } from "../../lib/api";
+import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE, BUSINESS_PHONE_TEL, LINKEDIN_URL } from "../../lib/seo";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
 
 type FooterServiceLink = {
@@ -7,13 +8,14 @@ type FooterServiceLink = {
 };
 
 const defaultServiceLinks: FooterServiceLink[] = [
-  { label: "Website Development", href: "/services" },
-  { label: "SaaS Development", href: "/services" },
+  { label: "Custom Websites", href: "/services" },
+  { label: "SaaS Platforms", href: "/services" },
   { label: "Mobile Apps", href: "/services" },
-  { label: "Admin Dashboards", href: "/services" }
+  { label: "Backend/API Development", href: "/services" }
 ];
 
 const socialOrder = ["instagram", "facebook", "twitter", "linkedin"];
+const DEFAULT_FOOTER_COPYRIGHT = "Copyright 2026 Opplexify LLC.";
 
 export function escapeHtml(value: unknown) {
   return String(value ?? "")
@@ -30,9 +32,9 @@ export function socialLabel(name: string) {
 
 export function orderedSocialLinks(social?: Record<string, unknown>) {
   return Object.entries(social ?? {})
-    .filter(([, href]) => Boolean(href))
+    .filter(([name, href]) => name.toLowerCase() === "linkedin" && Boolean(href))
     .sort(([a], [b]) => socialRank(a) - socialRank(b))
-    .map(([name, href]) => [name, String(href)] as const);
+    .map(([name]) => [name, LINKEDIN_URL] as const);
 }
 
 export function footerServiceLinks(footer?: Record<string, unknown>): FooterServiceLink[] {
@@ -47,6 +49,30 @@ export function footerServiceLinks(footer?: Record<string, unknown>): FooterServ
       };
     })
     .filter((item) => item.label.trim() && item.href.trim());
+}
+
+export function footerContactInfo(site: SitePayload) {
+  const settings = site.settings.site ?? {};
+  const email = String(settings.email ?? BUSINESS_EMAIL);
+  const phone = String(settings.phone ?? BUSINESS_PHONE);
+  const tel = phone.replace(/[^\d+]/g, "") || BUSINESS_PHONE_TEL;
+  const address = String(settings.address ?? BUSINESS_MAILING_ADDRESS).replace(/^Business mailing address:\s*/i, "");
+
+  return { address, email, phone, tel };
+}
+
+export function footerCopyright(footer?: Record<string, unknown>) {
+  const raw = typeof footer?.copyright === "string" ? footer.copyright.trim() : "";
+  if (!raw) return DEFAULT_FOOTER_COPYRIGHT;
+
+  if (!/(admin@opplexify\.com|\+1\s*\(307\)\s*443[-\u2013]5144|Business mailing address:)/i.test(raw)) {
+    return raw;
+  }
+
+  return raw
+    .split(/admin@opplexify\.com|\+1\s*\(307\)\s*443[-\u2013]5144|Business mailing address:/i)[0]
+    .replace(/\s*[|,;:-]\s*$/, "")
+    .trim() || DEFAULT_FOOTER_COPYRIGHT;
 }
 
 export function renderMenuHtml(items: MenuItem[]) {
@@ -98,10 +124,7 @@ export function renderTemplateHeaderHtml(site: SitePayload) {
 export function renderTemplateFooterHtml(site: SitePayload) {
   const footer = site.settings.footer ?? {};
   const companyItems = getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header");
-  const socialLinks = orderedSocialLinks(site.settings.social);
-  const socialHtml = (socialLinks.length ? socialLinks : [["linkedin", "https://www.linkedin.com/"] as const])
-    .map(([name, href]) => `<li><a href="${escapeHtml(href)}">${escapeHtml(socialLabel(String(name)))}</a></li>`)
-    .join("");
+  const contact = footerContactInfo(site);
   const serviceLinksHtml = footerServiceLinks(footer)
     .map((item) => `<li><a href="${escapeHtml(item.href)}">${escapeHtml(item.label)}</a></li>`)
     .join("");
@@ -112,17 +135,13 @@ export function renderTemplateFooterHtml(site: SitePayload) {
       <div class="footer-widget-wrapper">
         <div class="footer-widget-box content">
           <div class="title-wrapper">
-            <h2 class="title rr_title_anim">${escapeHtml(footer.headline ?? "Build a website,")} <br> ${escapeHtml(footer.headlineLine2 ?? "app or SaaS product")} <br> ${escapeHtml(footer.headlineLine3 ?? "that converts")}</h2>
+            <h2 class="title rr_title_anim">${escapeHtml(footer.headline ?? "Custom software,")} <br> ${escapeHtml(footer.headlineLine2 ?? "websites and SaaS")} <br> ${escapeHtml(footer.headlineLine3 ?? "built clearly")}</h2>
           </div>
           <a href="/contact" class="rr-btn-underline">${escapeHtml(footer.ctaLabel ?? "Get a development quote")}</a>
         </div>
         <div class="footer-widget-box">
           <h2 class="title">Company</h2>
           ${renderFooterMenuHtml(companyItems)}
-        </div>
-        <div class="footer-widget-box">
-          <h2 class="title">Social</h2>
-          <ul class="footer-nav-list">${socialHtml}</ul>
         </div>
         <div class="footer-widget-box">
           <h2 class="title">Services</h2>
@@ -137,14 +156,25 @@ export function renderTemplateFooterHtml(site: SitePayload) {
             <li><a href="/refund-policy">Refund Policy</a></li>
           </ul>
         </div>
+        <div class="footer-widget-box">
+          <h2 class="title">Contact</h2>
+          <ul class="footer-nav-list footer-contact-list">
+            <li><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a></li>
+            <li><a href="tel:${escapeHtml(contact.tel)}">${escapeHtml(contact.phone)}</a></li>
+            <li><span>${escapeHtml(contact.address)}</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
   <div class="copyright-area">
     <div class="copyright-area-inner">
       <div class="copyright-text">
-        <p class="text">${escapeHtml(footer.copyright ?? "© 2026 Opplexify. All rights reserved.")}</p>
+        <p class="text">${escapeHtml(footerCopyright(footer))}</p>
       </div>
+      <a class="copyright-social" href="${escapeHtml(LINKEDIN_URL)}" aria-label="Opplexify on LinkedIn">
+        <i class="fa-brands fa-linkedin-in"></i>
+      </a>
     </div>
   </div>
 </footer>`;

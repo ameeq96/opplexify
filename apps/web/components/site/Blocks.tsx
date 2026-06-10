@@ -39,18 +39,18 @@ export function HomeHero({ section }: { section?: Section }) {
   return (
     <section className="container hero">
       <div>
-        <p className="eyebrow">{content.eyebrow ?? "Full-stack web development agency"}</p>
-        <h1>{section?.title ?? "Websites, SaaS apps and dashboards built to grow"}</h1>
+        <p className="eyebrow">{content.eyebrow ?? "Wyoming-formed software development company"}</p>
+        <h1>{section?.title ?? "Custom websites, SaaS platforms and business software development"}</h1>
         <p>
           {section?.subtitle ??
-            "Opplexify builds SEO-friendly websites, Next.js web applications, SaaS platforms, mobile apps, admin dashboards, and backend systems."}
+            "Opplexify LLC helps businesses plan, design, and build websites, SaaS platforms, dashboards, backend systems, APIs, mobile apps, and workflow automations."}
         </p>
         <div className="hero-actions">
           <Link className="btn accent" href={primary.href ?? "/portfolio"}>
-            {primary.label ?? "View portfolio"} <ArrowRight size={18} />
+            {primary.label ?? "Request a Quote"} <ArrowRight size={18} />
           </Link>
           <Link className="btn secondary" href={secondary.href ?? "/contact"}>
-            {secondary.label ?? "Start a project"}
+            {secondary.label ?? "Book a Consultation"}
           </Link>
         </div>
       </div>

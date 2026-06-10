@@ -12,13 +12,23 @@ import {
   type SitePayload,
   type TeamMember
 } from "../lib/api";
-import { absoluteUrl, DEFAULT_OG_IMAGE, siteUrl } from "../lib/seo";
+import {
+  BUSINESS_EMAIL,
+  BUSINESS_MAILING_ADDRESS,
+  BUSINESS_PHONE,
+  COMPANY_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+  LEGAL_NAME,
+  LINKEDIN_URL,
+  absoluteUrl,
+  siteUrl
+} from "../lib/seo";
 
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/home", null);
-  return pageMetadata(page, "Web Development Agency for Websites, SaaS, Apps & Dashboards", "/");
+  return pageMetadata(page, "Custom Websites, SaaS Platforms & Business Software Development", "/");
 }
 
 const homeHtml = String.raw`
@@ -80,7 +90,7 @@ const homeHtml = String.raw`
           <div class="contact-meta">
             <div class="contact-item">
               <span class="icon"><i class="fa-solid fa-location-dot"></i></span>
-              <span class="text">Remote web development team</span>
+              <span class="text">Business mailing address: 525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States</span>
             </div>
             <div class="contact-item">
               <span class="icon"><i class="fa-solid fa-envelope"></i></span>
@@ -88,7 +98,7 @@ const homeHtml = String.raw`
             </div>
             <div class="contact-item">
               <span class="icon"><i class="fa-solid fa-phone"></i></span>
-              <span class="text"><a href="tel:(505)555-0125">(505) 555-0125</a></span>
+              <span class="text"><a href="tel:+13074435144">+1 (307) 443-5144</a></span>
             </div>
           </div>
         </div>
@@ -147,23 +157,23 @@ const homeHtml = String.raw`
               <div class="section-content">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h1 class="section-title rr_title_anim">Websites,
-                      SaaS apps and
-                      dashboards</h1>
+                    <h1 class="section-title rr_title_anim">Custom Websites,
+                      SaaS Platforms &
+                      Business Software Development</h1>
                   </div>
                   <div class="text-wrapper">
-                    <p class="text">Opplexify is a full-stack web development agency building SEO-friendly websites,
-                      Next.js web apps, SaaS platforms, mobile apps, admin dashboards, and backend systems.</p>
+                    <p class="text">Opplexify LLC helps businesses plan, design, and build websites, SaaS platforms,
+                      dashboards, backend systems, APIs, mobile apps, and workflow automations.</p>
                   </div>
                 </div>
                 <div class="meta-list">
                   <ul>
-                    <li>Conversion-focused <br>
-                      website and app development <br>
-                      since 2017</li>
-                    <li>Opplexify <br>
-                      Remote full-stack team for <br>
-                      startups and businesses</li>
+                    <li>Wyoming-formed <br>
+                      limited liability company <br>
+                      started May 28, 2026</li>
+                    <li>Business verification <br>
+                      contact <br>
+                      admin@opplexify.com</li>
                   </ul>
                 </div>
               </div>
@@ -178,9 +188,9 @@ const homeHtml = String.raw`
                 <div class="section-title-wrapper">
                   <div class="title-wrapper rr_title_anim">
                     <h2 class="section-title font-bdogrotesk-regular">We build
-                      high-converting digital
-                      products for businesses
-                      ready to grow. </h2>
+                      practical software
+                      for businesses
+                      with clear requirements. </h2>
                   </div>
                 </div>
               </div>
@@ -199,11 +209,10 @@ const homeHtml = String.raw`
                 </div>
                 <div class="section-content fade-anim">
                   <div class="text-wrapper">
-                    <p class="text">Opplexify plans, designs, and develops business websites, full-stack web
-                      applications, SaaS products, mobile apps, and admin dashboards with clean architecture,
-                      fast performance, and practical search engine optimization.</p>
-                    <p class="text">Our work connects strategy, UI/UX design, Next.js frontend development,
-                      NestJS backend APIs, database structure, and launch support into one maintainable system.</p>
+                    <p class="text">Opplexify LLC is a Wyoming-formed software development company providing remote
+                      development services for websites, SaaS platforms, dashboards, mobile apps, APIs, and automations.</p>
+                    <p class="text">Projects start with a written scope, proposal, and invoice. Delivery is planned
+                      around agreed milestones, direct communication, and client requirements.</p>
                   </div>
                   <div class="btn-wrapper">
                     <a href="/about" class="rr-btn-underline">Learn more about Opplexify</a>
@@ -233,19 +242,19 @@ const homeHtml = String.raw`
                 <div class="works-wrapper">
                   <div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-1.mp4" type="video/mp4"></video></a></div></div>
-                    <div class="content"><h3 class="title"><a href="/portfolio">Website UI Portfolio Video</a></h3><div class="meta"><span class="tag">Website Design, Motion</span><span class="date">(2026)</span></div></div>
+                    <div class="content"><h3 class="title"><a href="/portfolio">Private Website UI Sample</a></h3><div class="meta"><span class="tag">Website Design, Motion</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-2.mp4" type="video/mp4"></video></a></div></div>
-                    <div class="content"><h3 class="title"><a href="/portfolio">SaaS Product Showcase</a></h3><div class="meta"><span class="tag">SaaS, Product UI</span><span class="date">(2026)</span></div></div>
+                    <div class="content"><h3 class="title"><a href="/portfolio">Private SaaS UI Sample</a></h3><div class="meta"><span class="tag">SaaS, Product UI</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-3.mp4" type="video/mp4"></video></a></div></div>
-                    <div class="content"><h3 class="title"><a href="/portfolio">Admin Dashboard Interface</a></h3><div class="meta"><span class="tag">Dashboard, UI/UX</span><span class="date">(2026)</span></div></div>
+                    <div class="content"><h3 class="title"><a href="/portfolio">Private Dashboard Sample</a></h3><div class="meta"><span class="tag">Dashboard, UI/UX</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-4.mp4" type="video/mp4"></video></a></div></div>
-                    <div class="content"><h3 class="title"><a href="/portfolio">Mobile App and Web App Demo</a></h3><div class="meta"><span class="tag">Mobile App, Web App</span><span class="date">(2026)</span></div></div>
+                    <div class="content"><h3 class="title"><a href="/portfolio">Private App Interface Sample</a></h3><div class="meta"><span class="tag">Mobile App, Web App</span><span class="date">(2026)</span></div></div>
                   </div>
                 </div>
               </div>
@@ -260,7 +269,7 @@ const homeHtml = String.raw`
                 <span class="section-subtitle">Pricing</span>
                 <div class="pricing-title-wrap">
                   <h2 class="pricing-title rr_title_anim">Website, web app, SaaS and mobile app development pricing.</h2>
-                  <p>Transparent starting packages for SEO-friendly websites, full-stack web applications, SaaS platforms, admin dashboards, and complete product builds.</p>
+                  <p>Starting ranges for custom software projects. Final pricing depends on scope, integrations, content, revisions, and delivery requirements.</p>
                 </div>
               </div>
               <div class="pricing-grid fade-anim">
@@ -268,8 +277,8 @@ const homeHtml = String.raw`
                   <span class="pricing-label">5 Page Presence</span>
                   <h3>Simple Website</h3>
                   <p class="pricing-copy">A concise, responsive, SEO-friendly business website designed for credibility, lead capture, and clear service presentation.</p>
-                  <div class="pricing-price"><strong>$149</strong><span>starting</span></div>
-                  <span class="pricing-time">4-7 days</span>
+                  <div class="pricing-price"><strong>$750+</strong><span>starting</span></div>
+                  <span class="pricing-time">1-3 weeks</span>
                   <ul class="pricing-features">
                     <li>5 responsive pages</li>
                     <li>Contact form</li>
@@ -283,8 +292,8 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Full-Stack App</span>
                   <h3>Complete Web Application</h3>
                   <p class="pricing-copy">A full-stack web application with authentication, dashboards, APIs, database integration, and structured workflows.</p>
-                  <div class="pricing-price"><strong>$499</strong><span>starting</span></div>
-                  <span class="pricing-time">2-3 weeks</span>
+                  <div class="pricing-price"><strong>$3,500+</strong><span>starting</span></div>
+                  <span class="pricing-time">3-8 weeks</span>
                   <ul class="pricing-features">
                     <li>Authentication</li>
                     <li>User dashboard</li>
@@ -298,8 +307,8 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Subscription-Ready</span>
                   <h3>Complete SaaS Solution</h3>
                   <p class="pricing-copy">A scalable SaaS development foundation with product workflows, admin controls, database models, and subscription-ready architecture.</p>
-                  <div class="pricing-price"><strong>$999</strong><span>starting</span></div>
-                  <span class="pricing-time">3-5 weeks</span>
+                  <div class="pricing-price"><strong>$6,500+</strong><span>starting</span></div>
+                  <span class="pricing-time">6-12 weeks</span>
                   <ul class="pricing-features">
                     <li>SaaS platform</li>
                     <li>Admin dashboard</li>
@@ -313,8 +322,8 @@ const homeHtml = String.raw`
                   <span class="pricing-label">App Plus Control Room</span>
                   <h3>Mobile App with Admin Dashboard</h3>
                   <p class="pricing-copy">A mobile application connected to a secure backend API and an operational admin dashboard for real business workflows.</p>
-                  <div class="pricing-price"><strong>$1200</strong><span>starting</span></div>
-                  <span class="pricing-time">4-6 weeks</span>
+                  <div class="pricing-price"><strong>$4,500+</strong><span>starting</span></div>
+                  <span class="pricing-time">5-10 weeks</span>
                   <ul class="pricing-features">
                     <li>Mobile app</li>
                     <li>Admin dashboard</li>
@@ -328,8 +337,8 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Complete Product Suite</span>
                   <h3>Complete Mobile App + Web App</h3>
                   <p class="pricing-copy">A coordinated mobile app, web app, API, database, and admin dashboard system for a complete digital product launch.</p>
-                  <div class="pricing-price"><strong>$1699</strong><span>starting</span></div>
-                  <span class="pricing-time">6-8 weeks</span>
+                  <div class="pricing-price"><strong>$9,500+</strong><span>starting</span></div>
+                  <span class="pricing-time">8-16 weeks</span>
                   <ul class="pricing-features">
                     <li>Mobile app</li>
                     <li>Web app</li>
@@ -350,8 +359,8 @@ const homeHtml = String.raw`
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
                     <h2 class="section-title font-bdogrotesk-regular rr_title_anim">Full-stack development
-                      services built for
-                      measurable growth</h2>
+                      services for defined
+                      business requirements</h2>
                   </div>
                 </div>
               </div>
@@ -376,11 +385,11 @@ const homeHtml = String.raw`
                   </ul>
                 </div>
                 <div class="services-wrapper-1 services-box-anim">
-                  <a href="/services/web-design" class="service-box-1 item-1"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-1.webp" alt="SEO-friendly website development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-1-dark.webp" alt="SEO-friendly website development icon"></div><div class="content"><h3 class="title">Website <br> Development</h3></div></a>
-                  <a href="/services/web-application-development" class="service-box-1 item-2"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-2.webp" alt="Full-stack web application development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-2-dark.webp" alt="Full-stack web application development icon"></div><div class="content"><h3 class="title">Web App <br> Development</h3></div></a>
-                  <a href="/services/product-design" class="service-box-1 item-3"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-3.webp" alt="SaaS platform development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-3-dark.webp" alt="SaaS platform development icon"></div><div class="content"><h3 class="title">SaaS Platform <br> Development</h3></div></a>
-                  <a href="/services/motion-content" class="service-box-1 item-4"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-4.webp" alt="Mobile app development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-4-dark.webp" alt="Mobile app development icon"></div><div class="content"><h3 class="title">Mobile App <br> Development</h3></div></a>
-                  <a href="/services/brand-strategy" class="service-box-1 item-5"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-5.webp" alt="Admin dashboard development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-5-dark.webp" alt="Admin dashboard development icon"></div><div class="content"><h3 class="title">Admin <br> Dashboards</h3></div></a>
+                  <a href="/services/custom-website-development" class="service-box-1 item-1"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-1.webp" alt="Custom website development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-1-dark.webp" alt="Custom website development icon"></div><div class="content"><h3 class="title">Custom Website <br> Development</h3></div></a>
+                  <a href="/services/saas-platform-development" class="service-box-1 item-2"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-2.webp" alt="SaaS platform development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-2-dark.webp" alt="SaaS platform development icon"></div><div class="content"><h3 class="title">SaaS Platform <br> Development</h3></div></a>
+                  <a href="/services/dashboard-admin-panel-development" class="service-box-1 item-3"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-3.webp" alt="Dashboard and admin panel development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-3-dark.webp" alt="Dashboard and admin panel development icon"></div><div class="content"><h3 class="title">Dashboard & Admin <br> Panels</h3></div></a>
+                  <a href="/services/mobile-app-development" class="service-box-1 item-4"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-4.webp" alt="Mobile app development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-4-dark.webp" alt="Mobile app development icon"></div><div class="content"><h3 class="title">Mobile App <br> Development</h3></div></a>
+                  <a href="/services/backend-api-development" class="service-box-1 item-5"><div class="thumb"><img class="show-light" src="${A}/imgs/icon/icon-s-5.webp" alt="Backend and API development icon"><img class="show-dark" src="${A}/imgs/icon/icon-s-5-dark.webp" alt="Backend and API development icon"></div><div class="content"><h3 class="title">Backend & API <br> Development</h3></div></a>
                 </div>
                 <div class="add">
                   <div class="add-shape-wrapper">
@@ -401,17 +410,17 @@ const homeHtml = String.raw`
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">A focused team for
-                      design, frontend,
-                      backend and launch</h2>
+                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">Founder-led software
+                      development for
+                      scoped client projects</h2>
                   </div>
                 </div>
               </div>
               <div class="team-wrapper-box">
                 <div class="team-wrapper fade-anim">
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/ameeq-khan"><img src="/team/ameeq-khan.webp" alt="Ameeq Khan Opplexify full-stack product lead"></a></div><div class="content"><h3 class="name"><a href="/team/ameeq-khan">Ameeq Khan</a></h3><span class="post">Full-Stack Product Lead</span></div></div>
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/atiq-khan"><img src="/team/atiq-khan.webp" alt="Atiq Khan Opplexify SEO planning and launch support"></a></div><div class="content"><h3 class="name"><a href="/team/atiq-khan">Atiq Khan</a></h3><span class="post">SEO Planning and Launch Support</span></div></div>
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/emmad-khan"><img src="/team/emmad-khan.webp" alt="Emmad Khan Opplexify UI UX and frontend design"></a></div><div class="content"><h3 class="name"><a href="/team/emmad-khan">Emmad Khan</a></h3><span class="post">UI/UX and Frontend Design</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/muhammad-emmad-khan"><img src="/team/emmad-khan.webp" alt="Muhammad Emmad Khan, founder and owner of Opplexify LLC"></a></div><div class="content"><h3 class="name"><a href="/team/muhammad-emmad-khan">Muhammad Emmad Khan</a></h3><span class="post">Founder and Owner</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/ameeq-khan"><img src="/team/ameeq-khan.webp" alt="Ameeq Khan, full-stack developer at Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/ameeq-khan">Ameeq Khan</a></h3><span class="post">Full-Stack Developer</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/atiq-khan"><img src="/team/atiq-khan.webp" alt="Atiq Khan, project coordinator at Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/atiq-khan">Atiq Khan</a></h3><span class="post">Project Coordinator</span></div></div>
                 </div>
               </div>
             </div>
@@ -432,8 +441,7 @@ const homeHtml = String.raw`
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h2 class="section-title rr_title_anim">SEO-friendly digital products built to convert visitors
-                      into leads, users and paying customers</h2>
+                    <h2 class="section-title rr_title_anim">Selected private client work is available upon request.</h2>
                   </div>
                 </div>
               </div>
@@ -441,13 +449,9 @@ const homeHtml = String.raw`
                 <div class="clients-wrapper">
                   <div class="swiper client-slider-active">
                     <div class="swiper-wrapper">
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-1-light.webp" alt="image"><img class="show-dark" src="${A}/imgs/brand/brand-1.webp" alt="image"></div>
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-2-light.webp" alt="image"><img class="show-dark" src="${A}/imgs/brand/brand-2.webp" alt="image"></div>
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-3-light.webp" alt="image"><img class="show-dark" src="${A}/imgs/brand/brand-3.webp" alt="image"></div>
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-4-light.webp" alt="image"><img class="show-dark" src="${A}/imgs/brand/brand-4.webp" alt="image"></div>
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-5-light.webp" alt="image"><img class="show-dark" src="${A}/imgs/brand/brand-5.webp" alt="image"></div>
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-6-light.webp" alt="image"><img class="show-dark" src="${A}/imgs/brand/brand-6.webp" alt="image"></div>
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-7-light.webp" alt="image"><img class="show-dark" src="${A}/imgs/brand/brand-7.webp" alt="image"></div>
+                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-1-light.webp" alt="Private software project category"><img class="show-dark" src="${A}/imgs/brand/brand-1.webp" alt="Private software project category"></div>
+                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-2-light.webp" alt="Private website project category"><img class="show-dark" src="${A}/imgs/brand/brand-2.webp" alt="Private website project category"></div>
+                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-3-light.webp" alt="Private dashboard project category"><img class="show-dark" src="${A}/imgs/brand/brand-3.webp" alt="Private dashboard project category"></div>
                     </div>
                   </div>
                 </div>
@@ -489,11 +493,11 @@ const homeHtml = String.raw`
             <div class="footer-widget-wrapper">
               <div class="footer-widget-box content">
                 <div class="title-wrapper">
-                  <h2 class="title rr_title_anim">Build a website, <br> app or SaaS product
-                    that <br> converts
+                  <h2 class="title rr_title_anim">Custom software, <br> websites and SaaS
+                    built <br> clearly
                   </h2>
                 </div>
-                <a href="/contact" class="rr-btn-underline">Get a development quote</a>
+                <a href="/contact" class="rr-btn-underline">Request a Quote</a>
               </div>
               <div class="footer-widget-box">
                 <h2 class="title">Company</h2>
@@ -506,21 +510,29 @@ const homeHtml = String.raw`
                 </ul>
               </div>
               <div class="footer-widget-box">
-                <h2 class="title">Social</h2>
+                <h2 class="title">Services</h2>
                 <ul class="footer-nav-list">
-                  <li><a href="https://www.instagram.com/">Instagram</a></li>
-                  <li><a href="https://www.facebook.com/">Facebook</a></li>
-                  <li><a href="https://x.com/">Twitter</a></li>
-                  <li><a href="https://www.linkedin.com/">LinkedIn</a></li>
+                  <li><a href="/services">Custom Websites</a></li>
+                  <li><a href="/services">SaaS Platforms</a></li>
+                  <li><a href="/services">Mobile Apps</a></li>
+                  <li><a href="/services">Backend/API Development</a></li>
                 </ul>
               </div>
               <div class="footer-widget-box">
-                <h2 class="title">Services</h2>
+                <h2 class="title">Legal</h2>
                 <ul class="footer-nav-list">
-                  <li><a href="/services">Website Development</a></li>
-                  <li><a href="/services">SaaS Development</a></li>
-                  <li><a href="/services">Mobile Apps</a></li>
-                  <li><a href="/services">Admin Dashboards</a></li>
+                  <li><a href="/pricing">Pricing</a></li>
+                  <li><a href="/terms">Terms of Service</a></li>
+                  <li><a href="/privacy">Privacy Policy</a></li>
+                  <li><a href="/refund-policy">Refund Policy</a></li>
+                </ul>
+              </div>
+              <div class="footer-widget-box">
+                <h2 class="title">Contact</h2>
+                <ul class="footer-nav-list footer-contact-list">
+                  <li><a href="mailto:${BUSINESS_EMAIL}">${BUSINESS_EMAIL}</a></li>
+                  <li><a href="tel:+13074435144">${BUSINESS_PHONE}</a></li>
+                  <li><span>525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States</span></li>
                 </ul>
               </div>
             </div>
@@ -529,9 +541,11 @@ const homeHtml = String.raw`
         <div class="copyright-area">
           <div class="copyright-area-inner">
             <div class="copyright-text">
-              <p class="text">© 2026 <a href="/">Opplexify.</a> All right
-                reserved</p>
+              <p class="text">Copyright 2026 Opplexify LLC.</p>
             </div>
+            <a class="copyright-social" href="${LINKEDIN_URL}" aria-label="Opplexify on LinkedIn">
+              <i class="fa-brands fa-linkedin-in"></i>
+            </a>
           </div>
         </div>
       </footer>
@@ -549,23 +563,24 @@ export default async function HomePage() {
   ]);
   const homeJsonLd = {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    name: site.settings.site?.title ?? "Opplexify",
+    "@type": "WebPage",
+    name: "Custom Websites, SaaS Platforms & Business Software Development",
     url: siteUrl(),
     image: absoluteUrl(page?.ogImage ?? site.settings.seo?.ogImage ?? DEFAULT_OG_IMAGE),
     description:
       page?.seoDescription ??
       page?.summary ??
-      "Opplexify provides SEO-friendly website development, Next.js web app development, SaaS platform development, mobile app development, admin dashboard development, and NestJS backend development.",
-    areaServed: "Worldwide",
-    serviceType: [
-      "Website development services",
-      "Full-stack web application development",
-      "SaaS platform development",
-      "Mobile app development",
-      "Admin dashboard development",
-      "Backend API development"
-    ]
+      COMPANY_DESCRIPTION,
+    about: {
+      "@type": "Organization",
+      name: "Opplexify",
+      legalName: LEGAL_NAME,
+      url: siteUrl(),
+      email: BUSINESS_EMAIL,
+      telephone: BUSINESS_PHONE,
+      sameAs: [LINKEDIN_URL],
+      address: BUSINESS_MAILING_ADDRESS
+    }
   };
   const renderedHtml = applyHomeCms(homeHtml, page, site, portfolioItems, services, team);
 

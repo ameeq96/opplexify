@@ -23,8 +23,8 @@ const servicesAreaHtml = String.raw`
                     <div class="container rr-container-1650">
                         <div class="page-title-area-inner section-spacing-top">
                             <div class="page-title-wrapper">
-                                <h1 class="page-title fade-anim">Web development <br>
-                                    services for <span>growth</span></h1>
+                                <h1 class="page-title fade-anim">Software development <br>
+                                    services for <span>businesses</span></h1>
                             </div>
                         </div>
                     </div>
@@ -39,139 +39,139 @@ const servicesAreaHtml = String.raw`
                                     </div>
                                     <div class="title-wrapper">
                                         <img src="/services/services-overview.webp" alt="Opplexify web development services overview">
-                                        <p class="designation">Full-stack services for professional digital product delivery. <span>Each service is planned around business objectives, maintainable architecture, and a user experience that supports real operational needs.</span></p>
+                                        <p class="designation">Custom development services for business websites, SaaS platforms, dashboards, mobile apps, APIs, and workflow automation. <span>Each project starts with scope, timeline, deliverables, proposal, and milestone terms.</span></p>
                                     </div>
                                 </div>
                             </div>
                             <div class="service-2-wrapper section-spacing-150">
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/web-applications.webp" alt="Web applications"></a>
+                                        <a href="/contact"><img src="/services/business-websites.webp" alt="Custom website development"></a>
                                     </div>
                                     <div class="content">
-                                        <h2 class="title"><a href="/contact">Web Applications</a></h2>
-                                        <p class="designation">Custom portals, dashboards, booking systems, internal tools, and business workflow applications built around real operations.</p>
+                                        <h2 class="title"><a href="/contact">Custom Website Development</a></h2>
+                                        <p class="designation">Responsive business websites for companies that need clear service pages, contact paths, basic SEO setup, and a professional web presence. Typical timeline: 1-3 weeks.</p>
                                         <ul class="service-2-list">
-                                            <li><a href="/contact">Custom portals</a></li>
-                                            <li><a href="/contact">Dashboards</a></li>
-                                            <li><a href="/contact">Booking systems</a></li>
-                                            <li><a href="/contact">Internal tools</a></li>
-                                            <li><a href="/contact">Business workflows</a></li>
-                                        </ul>
-                                        <a href="/contact" class="rr-btn">
-                                            <span class="btn-wrap">
-                                                <span class="text-one">Explore the service</span>
-                                                <span class="text-two">Explore the service</span>
-                                            </span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="service-2-box fade-anim">
-                                    <div class="thumb">
-                                        <a href="/contact"><img src="/services/business-websites.webp" alt="Business websites"></a>
-                                    </div>
-                                    <div class="content">
-                                        <h2 class="title"><a href="/contact">Business Websites</a></h2>
-                                        <p class="designation">Responsive brand websites built to communicate trust, services, and conversion paths clearly across every device.</p>
-                                        <ul class="service-2-list">
+                                            <li><a href="/contact">Discovery and scope</a></li>
                                             <li><a href="/contact">Responsive pages</a></li>
-                                            <li><a href="/contact">Service presentation</a></li>
-                                            <li><a href="/contact">Lead capture</a></li>
-                                            <li><a href="/contact">SEO structure</a></li>
-                                            <li><a href="/contact">Conversion paths</a></li>
+                                            <li><a href="/contact">Contact form routing</a></li>
+                                            <li><a href="/contact">SEO foundations</a></li>
+                                            <li><a href="/contact">Launch handover</a></li>
                                         </ul>
                                         <a href="/contact" class="rr-btn">
                                             <span class="btn-wrap">
-                                                <span class="text-one">Explore the service</span>
-                                                <span class="text-two">Explore the service</span>
+                                                <span class="text-one">Request a Quote</span>
+                                                <span class="text-two">Request a Quote</span>
                                             </span>
                                         </a>
                                     </div>
                                 </div>
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/saas-platforms.webp" alt="SaaS platforms"></a>
+                                        <a href="/contact"><img src="/services/saas-platforms.webp" alt="SaaS platform development"></a>
                                     </div>
                                     <div class="content">
-                                        <h2 class="title"><a href="/contact">SaaS Platforms</a></h2>
-                                        <p class="designation">Product foundations with authentication, database models, admin views, and scalable API architecture.</p>
+                                        <h2 class="title"><a href="/contact">SaaS Platform Development</a></h2>
+                                        <p class="designation">SaaS products for founders and businesses that need user accounts, product workflows, admin tools, data models, and backend APIs. Typical timeline: 6-12 weeks.</p>
                                         <ul class="service-2-list">
+                                            <li><a href="/contact">Requirements planning</a></li>
                                             <li><a href="/contact">Authentication</a></li>
                                             <li><a href="/contact">Database models</a></li>
-                                            <li><a href="/contact">Admin views</a></li>
-                                            <li><a href="/contact">Scalable APIs</a></li>
-                                            <li><a href="/contact">Subscription-ready flows</a></li>
-                                        </ul>
-                                        <a href="/contact" class="rr-btn">
-                                            <span class="btn-wrap">
-                                                <span class="text-one">Explore the service</span>
-                                                <span class="text-two">Explore the service</span>
-                                            </span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="service-2-box fade-anim">
-                                    <div class="thumb">
-                                        <a href="/contact"><img src="/services/mobile-apps.webp" alt="Mobile apps"></a>
-                                    </div>
-                                    <div class="content">
-                                        <h2 class="title"><a href="/contact">Mobile Apps</a></h2>
-                                        <p class="designation">Mobile experiences connected to secure APIs, admin workflows, and notification-ready foundations.</p>
-                                        <ul class="service-2-list">
-                                            <li><a href="/contact">Mobile UI</a></li>
-                                            <li><a href="/contact">Secure API connection</a></li>
                                             <li><a href="/contact">Admin workflows</a></li>
-                                            <li><a href="/contact">Push notification-ready</a></li>
-                                            <li><a href="/contact">Product launch support</a></li>
+                                            <li><a href="/contact">Milestone delivery</a></li>
                                         </ul>
                                         <a href="/contact" class="rr-btn">
                                             <span class="btn-wrap">
-                                                <span class="text-one">Explore the service</span>
-                                                <span class="text-two">Explore the service</span>
+                                                <span class="text-one">Request a Quote</span>
+                                                <span class="text-two">Request a Quote</span>
                                             </span>
                                         </a>
                                     </div>
                                 </div>
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/admin-dashboards.webp" alt="Admin dashboards"></a>
+                                        <a href="/contact"><img src="/services/admin-dashboards.webp" alt="Dashboard and admin panel development"></a>
                                     </div>
                                     <div class="content">
-                                        <h2 class="title"><a href="/contact">Admin Dashboards</a></h2>
-                                        <p class="designation">Operational dashboards for managing content, users, requests, orders, and business reporting.</p>
+                                        <h2 class="title"><a href="/contact">Dashboard & Admin Panel Development</a></h2>
+                                        <p class="designation">Operational dashboards for teams that need to manage users, content, requests, reports, orders, or internal workflows. Typical timeline: 3-8 weeks.</p>
                                         <ul class="service-2-list">
-                                            <li><a href="/contact">Content management</a></li>
-                                            <li><a href="/contact">User management</a></li>
-                                            <li><a href="/contact">Requests and orders</a></li>
-                                            <li><a href="/contact">Business reporting</a></li>
                                             <li><a href="/contact">Role-based access</a></li>
+                                            <li><a href="/contact">Data tables</a></li>
+                                            <li><a href="/contact">Forms and filters</a></li>
+                                            <li><a href="/contact">Reports</a></li>
+                                            <li><a href="/contact">API integration</a></li>
                                         </ul>
                                         <a href="/contact" class="rr-btn">
                                             <span class="btn-wrap">
-                                                <span class="text-one">Explore the service</span>
-                                                <span class="text-two">Explore the service</span>
+                                                <span class="text-one">Request a Quote</span>
+                                                <span class="text-two">Request a Quote</span>
                                             </span>
                                         </a>
                                     </div>
                                 </div>
                                 <div class="service-2-box fade-anim">
                                     <div class="thumb">
-                                        <a href="/contact"><img src="/services/backend-systems.webp" alt="Backend systems"></a>
+                                        <a href="/contact"><img src="/services/mobile-apps.webp" alt="Mobile app development"></a>
                                     </div>
                                     <div class="content">
-                                        <h2 class="title"><a href="/contact">Backend Systems</a></h2>
-                                        <p class="designation">NestJS APIs, Prisma schemas, relational databases, JWT authentication, and maintainable backend structure.</p>
+                                        <h2 class="title"><a href="/contact">Mobile App Development</a></h2>
+                                        <p class="designation">Mobile app interfaces for customer or internal workflows, connected to secure APIs and admin tools when required. Typical timeline: 5-10 weeks.</p>
                                         <ul class="service-2-list">
-                                            <li><a href="/contact">NestJS APIs</a></li>
-                                            <li><a href="/contact">Prisma schemas</a></li>
-                                            <li><a href="/contact">Relational databases</a></li>
-                                            <li><a href="/contact">JWT authentication</a></li>
-                                            <li><a href="/contact">Maintainable structure</a></li>
+                                            <li><a href="/contact">Mobile screens</a></li>
+                                            <li><a href="/contact">API connection</a></li>
+                                            <li><a href="/contact">Admin workflow</a></li>
+                                            <li><a href="/contact">Testing support</a></li>
+                                            <li><a href="/contact">Store-ready handoff</a></li>
                                         </ul>
                                         <a href="/contact" class="rr-btn">
                                             <span class="btn-wrap">
-                                                <span class="text-one">Explore the service</span>
-                                                <span class="text-two">Explore the service</span>
+                                                <span class="text-one">Request a Quote</span>
+                                                <span class="text-two">Request a Quote</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="service-2-box fade-anim">
+                                    <div class="thumb">
+                                        <a href="/contact"><img src="/services/backend-systems.webp" alt="Backend and API development"></a>
+                                    </div>
+                                    <div class="content">
+                                        <h2 class="title"><a href="/contact">Backend/API Development</a></h2>
+                                        <p class="designation">Backend systems for applications that need secure APIs, databases, authentication, validation, and maintainable server-side logic. Typical timeline: 3-8 weeks.</p>
+                                        <ul class="service-2-list">
+                                            <li><a href="/contact">API design</a></li>
+                                            <li><a href="/contact">Database schema</a></li>
+                                            <li><a href="/contact">Authentication</a></li>
+                                            <li><a href="/contact">Validation</a></li>
+                                            <li><a href="/contact">Documentation</a></li>
+                                        </ul>
+                                        <a href="/contact" class="rr-btn">
+                                            <span class="btn-wrap">
+                                                <span class="text-one">Request a Quote</span>
+                                                <span class="text-two">Request a Quote</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="service-2-box fade-anim">
+                                    <div class="thumb">
+                                        <a href="/contact"><img src="/services/web-applications.webp" alt="Automation and integrations"></a>
+                                    </div>
+                                    <div class="content">
+                                        <h2 class="title"><a href="/contact">Automation & Integrations</a></h2>
+                                        <p class="designation">Workflow automations and integrations for businesses that need tools, forms, dashboards, APIs, or services to share data reliably. Typical timeline: 2-6 weeks.</p>
+                                        <ul class="service-2-list">
+                                            <li><a href="/contact">Workflow mapping</a></li>
+                                            <li><a href="/contact">API integrations</a></li>
+                                            <li><a href="/contact">Admin tools</a></li>
+                                            <li><a href="/contact">Data sync</a></li>
+                                            <li><a href="/contact">Testing and handoff</a></li>
+                                        </ul>
+                                        <a href="/contact" class="rr-btn">
+                                            <span class="btn-wrap">
+                                                <span class="text-one">Request a Quote</span>
+                                                <span class="text-two">Request a Quote</span>
                                             </span>
                                         </a>
                                     </div>
@@ -217,10 +217,10 @@ function renderServicesArea(services: Service[], page: Page | null) {
           <h2 class="title"><a href="${href}">${escapeHtml(service.title)}</a></h2>
           <p class="designation">${escapeHtml(service.shortDescription ?? service.description ?? "")}</p>
           <ul class="service-2-list">${listItems}</ul>
-          <a href="${href}" class="rr-btn">
+          <a href="/contact" class="rr-btn">
             <span class="btn-wrap">
-              <span class="text-one">Explore the service</span>
-              <span class="text-two">Explore the service</span>
+              <span class="text-one">Request a Quote</span>
+              <span class="text-two">Request a Quote</span>
             </span>
           </a>
         </div>
@@ -272,15 +272,15 @@ function renderServicePageHtml(services: Service[], page: Page | null) {
 const servicesJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "Opplexify web development services",
+  name: "Opplexify LLC software development services",
   url: `${siteUrl()}/services`,
   itemListElement: [
-    "SEO-friendly website development",
-    "Full-stack web application development",
+    "Custom website development",
     "SaaS platform development",
+    "Dashboard and admin panel development",
     "Mobile app development",
-    "Admin dashboard development",
-    "NestJS backend systems"
+    "Backend/API development",
+    "Automation and integrations"
   ].map((name, index) => ({
     "@type": "ListItem",
     position: index + 1,

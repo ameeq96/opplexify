@@ -1,15 +1,29 @@
 import type { Metadata } from "next";
 
 export const SITE_NAME = "Opplexify";
-export const DEFAULT_TITLE = "Opplexify - Web Development Agency for Websites, SaaS & Apps";
+export const LEGAL_NAME = "Opplexify LLC";
+export const BUSINESS_EMAIL = "admin@opplexify.com";
+export const BUSINESS_PHONE = "+1 (307) 443-5144";
+export const BUSINESS_PHONE_TEL = "+13074435144";
+export const BUSINESS_MAILING_ADDRESS = "Business mailing address: 525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States";
+export const BUSINESS_STREET_ADDRESS = "525 Randall Ave Ste 100 PMB 1203";
+export const BUSINESS_ADDRESS_LOCALITY = "Cheyenne";
+export const BUSINESS_ADDRESS_REGION = "WY";
+export const BUSINESS_POSTAL_CODE = "82001";
+export const BUSINESS_ADDRESS_COUNTRY = "US";
+export const LINKEDIN_URL = "https://www.linkedin.com/company/opplexify-llc/";
+export const COMPLIANCE_NOTE = "For business verification or compliance inquiries, contact admin@opplexify.com.";
+export const COMPANY_DESCRIPTION =
+  "Opplexify LLC helps businesses plan, design, and build websites, SaaS platforms, dashboards, backend systems, APIs, mobile apps, and workflow automations.";
+export const DEFAULT_TITLE = "Opplexify LLC - Custom Websites, SaaS Platforms & Business Software";
 export const DEFAULT_DESCRIPTION =
-  "Opplexify is a full-stack web development agency building SEO-friendly websites, SaaS platforms, mobile apps, admin dashboards, and scalable backend systems.";
+  COMPANY_DESCRIPTION;
 export const DEFAULT_OG_IMAGE = "/portfolio/thumbs/portfolio-001.webp";
 export const DEFAULT_OG_IMAGE_ALT = "Opplexify web development portfolio preview";
 export const SITE_LOCALE = "en_US";
 export const THEME_COLOR = "#050505";
 export const DEFAULT_KEYWORDS = [
-  "web development agency",
+  "software development company",
   "website development services",
   "Next.js development",
   "full-stack web application development",

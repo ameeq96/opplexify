@@ -59,16 +59,16 @@ export default async function ServiceDetailPage({ params }: Props) {
           </div>
           <aside className="meta-panel">
             <div className="meta-row">
-              <span>Managed by</span>
-              <strong>Admin CMS</strong>
+              <span>Process</span>
+              <strong>Scope, proposal, milestones, delivery</strong>
             </div>
             <div className="meta-row">
-              <span>Slug</span>
-              <strong>{service.slug}</strong>
+              <span>Typical timeline</span>
+              <strong>Confirmed after discovery</strong>
             </div>
             {features.length ? (
               <div className="meta-list-panel">
-                <span>What admin controls</span>
+                <span>Possible deliverables</span>
                 <ul>
                   {features.map((feature) => (
                     <li key={feature}>{feature}</li>
@@ -76,6 +76,12 @@ export default async function ServiceDetailPage({ params }: Props) {
                 </ul>
               </div>
             ) : null}
+            <div className="meta-row">
+              <span>Next step</span>
+              <strong>
+                <a href="/contact">Request a quote</a>
+              </strong>
+            </div>
           </aside>
         </div>
       </section>

@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
-import { seoMetadata } from "../../lib/seo";
+import { BUSINESS_MAILING_ADDRESS, COMPLIANCE_NOTE, LEGAL_NAME, seoMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
   title: "Privacy Policy - Opplexify",
   description:
-    "How Opplexify collects, uses, shares, and protects your personal information when you use our website and services.",
+    "How Opplexify LLC collects, uses, shares, and protects information when you use our website or custom software development services.",
   path: "/privacy"
 });
 
@@ -17,7 +17,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "This Privacy Policy explains how Opplexify (\"we\", \"us\", or \"our\") collects, uses, shares, and protects information about you when you visit our website or engage our web development services. We are committed to handling your personal information responsibly and in line with generally accepted data-protection principles."
+        text: `${LEGAL_NAME} ("we", "us", or "our") is a Wyoming-formed limited liability company that provides custom software development services. This Privacy Policy explains how we collect, use, share, and protect information when you visit our website, request a quote, contact us, or engage our services. ${BUSINESS_MAILING_ADDRESS}.`
       }
     ]
   },
@@ -48,7 +48,7 @@ const sections: LegalSection[] = [
         type: "list",
         items: [
           "To respond to your enquiries and provide quotes and proposals.",
-          "To deliver, manage, and support the development services you engage us for.",
+          "To deliver, manage, and support the software development services you engage us for.",
           "To process payments and maintain records of transactions and invoices.",
           "To operate, secure, and improve our website and services.",
           "To send service-related communications about your project.",
@@ -120,7 +120,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Opplexify works as a remote team serving clients worldwide, and the third parties we rely on may process information in different countries. Where information is transferred across borders, we take steps to ensure it remains protected in line with this policy and applicable law."
+        text: "Opplexify LLC provides remote software development services and may work with clients in different locations. The third parties we rely on may process information in different countries. Where information is transferred across borders, we take steps to ensure it remains protected in line with this policy and applicable law."
       }
     ]
   },
@@ -156,7 +156,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If you have any questions or requests regarding this Privacy Policy or your personal information, contact us at admin@opplexify.com."
+        text: `If you have any questions or requests regarding this Privacy Policy or your personal information, contact us at admin@opplexify.com. ${COMPLIANCE_NOTE}`
       }
     ]
   }
@@ -168,9 +168,9 @@ export default async function PrivacyPage() {
       <PageHero
         eyebrow="Legal"
         title="Privacy Policy"
-        subtitle="How Opplexify collects, uses, and protects your information when you use our website and services."
+        subtitle="How Opplexify LLC collects, uses, and protects information when you use our website and services."
       />
-      <LegalDoc lastUpdated="June 3, 2026" sections={sections} />
+      <LegalDoc lastUpdated="June 10, 2026" sections={sections} />
     </PublicShell>
   );
 }

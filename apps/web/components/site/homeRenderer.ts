@@ -1,4 +1,5 @@
 import { assetUrl, getSection, type Page, type PortfolioItem, type Section, type Service, type SitePayload, type TeamMember } from "../../lib/api";
+import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE, BUSINESS_PHONE_TEL, COMPANY_DESCRIPTION } from "../../lib/seo";
 import { normalizeTemplateHtml } from "./StaticTemplatePage";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
 import { escapeHtml } from "./templateRenderers";
@@ -283,11 +284,45 @@ function renderHomeServices(item: Section | null | undefined, services: Service[
         </section>`;
 }
 
+const fallbackHomeTeamMembers: TeamMember[] = [
+  {
+    id: "home-team-emmad",
+    name: "Muhammad Emmad Khan",
+    slug: "muhammad-emmad-khan",
+    role: "Founder and Owner",
+    image: "/team/emmad-khan.webp"
+  },
+  {
+    id: "home-team-ameeq",
+    name: "Ameeq Khan",
+    slug: "ameeq-khan",
+    role: "Full-Stack Developer",
+    image: "/team/ameeq-khan.webp"
+  },
+  {
+    id: "home-team-atiq",
+    name: "Atiq Khan",
+    slug: "atiq-khan",
+    role: "Project Coordinator",
+    image: "/team/atiq-khan.webp"
+  }
+];
+
 function renderHomeTeam(item: Section | null | undefined, team: TeamMember[]) {
-  if (!item || !team.length) return null;
+  if (!item) return null;
   const content = sectionContent(item);
-  const limit = Number(content.limit ?? 3);
-  const members = team.slice(0, Number.isFinite(limit) && limit > 0 ? limit : 3);
+  const requestedLimit = Number(content.limit ?? 3);
+  const limit = Number.isFinite(requestedLimit) && requestedLimit > 0 ? Math.max(3, requestedLimit) : 3;
+  const seen = new Set<string>();
+  const members = [...team, ...fallbackHomeTeamMembers]
+    .filter((member) => {
+      if (seen.has(member.slug)) return false;
+      seen.add(member.slug);
+      return true;
+    })
+    .slice(0, limit);
+
+  if (!members.length) return null;
 
   return String.raw`
         <section class="team-area-1 rr-bg-primary opplexify-home-team">
@@ -358,9 +393,9 @@ function renderHomeLogoStrip(item?: Section | null) {
                           const darkImage = assetUrl(stringValue(record.image, stringValue(record.lightImage)));
                           return `<div class="swiper-slide"><img class="show-light" src="${escapeHtml(
                             lightImage
-                          )}" alt="${escapeHtml(record.alt ?? "Client logo")}" loading="lazy" decoding="async"><img class="show-dark" src="${escapeHtml(
+                          )}" alt="${escapeHtml(record.alt ?? "Private project category")}" loading="lazy" decoding="async"><img class="show-dark" src="${escapeHtml(
                             darkImage
-                          )}" alt="${escapeHtml(record.alt ?? "Client logo")}" loading="lazy" decoding="async"></div>`;
+                          )}" alt="${escapeHtml(record.alt ?? "Private project category")}" loading="lazy" decoding="async"></div>`;
                         })
                         .join("")}
                     </div>
@@ -415,10 +450,13 @@ export function applyHomeCms(
 ) {
   const hero = getSection(page, "hero");
   const content = asRecord(hero?.content);
-  const title = typeof content.headline === "string" ? content.headline : hero?.title ?? "Websites,\nSaaS apps and\ndashboards";
+  const title =
+    typeof content.headline === "string"
+      ? content.headline
+      : hero?.title ?? "Custom Websites,\nSaaS Platforms &\nBusiness Software Development";
   const subtitle =
     hero?.subtitle ??
-    "Opplexify is a full-stack web development agency building SEO-friendly websites, Next.js web apps, SaaS platforms, mobile apps, admin dashboards, and backend systems.";
+    COMPANY_DESCRIPTION;
   const primary = asRecord(content.primaryCta);
   const siteSettings = site.settings.site ?? {};
 
@@ -426,10 +464,13 @@ export function applyHomeCms(
 
   let rendered = normalizeTemplateHtml(html, site)
     .replace(/<h1 class="section-title rr_title_anim">[\s\S]*?<\/h1>/, `<h1 class="section-title rr_title_anim">${headlineHtml(title)}</h1>`)
-    .replace(/<p class="text">Opplexify is a full-stack web development agency[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(subtitle)}</p>`)
-    .replace(/<span class="text">Remote web development team<\/span>/g, `<span class="text">${escapeHtml(siteSettings.address ?? "Remote web development team")}</span>`)
-    .replace(/<a href="mailto:hello@opplexify\.com">hello@opplexify\.com<\/a>/g, `<a href="mailto:${escapeHtml(siteSettings.email ?? "admin@opplexify.com")}">${escapeHtml(siteSettings.email ?? "admin@opplexify.com")}</a>`)
-    .replace(/<a href="tel:\(505\)555-0125">\(505\) 555-0125<\/a>/g, `<a href="tel:${escapeHtml(siteSettings.phone ?? "(505) 555-0125")}">${escapeHtml(siteSettings.phone ?? "(505) 555-0125")}</a>`)
+    .replace(/<p class="text">Opplexify is[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(subtitle)}</p>`)
+    .replace(/<span class="text">Remote web development team<\/span>/g, `<span class="text">${escapeHtml(siteSettings.address ?? BUSINESS_MAILING_ADDRESS)}</span>`)
+    .replace(/<a href="mailto:hello@opplexify\.com">hello@opplexify\.com<\/a>/g, `<a href="mailto:${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}">${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}</a>`)
+    .replace(
+      /<a href="tel:\(505\)555-0125">\(505\) 555-0125<\/a>/g,
+      `<a href="tel:${BUSINESS_PHONE_TEL}">${escapeHtml(siteSettings.phone ?? BUSINESS_PHONE)}</a>`
+    )
     .replace(/<a class="rr-btn-underline" href="\/portfolio">Browse all work<\/a>/g, `<a class="rr-btn-underline" href="${escapeHtml(stringValue(primary.href, "/portfolio"))}">${escapeHtml(stringValue(primary.label, "Browse all work"))}</a>`);
 
   if (metaItems.length >= 2) {

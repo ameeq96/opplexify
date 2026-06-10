@@ -8,7 +8,7 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/team", null);
-  return pageMetadata(page, "Development Team - Next.js, SaaS, Mobile Apps & Backend APIs", "/team");
+  return pageMetadata(page, "Founder - Opplexify LLC", "/team");
 }
 
 export default async function TeamPage() {
@@ -20,16 +20,16 @@ export default async function TeamPage() {
   const teamJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Opplexify development team",
+    name: "Opplexify LLC founder",
     url: absoluteUrl("/team"),
     description:
-      "Full-stack development team for websites, SaaS products, mobile apps, admin dashboards, backend APIs, UI/UX, SEO planning, and launches.",
+      "Founder and ownership information for Opplexify LLC, a Wyoming-formed software development company.",
     isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() }
   };
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(teamJsonLd) }} />
-      <PageHero title={intro?.title ?? page?.title ?? "Full-stack development team for product launches"} subtitle={intro?.subtitle ?? page?.summary ?? "Designers, frontend developers, backend engineers, and launch-focused builders for websites, SaaS platforms, mobile apps, and dashboards."} eyebrow="Team" />
+      <PageHero title={intro?.title ?? page?.title ?? "Founder-led software development"} subtitle={intro?.subtitle ?? page?.summary ?? "Opplexify LLC is led by Muhammad Emmad Khan and provides remote software development services for scoped client projects."} eyebrow="Team" />
       <section className="section">
         <div className="container rr-container-1650">
           <TeamGrid team={team} />

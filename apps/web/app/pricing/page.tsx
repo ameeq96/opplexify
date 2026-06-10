@@ -7,7 +7,7 @@ import { seoMetadata } from "../../lib/seo";
 export const metadata: Metadata = seoMetadata({
   title: "Pricing - Website, Web App, SaaS & Mobile App Development | Opplexify",
   description:
-    "Transparent starting packages for SEO-friendly websites, full-stack web applications, SaaS platforms, mobile apps, admin dashboards, and complete product builds.",
+    "Starting ranges for Opplexify LLC custom website, SaaS, dashboard, mobile app, backend API, and automation projects. Final pricing depends on project scope.",
   path: "/pricing"
 });
 
@@ -24,49 +24,49 @@ type Package = {
 const packages: Package[] = [
   {
     label: "5 Page Presence",
-    title: "Simple Website",
-    price: "$149",
-    time: "4-7 days",
+    title: "Custom Website",
+    price: "$750+",
+    time: "1-3 weeks",
     description:
-      "A concise, responsive, SEO-friendly business website designed for credibility, lead capture, and clear service presentation.",
-    features: ["5 responsive pages", "Contact form", "Foundational SEO", "Performance-focused structure"]
+      "A focused business website with responsive pages, contact routing, basic SEO setup, and service content structure.",
+    features: ["Written scope", "Responsive pages", "Contact form", "Foundational SEO", "One revision round"]
   },
   {
     label: "Full-Stack App",
     title: "Complete Web Application",
-    price: "$499",
-    time: "2-3 weeks",
+    price: "$3,500+",
+    time: "3-8 weeks",
     description:
-      "A full-stack web application with authentication, dashboards, APIs, database integration, and structured workflows.",
-    features: ["Authentication", "User dashboard", "Backend API", "Database integration"]
+      "A custom web app with database-backed workflows, authentication, dashboards, and backend API development.",
+    features: ["Project proposal", "Authentication", "User dashboard", "Backend API", "Milestone billing"]
   },
   {
     label: "Subscription-Ready",
     title: "Complete SaaS Solution",
-    price: "$999",
-    time: "3-5 weeks",
+    price: "$6,500+",
+    time: "6-12 weeks",
     description:
-      "A scalable SaaS development foundation with product workflows, admin controls, database models, and subscription-ready architecture.",
-    features: ["SaaS platform", "Admin dashboard", "Subscription-ready structure", "Database and API"],
+      "A SaaS platform foundation with product workflows, account roles, admin controls, data models, and API architecture.",
+    features: ["SaaS workflows", "Admin dashboard", "Database and API", "Launch handover", "Milestone invoices"],
     featured: true
   },
   {
     label: "App Plus Control Room",
     title: "Mobile App with Admin Dashboard",
-    price: "$1200",
-    time: "4-6 weeks",
+    price: "$4,500+",
+    time: "5-10 weeks",
     description:
-      "A mobile application connected to a secure backend API and an operational admin dashboard for real business workflows.",
-    features: ["Mobile app", "Admin dashboard", "Backend API", "Push notification-ready"]
+      "A mobile app experience connected to a backend API and admin dashboard for managing real project workflows.",
+    features: ["Mobile screens", "Admin dashboard", "Backend API", "Testing pass", "Revision terms"]
   },
   {
     label: "Complete Product Suite",
     title: "Complete Mobile App + Web App",
-    price: "$1699",
-    time: "6-8 weeks",
+    price: "$9,500+",
+    time: "8-16 weeks",
     description:
-      "A coordinated mobile app, web app, API, database, and admin dashboard system for a complete digital product launch.",
-    features: ["Mobile app", "Web app", "Admin dashboard", "Complete full-stack solution"]
+      "A larger scoped build with web app, mobile app, backend API, database, admin dashboard, and handover support.",
+    features: ["Written proposal", "Contract and invoices", "Milestone delivery", "Defined revisions", "Final handover"]
   }
 ];
 
@@ -76,7 +76,7 @@ export default async function PricingPage() {
       <PageHero
         eyebrow="Pricing"
         title="Website, web app, SaaS and mobile app development pricing"
-        subtitle="Transparent starting packages for SEO-friendly websites, full-stack web applications, SaaS platforms, admin dashboards, and complete product builds. Final quotes are confirmed after a short scoping call."
+        subtitle="Starting ranges for custom software work. Final pricing depends on project scope, integrations, content, revisions, and delivery requirements. Projects use written proposals, invoices, contracts when needed, and milestone-based billing."
       />
       <section className="section">
         <div className="container rr-container-1650">
@@ -96,7 +96,7 @@ export default async function PricingPage() {
                   ))}
                 </ul>
                 <Link className="btn secondary" href="/contact">
-                  Request Package
+                  Request a Quote
                 </Link>
               </article>
             ))}

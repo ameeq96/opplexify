@@ -8,7 +8,7 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/work", null);
-  return pageMetadata(page, "Case Studies - Website, SaaS, Web App & Mobile App Projects", "/work");
+  return pageMetadata(page, "Private Project Work - Opplexify LLC", "/work");
 }
 
 export default async function WorkPage() {
@@ -20,16 +20,16 @@ export default async function WorkPage() {
   const workJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Opplexify web development case studies",
+    name: "Opplexify LLC private project work",
     url: absoluteUrl("/work"),
     description:
-      "Case studies for SEO-friendly websites, full-stack web applications, SaaS products, mobile apps, admin dashboards, and backend systems.",
+      "Private client work summaries for websites, SaaS platforms, mobile apps, dashboards, backend APIs, and automation projects. Details are available upon request.",
     isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() }
   };
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(workJsonLd) }} />
-      <PageHero title={intro?.title ?? page?.title ?? "Case studies for websites, SaaS products and apps"} subtitle={intro?.subtitle ?? page?.summary ?? "Explore project work across business websites, full-stack web apps, SaaS platforms, mobile apps, admin dashboards, and backend systems."} eyebrow="Case studies" />
+      <PageHero title={intro?.title ?? page?.title ?? "Selected private client work"} subtitle={intro?.subtitle ?? page?.summary ?? "Selected private client work is available upon request. Opplexify LLC does not publish client names, results, or project details unless approved."} eyebrow="Work" />
       <section className="section">
         <div className="container rr-container-1650">
           <ProjectGrid projects={projects} />

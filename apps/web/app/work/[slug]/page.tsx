@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props) {
           title: project.seoTitle ?? `${project.title} Case Study`,
           summary:
             project.seoDescription ??
-            `${project.shortDescription ?? ""} Opplexify case study covering website, web app, SaaS, mobile app, dashboard, and backend development decisions.`,
+            `${project.shortDescription ?? ""} Opplexify LLC private work summary for website, SaaS, mobile app, dashboard, backend API, or automation development.`,
           ogImage: project.ogImage ?? project.mainImage,
           canonicalUrl: project.canonicalUrl
         }
@@ -66,7 +66,7 @@ export default async function WorkDetailPage({ params }: Props) {
           <aside className="meta-panel">
             <div className="meta-row">
               <span>Client</span>
-              <strong>{project.client ?? "Opplexify"}</strong>
+              <strong>{project.client ?? "Private client work available upon request"}</strong>
             </div>
             <div className="meta-row">
               <span>Tools</span>

@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const imageExtensions = new Set([".avif", ".jpg", ".jpeg", ".png", ".webp"]);
 const videoExtensions = new Set([".mp4", ".webm", ".mov"]);
-const tags = ["Branding", "Web Design", "UI/UX", "Development", "Marketing", "Creative"];
+const tags = ["Website", "SaaS UI", "Dashboard", "Mobile App", "Backend/API", "Automation"];
 const hiddenPortfolioImages = new Set(["33-0041.webp", "33-0042.webp"]);
 
 type PublicAsset = {
@@ -58,7 +58,7 @@ function readPublicAssets(folder: string, extensions: Set<string>): PublicAsset[
 function projectTitle(index: number) {
   const projectNumber = String(index + 1).padStart(2, "0");
 
-  return `Portfolio Visual ${projectNumber}`;
+  return `Private client work sample ${projectNumber}`;
 }
 
 function fallbackImages() {
@@ -127,7 +127,7 @@ export default async function PortfolioGridPage() {
     name: "Opplexify web development portfolio",
     url: absoluteUrl("/portfolio"),
     description:
-      "Portfolio of website design, SaaS UI, web application, mobile app, admin dashboard, and digital product work by Opplexify.",
+      "Selected Opplexify LLC portfolio visuals for websites, SaaS interfaces, mobile app screens, dashboards, and business software. Private client details are available upon request.",
     isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() }
   };
   const intro = getSection(page, "intro");
@@ -145,21 +145,21 @@ export default async function PortfolioGridPage() {
                 <p>
                   {intro?.subtitle ??
                     page?.summary ??
-                    "Selected website design, SaaS UI, web app, mobile app, and admin dashboard portfolio work from Opplexify projects."}
+                    "Selected private client work is available upon request. Public portfolio visuals show the types of websites, SaaS interfaces, mobile app screens, dashboards, and business software Opplexify LLC can build."}
                 </p>
 
                 <div className="opplexify-portfolio-hero__stats" aria-label="Portfolio overview">
                   <span>
-                    <strong>{images.length}</strong>
-                    <small> 4K visuals</small>
+                    <strong>Private</strong>
+                    <small> client work</small>
                   </span>
                   <span>
-                    <strong>{videos.length}</strong>
-                    <small> videos</small>
+                    <strong>Upon request</strong>
+                    <small> details</small>
                   </span>
                   <span>
-                    <strong>{filters.length}</strong>
-                    <small> disciplines</small>
+                    <strong>Scoped</strong>
+                    <small> services</small>
                   </span>
                 </div>
               </div>
@@ -208,8 +208,8 @@ export default async function PortfolioGridPage() {
             <div className="container rr-container-1650">
               <div className="portfolio-video-head">
                 <span className="section-subtitle">Motion</span>
-                <h2 className="section-title rr_title_anim">Product launch and app demo videos</h2>
-                <p>{videos.length} motion pieces for websites, SaaS products, dashboards, and app launches.</p>
+                <h2 className="section-title rr_title_anim">Private interface video samples</h2>
+                <p>{videos.length} private video samples for websites, SaaS products, dashboards, and app interfaces.</p>
               </div>
               <div className="portfolio-video-grid fade-anim">
                 {videos.map((video, index) => (
@@ -219,7 +219,7 @@ export default async function PortfolioGridPage() {
                     </video>
                     <div className="portfolio-video-caption">
                       <span>{String(index + 1).padStart(2, "0")}</span>
-                      <strong>{video.title ?? video.name.replace(/\.[^.]+$/, "").replaceAll("-", " ")}</strong>
+                      <strong>{video.title ?? `Private portfolio video sample ${String(index + 1).padStart(2, "0")}`}</strong>
                     </div>
                   </div>
                 ))}
