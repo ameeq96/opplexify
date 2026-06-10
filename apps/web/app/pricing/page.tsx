@@ -25,13 +25,13 @@ type Package = {
 const packages: Package[] = [
   {
     label: "5 Page Presence",
-    title: "Custom Website",
+    title: "Simple Website",
     price: "$750+",
     timeline: "1-3 weeks",
     description:
-      "A focused business website with responsive pages, contact routing, basic SEO setup, and service content structure.",
-    features: ["Written scope", "Responsive pages", "Contact form", "Foundational SEO", "One revision round"],
-    ctaLabel: "Request a Quote",
+      "A concise, responsive, SEO-friendly business website designed for credibility, lead capture, and clear service presentation.",
+    features: ["5 responsive pages", "Contact form", "Foundational SEO", "Performance-focused structure"],
+    ctaLabel: "Request Package",
     href: "/contact"
   },
   {
@@ -40,9 +40,9 @@ const packages: Package[] = [
     price: "$3,500+",
     timeline: "3-8 weeks",
     description:
-      "A custom web app with database-backed workflows, authentication, dashboards, and backend API development.",
-    features: ["Project proposal", "Authentication", "User dashboard", "Backend API", "Milestone billing"],
-    ctaLabel: "Request a Quote",
+      "A full-stack web application with authentication, dashboards, APIs, database integration, and structured workflows.",
+    features: ["Authentication", "User dashboard", "Backend API", "Database integration"],
+    ctaLabel: "Request Package",
     href: "/contact"
   },
   {
@@ -51,9 +51,9 @@ const packages: Package[] = [
     price: "$6,500+",
     timeline: "6-12 weeks",
     description:
-      "A SaaS platform foundation with product workflows, account roles, admin controls, data models, and API architecture.",
-    features: ["SaaS workflows", "Admin dashboard", "Database and API", "Launch handover", "Milestone invoices"],
-    ctaLabel: "Request a Quote",
+      "A scalable SaaS development foundation with product workflows, admin controls, database models, and subscription-ready architecture.",
+    features: ["SaaS platform", "Admin dashboard", "Subscription-ready structure", "Database and API"],
+    ctaLabel: "Request Package",
     href: "/contact",
     featured: true
   },
@@ -63,9 +63,9 @@ const packages: Package[] = [
     price: "$4,500+",
     timeline: "5-10 weeks",
     description:
-      "A mobile app experience connected to a backend API and admin dashboard for managing real project workflows.",
-    features: ["Mobile screens", "Admin dashboard", "Backend API", "Testing pass", "Revision terms"],
-    ctaLabel: "Request a Quote",
+      "A mobile application connected to a secure backend API and an operational admin dashboard for real business workflows.",
+    features: ["Mobile app", "Admin dashboard", "Backend API", "Push notification-ready"],
+    ctaLabel: "Request Package",
     href: "/contact"
   },
   {
@@ -74,9 +74,9 @@ const packages: Package[] = [
     price: "$9,500+",
     timeline: "8-16 weeks",
     description:
-      "A larger scoped build with web app, mobile app, backend API, database, admin dashboard, and handover support.",
-    features: ["Written proposal", "Contract and invoices", "Milestone delivery", "Defined revisions", "Final handover"],
-    ctaLabel: "Request a Quote",
+      "A coordinated mobile app, web app, API, database, and admin dashboard system for a complete digital product launch.",
+    features: ["Mobile app", "Web app", "Admin dashboard", "Complete full-stack solution"],
+    ctaLabel: "Request Package",
     href: "/contact"
   }
 ];
@@ -92,11 +92,11 @@ export default function PricingPage() {
                 <span className="section-subtitle">Pricing</span>
                 <div className="pricing-title-wrap">
                   <h1 className="pricing-title rr_title_anim">
-                    Website, SaaS, mobile app and software development pricing.
+                    Website, web app, SaaS and mobile app development pricing.
                   </h1>
                   <p>
-                    Starting ranges for custom software work. Final quotes depend on scope, integrations, content,
-                    revisions, and delivery requirements.
+                    Starting ranges for custom software projects. Final pricing depends on scope, integrations,
+                    content, revisions, and delivery requirements.
                   </p>
                 </div>
               </div>
