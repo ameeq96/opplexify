@@ -1380,25 +1380,35 @@ video {
 }
 
 .digital-agency-template .pricing-price {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+  display: grid;
+  align-items: start;
+  gap: 7px;
   margin-top: 28px;
 }
 
 .digital-agency-template .pricing-price strong {
   color: var(--text);
-  font-size: clamp(36px, 3vw, 54px);
+  font-size: clamp(34px, 2.6vw, 48px);
   font-weight: 650;
   line-height: 1;
+  white-space: nowrap;
 }
 
-.digital-agency-template .pricing-price span,
 .digital-agency-template .pricing-time {
   color: var(--muted-2);
   font-size: 13px;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.digital-agency-template .pricing-price span {
+  width: fit-content;
+  color: var(--muted-2);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
 }
 
 .digital-agency-template .pricing-time {
@@ -2784,6 +2794,25 @@ video {
   column-gap: clamp(28px, 4vw, 84px);
 }
 
+.footer-area .footer-widget-wrapper-box .content .title,
+.opplexify-template-page .footer-area .footer-widget-wrapper-box .content .title,
+.digital-agency-template .footer-area .footer-widget-wrapper-box .content .title {
+  max-width: 560px;
+  font-size: clamp(34px, 3vw, 52px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: 0 !important;
+}
+
+@media (max-width: 760px) {
+  .footer-area .footer-widget-wrapper-box .content .title,
+  .opplexify-template-page .footer-area .footer-widget-wrapper-box .content .title,
+  .digital-agency-template .footer-area .footer-widget-wrapper-box .content .title {
+    max-width: 100%;
+    font-size: clamp(24px, 7vw, 30px) !important;
+    line-height: 1.12 !important;
+  }
+}
+
 /* Remove the vertical divider line running through the footer. */
 .opplexify-template-page .footer-area .footer-widget-wrapper-box::before,
 .digital-agency-template .footer-area .footer-widget-wrapper-box::before {
@@ -2854,5 +2883,72 @@ video {
   .digital-agency-template .award-area .section-title {
     font-size: clamp(34px, 9.8vw, 42px) !important;
     line-height: 1.08 !important;
+  }
+}
+
+/* Final mobile heading sizing: keep long public-site headings readable instead
+   of breaking words into tall columns on narrow screens. */
+.opplexify-template-page .about-us .section-title-2,
+.opplexify-template-page .about-us-team .section-title,
+.opplexify-template-page .award-area-2 .section-title,
+.opplexify-template-page .service-2 .section-title,
+.digital-agency-template .about-area-2 .section-title,
+.digital-agency-template .hero-area .section-title {
+  letter-spacing: 0 !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  text-wrap: balance;
+}
+
+@media (max-width: 760px) {
+  .opplexify-template-page .about-us .section-title-2,
+  .opplexify-template-page .about-us-team .section-title,
+  .opplexify-template-page .award-area-2 .section-title,
+  .opplexify-template-page .service-2 .section-title {
+    max-width: 100% !important;
+    font-size: clamp(30px, 8.2vw, 38px) !important;
+    line-height: 1.1 !important;
+  }
+
+  .digital-agency-template .hero-area .section-title {
+    max-width: 100% !important;
+    font-size: clamp(28px, 7.8vw, 34px) !important;
+    line-height: 1.12 !important;
+  }
+
+  .digital-agency-template .about-area-2 .section-title,
+  .digital-agency-template .service-area .section-title,
+  .digital-agency-template .team-area-1 .section-title,
+  .digital-agency-template .pricing-title,
+  .digital-agency-template .award-area .section-title {
+    max-width: 100% !important;
+    font-size: clamp(28px, 7.8vw, 34px) !important;
+    line-height: 1.12 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .opplexify-template-page .about-us .section-title-2,
+  .opplexify-template-page .about-us-team .section-title,
+  .opplexify-template-page .award-area-2 .section-title,
+  .opplexify-template-page .service-2 .section-title {
+    font-size: 30px !important;
+    line-height: 1.12 !important;
+  }
+
+  .digital-agency-template .hero-area .section-title {
+    font-size: 28px !important;
+    line-height: 1.12 !important;
+  }
+
+  .digital-agency-template .about-area-2 .section-title,
+  .digital-agency-template .service-area .section-title,
+  .digital-agency-template .team-area-1 .section-title,
+  .digital-agency-template .pricing-title,
+  .digital-agency-template .award-area .section-title {
+    font-size: 30px !important;
+    line-height: 1.12 !important;
   }
 }

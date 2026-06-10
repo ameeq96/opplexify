@@ -46,7 +46,15 @@ function keepFounderAboutTeamMember(html: string) {
   );
 }
 
-const aboutPageHtml = keepFounderAboutTeamMember(
+function sequenceCapabilityYears(html: string) {
+  let index = 0;
+  return html.replace(/<span class="year">[^<]*<\/span>/g, () => {
+    index += 1;
+    return `<span class="year">${String(index).padStart(2, "0")}</span>`;
+  });
+}
+
+const aboutPageHtml = sequenceCapabilityYears(keepFounderAboutTeamMember(
   aboutHtml
   .replace(
     /<p class="text">— We help <br>[\s\S]*?<\/p>/,
@@ -76,9 +84,7 @@ const aboutPageHtml = keepFounderAboutTeamMember(
                                     frontend development, backend architecture, database planning, admin workflows, and launch support.
                                     Projects use written scopes, milestone-based delivery, clear communication, proposals, and invoices.</p>`
   )
-  .replace(/<p>years of experience<\/p>/g, "<p>Wyoming LLC formed</p>")
-  .replace(/<p>crafted digital products<\/p>/g, "<p>project scopes and proposals</p>")
-  .replace(/<p>skilled team players<\/p>/g, "<p>milestone-based delivery</p>")
+  .replace(/<!-- choose-us area start  -->[\s\S]*?<!-- choose-us area end  -->/g, "")
   .replace(/<span class="section-subtitle">Why choose us<\/span>/g, `<span class="section-subtitle">Why choose Opplexify LLC</span>`)
   .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-1.webp"/g, `src="/team/emmad-khan.webp"`)
   .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-2.webp"/g, `src="/team/atiq-khan.webp"`)
@@ -114,7 +120,7 @@ const aboutPageHtml = keepFounderAboutTeamMember(
   .replace(/8x Best design <br> of the day/g, "Admin dashboard <br> development")
   .replace(/Help to brands growing up and show their\s*success stories to the world/g, "Helping businesses plan and build custom software through written scopes and milestones")
   .replace(/We <span>learn<\/span> and[\s\S]*?together\./, "We <span>scope</span> and <span>build</span> <br> <span>custom</span> software")
-);
+));
 
 const aboutJsonLd = {
   "@context": "https://schema.org",
@@ -156,24 +162,6 @@ function replaceDivBlock(html: string, marker: string, replacement: string) {
   return html.slice(0, start) + replacement + html.slice(end);
 }
 
-function renderStats(section?: Section) {
-  const items = asArray(section?.content?.items);
-  if (!items.length) return null;
-
-  return `<div class="choose-us__warpper choose-us--about fade-anim">
-    ${items
-      .slice(0, 4)
-      .map((item, index) => {
-        const record = asRecord(item);
-        return `<div class="choose-us__item item-${index + 1}">
-          <p>${escapeHtml(record.label ?? "Metric")}</p>
-          <h2>${escapeHtml(record.value ?? "0")}</h2>
-        </div>`;
-      })
-      .join("")}
-  </div>`;
-}
-
 function renderTeam(section: Section | undefined, team: TeamMember[]) {
   const limit = Number(section?.content?.limit ?? 3);
   const members = team.slice(0, Number.isFinite(limit) && limit > 0 ? limit : 3);
@@ -202,7 +190,7 @@ function renderCapabilities(section?: Section) {
         return `<div class="award-box">
           <span class="category">${escapeHtml(record.category ?? "Capability")}</span>
           <p class="award">${escapeHtml(record.text ?? record.title ?? "")}</p>
-          <span class="year">${escapeHtml(record.year ?? String(index + 1).padStart(2, "0"))}</span>
+          <span class="year">${String(index + 1).padStart(2, "0")}</span>
         </div>`;
       })
       .join("")}
@@ -211,7 +199,6 @@ function renderCapabilities(section?: Section) {
 
 function applyAboutCms(html: string, page: Page | null, team: TeamMember[]) {
   const intro = getSection(page, "intro");
-  const stats = getSection(page, "stats");
   const teamSection = getSection(page, "team-showcase");
   const marquee = getSection(page, "marquee");
   const capabilities = getSection(page, "capability-list");
@@ -231,9 +218,6 @@ function applyAboutCms(html: string, page: Page | null, team: TeamMember[]) {
       `<div class="about-us__media parallax-view"><img data-speed="0.6" src="${escapeHtml(image)}" alt="${escapeHtml(title ?? "Opplexify")}"></div>`
     );
   }
-
-  const statsHtml = renderStats(stats);
-  if (statsHtml) rendered = replaceDivBlock(rendered, '<div class="choose-us__warpper choose-us--about fade-anim">', statsHtml);
 
   if (teamSection?.title) {
     rendered = rendered.replace(

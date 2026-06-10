@@ -115,15 +115,56 @@ function renderSocialHtml(site: SitePayload) {
   </div>`;
 }
 
+function findDivEnd(html: string, startIndex: number) {
+  const divTag = /<\/?div\b[^>]*>/g;
+  divTag.lastIndex = startIndex;
+  let depth = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = divTag.exec(html))) {
+    depth += match[0].startsWith("</") ? -1 : 1;
+    if (depth === 0) return divTag.lastIndex;
+  }
+
+  return -1;
+}
+
+function replaceDivBlock(html: string, marker: string, replacement: string) {
+  const start = html.indexOf(marker);
+  const end = start === -1 ? -1 : findDivEnd(html, start);
+  if (start === -1 || end === -1) return html;
+  return html.slice(0, start) + replacement + html.slice(end);
+}
+
+function renderContactInfoHtml(email: string, phone: string, address: string) {
+  const cleanAddress = address.replace(/^Business mailing address:\s*/i, "");
+  const tel = phone.replace(/[^\d+]/g, "") || "+13074435144";
+
+  return `<div class="contact-us__info">
+    <div class="contact-us__item">
+      <h3 class="title">Business Mailing Address</h3>
+      <p class="location">${escapeHtml(cleanAddress)}</p>
+    </div>
+    <div class="contact-us__item">
+      <h3 class="title">Business Email</h3>
+      <a class="location" href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>
+    </div>
+    <div class="contact-us__item">
+      <h3 class="title">Business Phone</h3>
+      <a class="phone" href="tel:${escapeHtml(tel)}">${escapeHtml(phone)}</a>
+    </div>
+  </div>`;
+}
+
 function applyContactCms(html: string, page: Page | null, site: SitePayload) {
   const intro = getSection(page, "contact-hero") ?? getSection(page, "hero");
   const contactInfo = getSection(page, "contact-info");
   const siteSettings = site.settings.site ?? {};
   const title = intro?.title ?? page?.title;
   const subtitle = intro?.subtitle ?? page?.summary;
-  const email = contactInfo?.content?.email ?? siteSettings.email ?? BUSINESS_EMAIL;
-  const phone = contactInfo?.content?.phone ?? siteSettings.phone ?? BUSINESS_PHONE;
-  const address = contactInfo?.content?.address ?? siteSettings.address ?? BUSINESS_MAILING_ADDRESS;
+  const email = String(contactInfo?.content?.email ?? siteSettings.email ?? BUSINESS_EMAIL);
+  const phone = String(contactInfo?.content?.phone ?? siteSettings.phone ?? BUSINESS_PHONE);
+  const address = String(contactInfo?.content?.address ?? siteSettings.address ?? BUSINESS_MAILING_ADDRESS);
 
   let rendered = html
     .replace(/<h1 class="page-title ">[\s\S]*?<\/h1>/, title ? `<h1 class="page-title ">${escapeHtml(title)}</h1>` : "$&")
@@ -146,7 +187,7 @@ function applyContactCms(html: string, page: Page | null, site: SitePayload) {
     rendered = rendered.replace(`Phone: ${BUSINESS_PHONE}`, `Phone: ${escapeHtml(phone)}`);
   }
 
-  return rendered;
+  return replaceDivBlock(rendered, '<div class="contact-us__info">', renderContactInfoHtml(email, phone, address));
 }
 
 export default async function ContactPage() {

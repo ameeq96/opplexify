@@ -260,7 +260,7 @@ async function seedPages() {
           image: portfolioImage(0),
           headline: "Custom Websites,\nSaaS Platforms &\nBusiness Software Development",
           metaItems: [
-            "Wyoming-formed\nlimited liability company\nstarted May 28, 2026",
+            "Founded 2026\nWyoming limited liability company\nremote software development",
             "Business verification\ncontact\nadmin@opplexify.com"
           ]
         }

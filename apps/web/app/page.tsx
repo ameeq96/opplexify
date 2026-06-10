@@ -168,9 +168,9 @@ const homeHtml = String.raw`
                 </div>
                 <div class="meta-list">
                   <ul>
-                    <li>Wyoming-formed <br>
-                      limited liability company <br>
-                      started May 28, 2026</li>
+                    <li>Founded 2026 <br>
+                      Wyoming limited liability company <br>
+                      remote software development</li>
                     <li>Business verification <br>
                       contact <br>
                       admin@opplexify.com</li>

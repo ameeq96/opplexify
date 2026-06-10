@@ -13,7 +13,25 @@ function headlineHtml(value: string) {
 }
 
 function lineBreakHtml(value: unknown) {
-  return escapeHtml(value).replace(/\n/g, "<br>");
+  return escapeHtml(normalizeFoundingCopy(value)).replace(/\n/g, "<br>");
+}
+
+function normalizeFoundingCopy(value: unknown) {
+  return String(value ?? "")
+    .replace(/\bsince\s+2017\b/gi, "Founded 2026")
+    .replace(/\bfounded\s+(?:in\s+)?2017\b/gi, "Founded 2026")
+    .replace(/\best\.?\s*2017\b/gi, "Founded 2026")
+    .replace(/\bstarted\s+(?:in\s+)?2017\b/gi, "founded 2026")
+    .replace(/\(2017\s*[-\u2013\u2014]\s*(?:2025|2026)\)/g, "(Founded 2026)");
+}
+
+function normalizeFoundingHtml(value: string) {
+  return value
+    .replace(/\bsince(?:\s|<br\s*\/?>)+2017\b/gi, "Founded 2026")
+    .replace(/\bfounded(?:\s|<br\s*\/?>)+(?:in(?:\s|<br\s*\/?>)+)?2017\b/gi, "Founded 2026")
+    .replace(/\best\.?(?:\s|<br\s*\/?>)*2017\b/gi, "Founded 2026")
+    .replace(/\bstarted(?:\s|<br\s*\/?>)+(?:in(?:\s|<br\s*\/?>)+)?2017\b/gi, "founded 2026")
+    .replace(/\(2017\s*[-\u2013\u2014]\s*(?:2025|2026)\)/g, "(Founded 2026)");
 }
 
 function asRecord(value: unknown): ContentRecord {
@@ -463,8 +481,8 @@ export function applyHomeCms(
   const metaItems = asArray(content.metaItems);
 
   let rendered = normalizeTemplateHtml(html, site)
-    .replace(/<h1 class="section-title rr_title_anim">[\s\S]*?<\/h1>/, `<h1 class="section-title rr_title_anim">${headlineHtml(title)}</h1>`)
-    .replace(/<p class="text">Opplexify is[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(subtitle)}</p>`)
+    .replace(/<h1 class="section-title rr_title_anim">[\s\S]*?<\/h1>/, `<h1 class="section-title rr_title_anim">${headlineHtml(normalizeFoundingCopy(title))}</h1>`)
+    .replace(/<p class="text">Opplexify is[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(normalizeFoundingCopy(subtitle))}</p>`)
     .replace(/<span class="text">Remote web development team<\/span>/g, `<span class="text">${escapeHtml(siteSettings.address ?? BUSINESS_MAILING_ADDRESS)}</span>`)
     .replace(/<a href="mailto:hello@opplexify\.com">hello@opplexify\.com<\/a>/g, `<a href="mailto:${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}">${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}</a>`)
     .replace(
@@ -493,5 +511,5 @@ export function applyHomeCms(
   rendered = replaceWhen(rendered, /<div class="client-area rr-bg-primary">[\s\S]*?(?=\s*<section class="award-area rr-bg-primary">)/, renderHomeLogoStrip(section(page, "logo-strip")));
   rendered = replaceWhen(rendered, /<section class="award-area rr-bg-primary">[\s\S]*?<\/section>/, renderHomeCapabilities(section(page, "capability-list")));
 
-  return rendered;
+  return normalizeFoundingHtml(rendered);
 }
