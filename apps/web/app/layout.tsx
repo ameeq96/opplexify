@@ -64,13 +64,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/template-assets/dark/assets/imgs/logo/favicon.svg", type: "image/svg+xml" },
-      { url: "/template-assets/dark/assets/imgs/logo/favicon.webp", sizes: "64x64", type: "image/webp" },
-      { url: "/template-assets/dark/assets/imgs/logo/app-icon-192.webp", sizes: "192x192", type: "image/webp" },
-      { url: "/template-assets/dark/assets/imgs/logo/app-icon-512.webp", sizes: "512x512", type: "image/webp" }
+      { url: "/template-assets/dark/assets/imgs/logo/opplexify-mark-64.webp", sizes: "64x64", type: "image/webp" },
+      { url: "/template-assets/dark/assets/imgs/logo/opplexify-mark-192.webp", sizes: "192x192", type: "image/webp" },
+      { url: "/template-assets/dark/assets/imgs/logo/opplexify-mark-512.webp", sizes: "512x512", type: "image/webp" }
     ],
-    shortcut: [{ url: "/template-assets/dark/assets/imgs/logo/favicon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/template-assets/dark/assets/imgs/logo/apple-touch-icon.webp", sizes: "180x180", type: "image/webp" }]
+    shortcut: [{ url: "/template-assets/dark/assets/imgs/logo/opplexify-mark-64.webp", type: "image/webp" }],
+    apple: [{ url: "/template-assets/dark/assets/imgs/logo/opplexify-mark-180.webp", sizes: "180x180", type: "image/webp" }]
   },
   robots: {
     index: true,

@@ -13,18 +13,18 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: THEME_COLOR,
     icons: [
       {
-        src: "/template-assets/dark/assets/imgs/logo/favicon.svg",
+        src: "/template-assets/dark/assets/imgs/logo/opplexify-mark-64.webp",
         sizes: "64x64",
-        type: "image/svg+xml"
+        type: "image/webp"
       },
       {
-        src: "/template-assets/dark/assets/imgs/logo/app-icon-192.webp",
+        src: "/template-assets/dark/assets/imgs/logo/opplexify-mark-192.webp",
         sizes: "192x192",
         type: "image/webp",
         purpose: "any"
       },
       {
-        src: "/template-assets/dark/assets/imgs/logo/app-icon-512.webp",
+        src: "/template-assets/dark/assets/imgs/logo/opplexify-mark-512.webp",
         sizes: "512x512",
         type: "image/webp",
         purpose: "any"
