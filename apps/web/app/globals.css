@@ -7,8 +7,8 @@
   --muted-2: rgba(255, 255, 255, 0.45);
   --line: rgba(255, 255, 255, 0.12);
   --line-strong: rgba(255, 255, 255, 0.2);
-  --accent: #dfff5c;
-  --accent-2: #b7ff3c;
+  --accent: #1e88f0;
+  --accent-2: #5aa9ff;
   --danger: #ff6b6b;
   --shadow: 0 28px 90px rgba(0, 0, 0, 0.36);
   color-scheme: dark;
@@ -486,7 +486,7 @@ video {
 .admin-field textarea:focus,
 .admin-field select:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(223, 255, 92, 0.14);
+  box-shadow: 0 0 0 3px rgba(30, 136, 240, 0.3);
 }
 
 .notice,
@@ -1428,8 +1428,8 @@ video {
 }
 
 .digital-agency-template .pricing-card.featured {
-  border-color: rgba(223, 255, 92, 0.5);
-  background: linear-gradient(180deg, rgba(223, 255, 92, 0.16), rgba(255, 255, 255, 0.045));
+  border-color: rgba(30, 136, 240, 0.5);
+  background: linear-gradient(180deg, rgba(30, 136, 240, 0.18), rgba(255, 255, 255, 0.045));
 }
 
 .digital-agency-template .pricing-label {
@@ -2789,7 +2789,7 @@ video {
 .opplexify-template-page .pricing-cards .card.card-featured,
 .digital-agency-template .pricing-cards .card.card-featured {
   border-color: var(--accent);
-  background: rgba(223, 255, 92, 0.06);
+  background: rgba(30, 136, 240, 0.1);
 }
 
 .pricing-cards .card > strong {
@@ -3128,4 +3128,13 @@ video {
   line-height: 1.06 !important;
   letter-spacing: 0 !important;
   max-width: 680px;
+}
+
+/* Brand color = the logo's electric blue. The custom UI uses --accent (set in :root);
+   the template's own accent var (--theme, originally orange #FA814D) is remapped here
+   so any template-styled accents also match the logo. Scoped above :root specificity. */
+.body-wrapper.dark,
+.opplexify-template-page,
+.digital-agency-template {
+  --theme: #1e88f0;
 }
