@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { TEMPLATE_ASSET_BASE, templateScriptFiles } from "./templateAssets";
+import { TEMPLATE_ASSET_BASE, templateScriptFiles, withAssetVersion } from "./templateAssets";
 
 declare global {
   interface Window {
@@ -20,7 +20,7 @@ function findLoadedScript(src: string) {
 }
 
 function loadTemplateScript(file: string) {
-  const src = `${TEMPLATE_ASSET_BASE}/js/${file}`;
+  const src = withAssetVersion(`${TEMPLATE_ASSET_BASE}/js/${file}`);
   const existing = findLoadedScript(src);
 
   if (existing || window.__opplexifyDigitalAgencyScripts?.has(file)) {
@@ -48,23 +48,6 @@ function loadTemplateScript(file: string) {
 
   window.__opplexifyDigitalAgencyScriptLoads[file] = loadPromise;
   return loadPromise;
-}
-
-function preloadTemplateScripts() {
-  templateScriptFiles.forEach((file) => {
-    const href = `${TEMPLATE_ASSET_BASE}/js/${file}`;
-    const existing = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="preload"][as="script"]')).some((link) =>
-      link.href.endsWith(href)
-    );
-    if (existing || findLoadedScript(href)) return;
-
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "script";
-    link.href = href;
-    link.dataset.opplexifyDigitalAgency = "true";
-    document.head.appendChild(link);
-  });
 }
 
 type DigitalAgencyRuntimeProps = {
@@ -171,7 +154,6 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
     window.__opplexifyDigitalAgencyScripts ??= new Set<string>();
     window.__opplexifyDigitalAgencyScriptLoads ??= {};
     document.body.classList.add(...bodyClasses);
-    preloadTemplateScripts();
 
     const syncSmoother = () => {
       const smoother = window.ScrollSmoother?.get?.();

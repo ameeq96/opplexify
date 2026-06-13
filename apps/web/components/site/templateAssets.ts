@@ -1,5 +1,14 @@
 export const TEMPLATE_ASSET_BASE = "/template-assets/dark/assets";
 
+// Cache-busting version stamped at build time (git short SHA, injected via next.config `env`).
+// Lets us serve the template assets with `immutable` long-cache headers while still
+// forcing a fresh fetch on every deploy. Falls back to "dev" outside a build.
+export const ASSET_VERSION = process.env.NEXT_PUBLIC_ASSET_VERSION || "dev";
+
+export function withAssetVersion(url: string) {
+  return `${url}${url.includes("?") ? "&" : "?"}v=${ASSET_VERSION}`;
+}
+
 export const templateCssFiles = [
   "bootstrap.min.css",
   "fontawesome-pro.css",

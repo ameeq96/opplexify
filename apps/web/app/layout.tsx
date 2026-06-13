@@ -97,7 +97,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     name: SITE_NAME,
     legalName: LEGAL_NAME,
     url: siteUrl(),
-    logo: absoluteUrl("/template-assets/dark/assets/imgs/logo/opplexify-logo-light.svg"),
+    logo: absoluteUrl("/template-assets/dark/assets/imgs/logo/opplexify-logo-full.png"),
     email: BUSINESS_EMAIL,
     telephone: BUSINESS_PHONE,
     foundingDate: "2026-05-28",
@@ -147,6 +147,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Warm the TLS connection to Google Fonts — style.css @imports DM Sans from gstatic. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      </head>
       <body suppressHydrationWarning>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />

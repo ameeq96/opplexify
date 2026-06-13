@@ -62,6 +62,29 @@ async function start() {
 
     return res.redirect(301, `https://${preferredHost}${req.originalUrl || req.url}`);
   });
+
+  // Compress text responses (HTML, CSS, JS, JSON, SVG). Already-compressed binaries
+  // (woff2/webp/mp4) are skipped automatically by content-type. Big first-load win:
+  // e.g. the template CSS shrinks ~1.3MB -> ~250KB over the wire.
+  try {
+    const compression = require("compression");
+    server.use(compression());
+  } catch (error) {
+    log("compression middleware unavailable; serving uncompressed", { message: error.message });
+  }
+
+  // Serve static template assets directly with a far-future immutable cache. URLs are
+  // cache-busted per deploy via a `?v=` stamp (apps/web/components/site/templateAssets.ts),
+  // so `immutable` is safe and removes ~2MB of re-downloads on every navigation/repeat visit.
+  server.use(
+    "/template-assets",
+    express.static(path.join(webDir, "public/template-assets"), {
+      immutable: true,
+      maxAge: "1y",
+      setHeaders: (res) => res.setHeader("Cache-Control", "public, max-age=31536000, immutable")
+    })
+  );
+
   server.use(createApiApp());
   server.use((req, res) => {
     res.removeHeader("Content-Security-Policy");

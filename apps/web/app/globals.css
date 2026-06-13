@@ -2376,8 +2376,8 @@ video {
 
   .opplexify-template-page .footer-widget-box.content .title,
   .digital-agency-template .footer-widget-box.content .title {
-    font-size: clamp(38px, 11vw, 52px) !important;
-    line-height: 1.04 !important;
+    font-size: clamp(22px, 6vw, 32px) !important;
+    line-height: 1.1 !important;
   }
 
   .opplexify-template-page .footer-widget-box > .title,
@@ -2911,8 +2911,8 @@ video {
 .opplexify-template-page .footer-area .footer-widget-wrapper-box .content .title,
 .digital-agency-template .footer-area .footer-widget-wrapper-box .content .title {
   max-width: 560px;
-  font-size: clamp(34px, 3vw, 52px) !important;
-  line-height: 1.08 !important;
+  font-size: clamp(22px, 2vw, 34px) !important;
+  line-height: 1.12 !important;
   letter-spacing: 0 !important;
 }
 
@@ -2921,7 +2921,7 @@ video {
   .opplexify-template-page .footer-area .footer-widget-wrapper-box .content .title,
   .digital-agency-template .footer-area .footer-widget-wrapper-box .content .title {
     max-width: 100%;
-    font-size: clamp(24px, 7vw, 30px) !important;
+    font-size: clamp(20px, 6vw, 26px) !important;
     line-height: 1.12 !important;
   }
 }
@@ -3064,4 +3064,68 @@ video {
     font-size: 30px !important;
     line-height: 1.12 !important;
   }
+}
+
+/* Brand logo sizing.
+   The new logo (opplexify-logo-full.png) is ~3:2, much squarer than the old wide
+   banner SVG. The template sizes header logos by `width:100px`, which would make
+   the new logo ~67px tall and overflow the 80px header bar. We target ONLY the new
+   logo (by src) and size it by height so it sits cleanly — header height unchanged,
+   and the old dark-variant SVG is never affected. Adjust the height values below to
+   make the logo larger/smaller. */
+.header-area .header__logo img[src*="opplexify-logo-full"] {
+  width: auto !important;
+}
+
+.offset-logo img[src*="opplexify-logo-full"] {
+  width: auto !important;
+  height: 64px !important;
+}
+
+/* The bigger logo needs more room than the template's 80px sticky/scrolled header,
+   otherwise it clips when the header sticks. Raise the capped header height to match. */
+.sticky .header-area__inner,
+.transformed .header-area__inner {
+  height: 104px !important;
+}
+
+@media (max-width: 760px) {
+  .header-area .header__logo img[src*="opplexify-logo-full"] {
+    height: 54px !important;
+  }
+  .header-area__inner,
+  .sticky .header-area__inner,
+  .transformed .header-area__inner {
+    height: auto !important;
+    min-height: 78px !important;
+  }
+}
+
+/* Footer brand logo — top of the left ("content") column, above the headline. */
+.footer-area .footer-logo {
+  display: inline-block;
+  margin-bottom: 26px;
+  line-height: 0;
+}
+
+.footer-area .footer-logo img[src*="opplexify-logo-full"] {
+  width: auto !important;
+  height: 90px !important;
+}
+
+@media (max-width: 760px) {
+  .footer-area .footer-logo img[src*="opplexify-logo-full"] {
+    height: 56px !important;
+  }
+}
+
+/* Hero heading sizing. The template ramps this h1 up to 90–140px which is far too
+   large; cap it to a sensible responsive size that scales smoothly mobile->desktop.
+   High specificity + !important so it overrides the template's per-breakpoint sizes. */
+.digital-agency-template .hero-area .section-content .section-title,
+.opplexify-template-page .hero-area .section-content .section-title {
+  font-size: clamp(34px, 5vw, 60px) !important;
+  line-height: 1.06 !important;
+  letter-spacing: 0 !important;
+  max-width: 680px;
 }

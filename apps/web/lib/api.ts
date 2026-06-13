@@ -185,7 +185,11 @@ type FetchApiInit = RequestInit & {
   };
 };
 
+const FETCH_TIMEOUT_MS = 8000;
+
 export async function fetchApi<T>(path: string, fallback: T, init: FetchApiInit = {}): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
     const { noStore = false, revalidate = 60, next, ...requestInit } = init;
     const method = String(requestInit.method ?? "GET").toUpperCase();
@@ -201,13 +205,17 @@ export async function fetchApi<T>(path: string, fallback: T, init: FetchApiInit 
 
     const response = await fetch(apiEndpoint(path), {
       ...requestInit,
-      ...cacheOptions
+      ...cacheOptions,
+      signal: controller.signal
     });
 
     if (!response.ok) return fallback;
     return (await response.json()) as T;
   } catch {
+    // Network error, non-OK, or timeout abort — fall back to the safe default.
     return fallback;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -250,7 +258,7 @@ export const emptySite: SitePayload = {
     site: {
       title: SITE_NAME,
       description: DEFAULT_DESCRIPTION,
-      logoLight: "/template-assets/dark/assets/imgs/logo/opplexify-logo-light.svg",
+      logoLight: "/template-assets/dark/assets/imgs/logo/opplexify-logo-full.png",
       logoDark: "/template-assets/dark/assets/imgs/logo/opplexify-logo-dark.svg",
       email: BUSINESS_EMAIL,
       phone: BUSINESS_PHONE,

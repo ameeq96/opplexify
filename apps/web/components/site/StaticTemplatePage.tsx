@@ -1,7 +1,8 @@
 import { DigitalAgencyRuntime } from "./DigitalAgencyRuntime";
 import { emptySite, fetchApi, getMenu, type SitePayload } from "../../lib/api";
 import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE } from "../../lib/seo";
-import { TEMPLATE_ASSET_BASE as A, templateCssFiles } from "./templateAssets";
+import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
+import { TemplateAssetLinks } from "./TemplateAssetLinks";
 import { escapeHtml, renderFooterMenuHtml, renderMenuHtml, renderTemplateFooterHtml, renderTemplateHeaderHtml } from "./templateRenderers";
 
 type StaticTemplatePageProps = {
@@ -27,7 +28,7 @@ export function normalizeTemplateHtml(html: string, site: SitePayload = emptySit
     .replace(/<footer class="footer-area">[\s\S]*?<\/footer>/g, footerHtml)
     .replace(/<nav class="main-menu">[\s\S]*?<\/nav>/g, dynamicMenuHtml)
     .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/dark-logo\.webp/g, `${A}/imgs/logo/opplexify-logo-dark.svg`)
-    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/light-logo\.webp/g, `${A}/imgs/logo/opplexify-logo-light.svg`)
+    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/light-logo\.webp/g, `${A}/imgs/logo/opplexify-logo-full.png`)
     .replace(/(<h2 class="title">Company<\/h2>\s*)<ul class="footer-nav-list">[\s\S]*?<\/ul>/g, (_match, heading) => `${heading}${dynamicFooterMenuHtml}`)
     .replace(/action="http:\/\/localhost:4000\/public\/contact"/g, 'action="/contact"')
     .replace(/infoO@opplexifycreative\.com|hello@opplexify\.com/g, email)
@@ -46,9 +47,7 @@ export async function StaticTemplatePage({ html, bodyClassName = "" }: StaticTem
 
   return (
     <>
-      {templateCssFiles.map((file) => (
-        <link key={file} rel="stylesheet" href={`${A}/css/${file}`} />
-      ))}
+      <TemplateAssetLinks />
       <div
         className={["opplexify-template-page", "body-wrapper", "dark", bodyClassName].filter(Boolean).join(" ")}
         dangerouslySetInnerHTML={{ __html: normalizedHtml }}

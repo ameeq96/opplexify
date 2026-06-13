@@ -1,7 +1,8 @@
 import { DigitalAgencyRuntime } from "./DigitalAgencyRuntime";
 import { assetUrl, emptySite, fetchApi, getMenu, type MenuItem, type SitePayload } from "../../lib/api";
 import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE, BUSINESS_PHONE_TEL, LINKEDIN_URL } from "../../lib/seo";
-import { TEMPLATE_ASSET_BASE as A, templateCssFiles } from "./templateAssets";
+import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
+import { TemplateAssetLinks } from "./TemplateAssetLinks";
 import { footerContactInfo, footerCopyright, footerServiceLinks } from "./templateRenderers";
 
 function renderLoaderLetters(text = "Opplexify") {
@@ -43,7 +44,7 @@ function CursorAndLoader({ site, showLoader }: { site: SitePayload; showLoader: 
 function SideInfo({ site }: { site: SitePayload }) {
   const settings = site.settings.site ?? {};
   const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-dark.svg`);
-  const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`);
+  const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
   const email = settings.email ?? BUSINESS_EMAIL;
   const phone = settings.phone ?? BUSINESS_PHONE;
   const address = settings.address ?? BUSINESS_MAILING_ADDRESS;
@@ -127,7 +128,7 @@ function MainMenu({ items }: { items: MenuItem[] }) {
 }
 
 function HomepageHeader({ site }: { site: SitePayload }) {
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
   const headerItems = getMenu(site, "header");
 
   return (
@@ -167,6 +168,7 @@ function HomepageFooter({ site }: { site: SitePayload }) {
   const footer = site.settings.footer ?? {};
   const serviceLinks = footerServiceLinks(footer);
   const contact = footerContactInfo(site);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
 
   return (
     <footer className="footer-area">
@@ -174,6 +176,9 @@ function HomepageFooter({ site }: { site: SitePayload }) {
         <div className="footer-widget-wrapper-box">
           <div className="footer-widget-wrapper">
             <div className="footer-widget-box content">
+              <a href="/" className="footer-logo">
+                <img src={logoLight} alt="Opplexify logo" decoding="async" />
+              </a>
               <div className="title-wrapper">
                 <h2 className="title rr_title_anim">
                   {footer.headline ?? "Custom software,"} <br /> {footer.headlineLine2 ?? "websites and SaaS"} <br /> {footer.headlineLine3 ?? "built clearly"}
@@ -268,9 +273,7 @@ export async function PublicShell({
 
   return (
     <>
-      {templateCssFiles.map((file) => (
-        <link key={file} rel="stylesheet" href={`${A}/css/${file}`} />
-      ))}
+      <TemplateAssetLinks />
       <div className="opplexify-template-page body-wrapper dark">
         <CursorAndLoader site={site} showLoader={showLoader} />
         <SideInfo site={site} />

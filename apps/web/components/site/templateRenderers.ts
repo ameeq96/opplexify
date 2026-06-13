@@ -92,7 +92,7 @@ export function renderFooterMenuHtml(items: MenuItem[]) {
 }
 
 export function renderTemplateHeaderHtml(site: SitePayload) {
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
   return `<header class="header-area">
   <div class="header-main">
     <div class="container rr-container-1650">
@@ -125,6 +125,7 @@ export function renderTemplateFooterHtml(site: SitePayload) {
   const footer = site.settings.footer ?? {};
   const companyItems = getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header");
   const contact = footerContactInfo(site);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
   const serviceLinksHtml = footerServiceLinks(footer)
     .map((item) => `<li><a href="${escapeHtml(item.href)}">${escapeHtml(item.label)}</a></li>`)
     .join("");
@@ -134,6 +135,9 @@ export function renderTemplateFooterHtml(site: SitePayload) {
     <div class="footer-widget-wrapper-box">
       <div class="footer-widget-wrapper">
         <div class="footer-widget-box content">
+          <a href="/" class="footer-logo">
+            <img src="${escapeHtml(logoLight)}" alt="Opplexify logo" decoding="async">
+          </a>
           <div class="title-wrapper">
             <h2 class="title rr_title_anim">${escapeHtml(footer.headline ?? "Custom software,")} <br> ${escapeHtml(footer.headlineLine2 ?? "websites and SaaS")} <br> ${escapeHtml(footer.headlineLine3 ?? "built clearly")}</h2>
           </div>

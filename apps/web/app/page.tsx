@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { DigitalAgencyRuntime } from "../components/site/DigitalAgencyRuntime";
 import { applyHomeCms } from "../components/site/homeRenderer";
-import { TEMPLATE_ASSET_BASE as A, templateCssFiles } from "../components/site/templateAssets";
+import { TEMPLATE_ASSET_BASE as A } from "../components/site/templateAssets";
+import { TemplateAssetLinks } from "../components/site/TemplateAssetLinks";
 import {
   emptySite,
   fetchApi,
@@ -69,7 +70,7 @@ const homeHtml = String.raw`
           <div class="offset-logo">
             <a href="/">
               <img class="show-light" src="${A}/imgs/logo/opplexify-logo-dark.svg" alt="Opplexify logo">
-              <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-light.svg" alt="Opplexify logo">
+              <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo">
             </a>
           </div>
           <button id="side-info-close" class="side-info-close">
@@ -116,7 +117,7 @@ const homeHtml = String.raw`
             <div class="header-area__inner">
               <div class="header__logo">
                 <a href="/">
-                  <img src="${A}/imgs/logo/opplexify-logo-light.svg" class="normal-logo" alt="Opplexify logo">
+                  <img src="${A}/imgs/logo/opplexify-logo-full.png" class="normal-logo" alt="Opplexify logo">
                 </a>
               </div>
               <div class="header__shape">
@@ -492,6 +493,9 @@ const homeHtml = String.raw`
           <div class="footer-widget-wrapper-box">
             <div class="footer-widget-wrapper">
               <div class="footer-widget-box content">
+                <a href="/" class="footer-logo">
+                  <img src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo" decoding="async">
+                </a>
                 <div class="title-wrapper">
                   <h2 class="title rr_title_anim">Custom software, <br> websites and SaaS
                     built <br> clearly
@@ -587,9 +591,7 @@ export default async function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }} />
-      {templateCssFiles.map((file) => (
-        <link key={file} rel="stylesheet" href={`${A}/css/${file}`} />
-      ))}
+      <TemplateAssetLinks />
       <div
         className="digital-agency-template dark body-wrapper body-digital-agency"
         dangerouslySetInnerHTML={{ __html: renderedHtml }}

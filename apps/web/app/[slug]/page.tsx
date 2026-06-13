@@ -15,9 +15,11 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function DynamicPage({ params }: Props) {
   const { slug } = await params;
-  const page = await fetchApi<Page | null>(`/public/pages/${slug}`, null);
+  const [page, projects] = await Promise.all([
+    fetchApi<Page | null>(`/public/pages/${slug}`, null),
+    fetchApi<Project[]>("/public/projects?featured=true", [])
+  ]);
   if (!page) notFound();
-  const projects = await fetchApi<Project[]>("/public/projects?featured=true", []);
 
   return (
     <PublicShell>
