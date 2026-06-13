@@ -26,7 +26,7 @@ const packages: Package[] = [
   {
     label: "5 Page Presence",
     title: "Simple Website",
-    price: "$750+",
+    price: "$150",
     timeline: "1-3 weeks",
     description:
       "A concise, responsive, SEO-friendly business website designed for credibility, lead capture, and clear service presentation.",
@@ -37,7 +37,7 @@ const packages: Package[] = [
   {
     label: "Full-Stack App",
     title: "Complete Web Application",
-    price: "$3,500+",
+    price: "$500",
     timeline: "3-8 weeks",
     description:
       "A full-stack web application with authentication, dashboards, APIs, database integration, and structured workflows.",
@@ -48,7 +48,7 @@ const packages: Package[] = [
   {
     label: "Subscription-Ready",
     title: "Complete SaaS Solution",
-    price: "$6,500+",
+    price: "$1,000",
     timeline: "6-12 weeks",
     description:
       "A scalable SaaS development foundation with product workflows, admin controls, database models, and subscription-ready architecture.",
@@ -60,7 +60,7 @@ const packages: Package[] = [
   {
     label: "App Plus Control Room",
     title: "Mobile App with Admin Dashboard",
-    price: "$4,500+",
+    price: "$1,500",
     timeline: "5-10 weeks",
     description:
       "A mobile application connected to a secure backend API and an operational admin dashboard for real business workflows.",
@@ -71,7 +71,7 @@ const packages: Package[] = [
   {
     label: "Complete Product Suite",
     title: "Complete Mobile App + Web App",
-    price: "$9,500+",
+    price: "$2,000",
     timeline: "8-16 weeks",
     description:
       "A coordinated mobile app, web app, API, database, and admin dashboard system for a complete digital product launch.",

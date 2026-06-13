@@ -278,7 +278,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">5 Page Presence</span>
                   <h3>Simple Website</h3>
                   <p class="pricing-copy">A concise, responsive, SEO-friendly business website designed for credibility, lead capture, and clear service presentation.</p>
-                  <div class="pricing-price"><strong>$750+</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>$150</strong><span>starting</span></div>
                   <span class="pricing-time">1-3 weeks</span>
                   <ul class="pricing-features">
                     <li>5 responsive pages</li>
@@ -293,7 +293,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Full-Stack App</span>
                   <h3>Complete Web Application</h3>
                   <p class="pricing-copy">A full-stack web application with authentication, dashboards, APIs, database integration, and structured workflows.</p>
-                  <div class="pricing-price"><strong>$3,500+</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>$500</strong><span>starting</span></div>
                   <span class="pricing-time">3-8 weeks</span>
                   <ul class="pricing-features">
                     <li>Authentication</li>
@@ -308,7 +308,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Subscription-Ready</span>
                   <h3>Complete SaaS Solution</h3>
                   <p class="pricing-copy">A scalable SaaS development foundation with product workflows, admin controls, database models, and subscription-ready architecture.</p>
-                  <div class="pricing-price"><strong>$6,500+</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>$1,000</strong><span>starting</span></div>
                   <span class="pricing-time">6-12 weeks</span>
                   <ul class="pricing-features">
                     <li>SaaS platform</li>
@@ -323,7 +323,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">App Plus Control Room</span>
                   <h3>Mobile App with Admin Dashboard</h3>
                   <p class="pricing-copy">A mobile application connected to a secure backend API and an operational admin dashboard for real business workflows.</p>
-                  <div class="pricing-price"><strong>$4,500+</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>$1,500</strong><span>starting</span></div>
                   <span class="pricing-time">5-10 weeks</span>
                   <ul class="pricing-features">
                     <li>Mobile app</li>
@@ -338,7 +338,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Complete Product Suite</span>
                   <h3>Complete Mobile App + Web App</h3>
                   <p class="pricing-copy">A coordinated mobile app, web app, API, database, and admin dashboard system for a complete digital product launch.</p>
-                  <div class="pricing-price"><strong>$9,500+</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>$2,000</strong><span>starting</span></div>
                   <span class="pricing-time">8-16 weeks</span>
                   <ul class="pricing-features">
                     <li>Mobile app</li>
@@ -370,7 +370,7 @@ const homeHtml = String.raw`
                   <div class="mockup-header">
                     <div class="mockup-logo">
                       <img class="show-light" src="${A}/imgs/logo/opplexify-logo-dark.svg" alt="Opplexify logo">
-                      <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-light.svg" alt="Opplexify logo">
+                      <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo">
                     </div>
                     <div class="mockup-offcanvas">
                       <svg width="30" height="13" viewBox="0 0 30 13" xmlns="http://www.w3.org/2000/svg">

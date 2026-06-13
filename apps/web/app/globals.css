@@ -3138,3 +3138,10 @@ video {
 .digital-agency-template {
   --theme: #1e88f0;
 }
+
+/* Logo inside the home services phone-mockup — use the new logo, sized to fit
+   (the template's width:100px makes the wide logo too tall here). */
+.phone-mockup .mockup-logo img[src*="opplexify-logo-full"] {
+  width: auto !important;
+  height: 40px !important;
+}

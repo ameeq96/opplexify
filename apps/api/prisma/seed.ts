@@ -333,7 +333,7 @@ async function seedPages() {
               title: "Custom Website",
               description:
                 "A focused business website with responsive pages, contact routing, basic SEO setup, and service content structure.",
-              price: "$750+",
+              price: "$150",
               suffix: "starting",
               timeline: "1-3 weeks",
               features: ["Written scope", "Responsive pages", "Contact form", "Foundational SEO", "One revision round"],
@@ -345,7 +345,7 @@ async function seedPages() {
               title: "Complete Web Application",
               description:
                 "A custom web app with database-backed workflows, authentication, dashboards, and backend API development.",
-              price: "$3,500+",
+              price: "$500",
               suffix: "starting",
               timeline: "3-8 weeks",
               features: ["Project proposal", "Authentication", "User dashboard", "Backend API", "Milestone billing"],
@@ -357,7 +357,7 @@ async function seedPages() {
               title: "Complete SaaS Solution",
               description:
                 "A SaaS platform foundation with product workflows, account roles, admin controls, data models, and API architecture.",
-              price: "$6,500+",
+              price: "$1,000",
               suffix: "starting",
               timeline: "6-12 weeks",
               features: ["SaaS workflows", "Admin dashboard", "Database and API", "Launch handover", "Milestone invoices"],
@@ -370,7 +370,7 @@ async function seedPages() {
               title: "Mobile App with Admin Dashboard",
               description:
                 "A mobile app experience connected to a backend API and admin dashboard for managing real project workflows.",
-              price: "$4,500+",
+              price: "$1,500",
               suffix: "starting",
               timeline: "5-10 weeks",
               features: ["Mobile screens", "Admin dashboard", "Backend API", "Testing pass", "Revision terms"],
@@ -382,7 +382,7 @@ async function seedPages() {
               title: "Complete Mobile App + Web App",
               description:
                 "A larger scoped build with web app, mobile app, backend API, database, admin dashboard, and handover support.",
-              price: "$9,500+",
+              price: "$2,000",
               suffix: "starting",
               timeline: "8-16 weeks",
               features: ["Written proposal", "Contract and invoices", "Milestone delivery", "Defined revisions", "Final handover"],

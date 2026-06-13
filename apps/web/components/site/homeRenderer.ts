@@ -257,7 +257,7 @@ function renderHomeServices(item: Section | null | undefined, services: Service[
                   <div class="mockup-header">
                     <div class="mockup-logo">
                       <img class="show-light" src="${A}/imgs/logo/opplexify-logo-dark.svg" alt="Opplexify logo" decoding="async">
-                      <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-light.svg" alt="Opplexify logo" decoding="async">
+                      <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo" decoding="async">
                     </div>
                     <div class="mockup-offcanvas">
                       <svg width="30" height="13" viewBox="0 0 30 13" xmlns="http://www.w3.org/2000/svg">
