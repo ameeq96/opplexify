@@ -1260,6 +1260,38 @@
     });
   }
 
+  // service area animation — mobile (<=575px). Phones show the five service
+  // cards stacked one per row (single column). Merge every card onto the first
+  // one, then fan them down into their rows as the column scrolls through. Not
+  // pinned, so it works on native mobile scroll without a pin/transform clash.
+  // Offsets are read from the live rows (offsetTop) so the merge stays correct
+  // across card heights, fonts and orientation changes.
+  if (document.querySelectorAll(".service-area").length > 0) {
+    mm.add("(max-width: 575px)", () => {
+      const service_boxes = gsap.utils.toArray(".services-wrapper-1 .service-box-1");
+      if (service_boxes.length < 2) return;
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".services-wrapper-1",
+          start: "top 90%",
+          end: "top 20%",
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+        }
+      });
+
+      service_boxes.forEach((box) => {
+        tl.fromTo(
+          box,
+          { y: () => -(box.offsetTop - service_boxes[0].offsetTop) },
+          { y: 0, ease: "power2.out" },
+          0
+        );
+      });
+    });
+  }
+
   // Animate the image scaling to fullscreen, keeping center position
   if ($('.hero-area-7').length > 0 && window.innerWidth > 1200) {
     gsap.to(".image-wrapper", {

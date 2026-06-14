@@ -3145,3 +3145,27 @@ video {
   width: auto !important;
   height: 40px !important;
 }
+
+/* ── Mobile (<=575px): home service cards fan-out ───────────────────────────
+   Cards are a single column (one per row). They merge onto the first card and
+   fan down into their rows on scroll — animated in main.js. The phone mockup
+   and "+" panel stay hidden (template default below 1200px); only the boxes
+   animate. */
+@media (max-width: 575px) {
+  .service-area .services-wrapper-1 {
+    grid-template-columns: 1fr !important;
+    margin-top: 0;
+  }
+}
+
+/* ── Mobile (<=575px): "recent work" meta row alignment ──────────────────────
+   The header meta is a 2-column grid on phones, which squeezed the
+   "Browse all work" pill into a half-width column so its label wrapped to two
+   lines. Give that button its own full-width row so it sits on one line and
+   aligns under the label. */
+@media (max-width: 575px) {
+  .work-area .work-header-meta span:nth-child(3) {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+}
