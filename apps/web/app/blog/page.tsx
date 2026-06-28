@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BlogGrid, PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { fetchApi, getSection, pageMetadata, type BlogPost, type Page } from "../../lib/api";
-import { absoluteUrl, siteUrl } from "../../lib/seo";
+import { absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -29,6 +29,7 @@ export default async function BlogPage() {
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }])) }} />
       <PageHero title={intro?.title ?? page?.title ?? "Web development, SaaS and SEO insights"} subtitle={intro?.subtitle ?? page?.summary ?? "Practical articles about SEO-friendly websites, Next.js web apps, SaaS products, mobile apps, dashboards, backend systems, and product launch strategy."} eyebrow="Blog" />
       <section className="section">
         <div className="container rr-container-1650">

@@ -36,6 +36,18 @@ export const DEFAULT_KEYWORDS = [
   "Opplexify"
 ];
 
+export const DEFAULT_OG_IMAGE_TYPE = "image/webp";
+
+/** Shared schema.org PostalAddress so every entity declares the address identically. */
+export const BUSINESS_POSTAL_ADDRESS = {
+  "@type": "PostalAddress",
+  streetAddress: BUSINESS_STREET_ADDRESS,
+  addressLocality: BUSINESS_ADDRESS_LOCALITY,
+  addressRegion: BUSINESS_ADDRESS_REGION,
+  postalCode: BUSINESS_POSTAL_CODE,
+  addressCountry: BUSINESS_ADDRESS_COUNTRY
+} as const;
+
 export function siteUrl() {
   return (process.env.NEXT_PUBLIC_SITE_URL ?? "https://opplexify.com").replace(/\/+$/, "");
 }
@@ -86,6 +98,24 @@ function robots(noIndex: boolean): Metadata["robots"] {
   };
 }
 
+/**
+ * Builds a schema.org BreadcrumbList from an ordered list of crumbs.
+ * Used on detail routes so search/AI engines render breadcrumb rich results
+ * and better understand the site hierarchy.
+ */
+export function breadcrumbList(items: Array<{ name: string; path: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path)
+    }))
+  };
+}
+
 export function seoMetadata({
   title,
   description = DEFAULT_DESCRIPTION,
@@ -93,8 +123,7 @@ export function seoMetadata({
   canonical,
   image = DEFAULT_OG_IMAGE,
   type = "website",
-  noIndex = false,
-  keywords = DEFAULT_KEYWORDS
+  noIndex = false
 }: SeoMetadataOptions): Metadata {
   const resolvedDescription = description?.trim() || DEFAULT_DESCRIPTION;
   const canonicalUrl = absoluteUrl(canonical ?? path);
@@ -103,7 +132,6 @@ export function seoMetadata({
   return {
     title,
     description: resolvedDescription,
-    keywords,
     alternates: { canonical: canonicalUrl },
     robots: robots(noIndex),
     openGraph: {
@@ -111,7 +139,7 @@ export function seoMetadata({
       description: resolvedDescription,
       url: canonicalUrl,
       siteName: SITE_NAME,
-      images: [{ url: imageUrl, alt: DEFAULT_OG_IMAGE_ALT }],
+      images: [{ url: imageUrl, alt: DEFAULT_OG_IMAGE_ALT, type: DEFAULT_OG_IMAGE_TYPE }],
       locale: SITE_LOCALE,
       type
     },

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHero, TeamGrid } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { fetchApi, getSection, pageMetadata, type Page, type TeamMember } from "../../lib/api";
-import { absoluteUrl, siteUrl } from "../../lib/seo";
+import { absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -29,6 +29,7 @@ export default async function TeamPage() {
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(teamJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "Team", path: "/team" }])) }} />
       <PageHero title={intro?.title ?? page?.title ?? "Founder-led software development"} subtitle={intro?.subtitle ?? page?.summary ?? "Opplexify LLC is led by Muhammad Emmad Khan and provides remote software development services for scoped client projects."} eyebrow="Team" />
       <section className="section">
         <div className="container rr-container-1650">

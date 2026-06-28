@@ -89,8 +89,8 @@ function renderHomeAbout(item?: Section | null) {
               </div>
               <div class="section-content-wrapper">
                 <div class="area-shape-1">
-                  <img class="fade-anim show-light" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1.webp" alt="image" data-speed="0.8" loading="lazy" decoding="async">
-                  <img class="fade-anim show-dark" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1-light.webp" alt="image" data-speed="0.8" loading="lazy" decoding="async">
+                  <img class="fade-anim show-light" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1.webp" alt="" data-speed="0.8" loading="lazy" decoding="async">
+                  <img class="fade-anim show-dark" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1-light.webp" alt="" data-speed="0.8" loading="lazy" decoding="async">
                 </div>
                 <div class="section-subtitle-wrapper fade-anim">
                   <div class="subtitle-wrapper">
@@ -481,7 +481,7 @@ export function applyHomeCms(
   const metaItems = asArray(content.metaItems);
 
   let rendered = normalizeTemplateHtml(html, site)
-    .replace(/<h1 class="section-title rr_title_anim">[\s\S]*?<\/h1>/, `<h1 class="section-title rr_title_anim">${headlineHtml(normalizeFoundingCopy(title))}</h1>`)
+    .replace(/<h1 class="section-title(?: rr_title_anim)?">[\s\S]*?<\/h1>/, `<h1 class="section-title">${headlineHtml(normalizeFoundingCopy(title))}</h1>`)
     .replace(/<p class="text">Opplexify is[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(normalizeFoundingCopy(subtitle))}</p>`)
     .replace(/<span class="text">Remote web development team<\/span>/g, `<span class="text">${escapeHtml(siteSettings.address ?? BUSINESS_MAILING_ADDRESS)}</span>`)
     .replace(/<a href="mailto:hello@opplexify\.com">hello@opplexify\.com<\/a>/g, `<a href="mailto:${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}">${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}</a>`)

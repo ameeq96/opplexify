@@ -31,6 +31,31 @@ export function PageHero({
   );
 }
 
+/**
+ * Renders CMS body text as discrete paragraphs instead of one giant <p>.
+ * Splits on blank lines (or single newlines) so authored multi-paragraph
+ * content gains real structure — better readability and AEO extraction.
+ * Falls back to a single paragraph for unbroken prose.
+ */
+export function Prose({ text, className = "detail-copy" }: { text?: string | null; className?: string }) {
+  const paragraphs = (text ?? "")
+    .split(/\n{2,}|\r\n/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (!paragraphs.length) return null;
+
+  return (
+    <>
+      {paragraphs.map((paragraph, index) => (
+        <p className={className} key={`${index}-${paragraph.slice(0, 24)}`}>
+          {paragraph}
+        </p>
+      ))}
+    </>
+  );
+}
+
 export function HomeHero({ section }: { section?: Section }) {
   const content = section?.content ?? {};
   const primary = content.primaryCta ?? { label: "View portfolio", href: "/portfolio" };

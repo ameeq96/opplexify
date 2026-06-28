@@ -1,18 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import {
   absoluteUrl,
-  BUSINESS_ADDRESS_COUNTRY,
-  BUSINESS_ADDRESS_LOCALITY,
-  BUSINESS_ADDRESS_REGION,
   BUSINESS_EMAIL,
   BUSINESS_PHONE,
-  BUSINESS_POSTAL_CODE,
-  BUSINESS_STREET_ADDRESS,
+  BUSINESS_POSTAL_ADDRESS,
   COMPANY_DESCRIPTION,
   DEFAULT_DESCRIPTION,
-  DEFAULT_KEYWORDS,
   DEFAULT_OG_IMAGE,
   DEFAULT_OG_IMAGE_ALT,
+  DEFAULT_OG_IMAGE_TYPE,
   DEFAULT_TITLE,
   LEGAL_NAME,
   LINKEDIN_URL,
@@ -22,6 +18,7 @@ import {
   siteUrl,
   THEME_COLOR
 } from "../lib/seo";
+import { pricingOfferCatalog } from "../lib/pricing";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,7 +29,6 @@ export const metadata: Metadata = {
   },
   description: DEFAULT_DESCRIPTION,
   applicationName: SITE_NAME,
-  keywords: DEFAULT_KEYWORDS,
   authors: [{ name: SITE_NAME, url: siteUrl() }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
@@ -53,7 +49,7 @@ export const metadata: Metadata = {
     url: absoluteUrl("/"),
     siteName: SITE_NAME,
     locale: SITE_LOCALE,
-    images: [{ url: absoluteUrl(DEFAULT_OG_IMAGE), alt: DEFAULT_OG_IMAGE_ALT }],
+    images: [{ url: absoluteUrl(DEFAULT_OG_IMAGE), alt: DEFAULT_OG_IMAGE_ALT, type: DEFAULT_OG_IMAGE_TYPE }],
     type: "website"
   },
   twitter: {
@@ -102,14 +98,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     foundingDate: "2026-05-28",
     description: COMPANY_DESCRIPTION,
     sameAs: [LINKEDIN_URL],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: BUSINESS_STREET_ADDRESS,
-      addressLocality: BUSINESS_ADDRESS_LOCALITY,
-      addressRegion: BUSINESS_ADDRESS_REGION,
-      postalCode: BUSINESS_POSTAL_CODE,
-      addressCountry: BUSINESS_ADDRESS_COUNTRY
-    },
+    address: BUSINESS_POSTAL_ADDRESS,
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "business verification and project inquiries",
@@ -133,7 +122,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobile app development" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Backend API development" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Automation and integrations" } }
-    ]
+    ],
+    hasOfferCatalog: pricingOfferCatalog("Opplexify software development packages")
   };
   const websiteJsonLd = {
     "@context": "https://schema.org",

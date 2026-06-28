@@ -6,6 +6,20 @@ export const revalidate = 300;
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
+// Captured once when the module is first loaded (deploy/boot time), not per
+// request — so static routes get a stable lastModified instead of "now" on
+// every 5-minute revalidation, which crawlers learn to ignore.
+const BUILD_TIME = new Date();
+
+function pickDate(...candidates: Array<string | Date | null | undefined>): Date {
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    const date = new Date(candidate);
+    if (!Number.isNaN(date.getTime())) return date;
+  }
+  return BUILD_TIME;
+}
+
 const staticRoutes: Array<Pick<SitemapEntry, "url" | "changeFrequency" | "priority">> = [
   { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
   { url: absoluteUrl("/about"), changeFrequency: "monthly", priority: 0.8 },
@@ -22,10 +36,15 @@ const staticRoutes: Array<Pick<SitemapEntry, "url" | "changeFrequency" | "priori
   { url: absoluteUrl("/refund-policy"), changeFrequency: "yearly", priority: 0.3 }
 ];
 
-function route(path: string, priority: number, changeFrequency: SitemapEntry["changeFrequency"] = "monthly"): SitemapEntry {
+function route(
+  path: string,
+  priority: number,
+  lastModified: Date,
+  changeFrequency: SitemapEntry["changeFrequency"] = "monthly"
+): SitemapEntry {
   return {
     url: absoluteUrl(path),
-    lastModified: new Date(),
+    lastModified,
     changeFrequency,
     priority
   };
@@ -40,10 +59,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   return [
-    ...staticRoutes.map((item) => ({ ...item, lastModified: new Date() })),
-    ...services.map((item) => route(`/services/${item.slug}`, 0.75, "monthly")),
-    ...projects.map((item) => route(`/work/${item.slug}`, 0.75, "monthly")),
-    ...posts.map((item) => route(`/blog/${item.slug}`, 0.65, "weekly")),
-    ...team.map((item) => route(`/team/${item.slug}`, 0.55, "monthly"))
+    ...staticRoutes.map((item) => ({ ...item, lastModified: BUILD_TIME })),
+    ...services.map((item) => route(`/services/${item.slug}`, 0.75, pickDate(item.updatedAt), "monthly")),
+    ...projects.map((item) => route(`/work/${item.slug}`, 0.75, pickDate(item.updatedAt, item.date), "monthly")),
+    ...posts.map((item) => route(`/blog/${item.slug}`, 0.65, pickDate(item.updatedAt, item.publishedAt), "weekly")),
+    ...team.map((item) => route(`/team/${item.slug}`, 0.55, pickDate(item.updatedAt), "monthly"))
   ];
 }

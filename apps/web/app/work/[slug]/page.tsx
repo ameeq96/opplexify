@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { PageHero } from "../../../components/site/Blocks";
+import { PageHero, Prose } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
 import { assetUrl, fetchApi, pageMetadata, type Project } from "../../../lib/api";
-import { absoluteUrl, siteUrl } from "../../../lib/seo";
+import { absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
 
 export const revalidate = 300;
 
@@ -47,16 +47,22 @@ export default async function WorkDetailPage({ params }: Props) {
     },
     keywords: ["website development", "SaaS development", "web app development", "mobile app development", "admin dashboard"]
   };
+  const breadcrumbJsonLd = breadcrumbList([
+    { name: "Home", path: "/" },
+    { name: "Work", path: "/work" },
+    { name: project.title, path: `/work/${project.slug}` }
+  ]);
 
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <PageHero title={project.title} subtitle={project.shortDescription} eyebrow={project.category?.name ?? "Project"} />
       <section className="section">
         <div className="container detail-layout">
           <div>
             <img src={assetUrl(project.mainImage)} alt={project.title} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
-            <p className="detail-copy">{project.description}</p>
+            <Prose text={project.description} />
             {project.videoUrl ? (
               <video className="detail-video" controls preload="metadata">
                 <source src={assetUrl(project.videoUrl)} type="video/mp4" />

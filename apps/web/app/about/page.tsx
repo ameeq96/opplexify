@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { StaticTemplatePage } from "../../components/site/StaticTemplatePage";
 import { aboutHtml } from "../../components/site/templateHtml";
 import { assetUrl, fetchApi, getSection, pageMetadata, type Page, type Section, type TeamMember } from "../../lib/api";
-import { BUSINESS_MAILING_ADDRESS, COMPANY_DESCRIPTION, LEGAL_NAME, LINKEDIN_URL, absoluteUrl, siteUrl } from "../../lib/seo";
+import { BUSINESS_POSTAL_ADDRESS, COMPANY_DESCRIPTION, LEGAL_NAME, LINKEDIN_URL, absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -138,7 +138,7 @@ const aboutJsonLd = {
     legalName: LEGAL_NAME,
     url: siteUrl(),
     sameAs: [LINKEDIN_URL],
-    address: BUSINESS_MAILING_ADDRESS
+    address: BUSINESS_POSTAL_ADDRESS
   }
 };
 
@@ -253,6 +253,7 @@ export default async function AboutPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])) }} />
       <StaticTemplatePage html={applyAboutCms(aboutPageHtml, page, team)} bodyClassName="body-about-us" />
     </>
   );

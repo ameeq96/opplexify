@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { PageHero } from "../../../components/site/Blocks";
+import { PageHero, Prose } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
 import { assetUrl, fetchApi, pageMetadata, type Service } from "../../../lib/api";
-import { absoluteUrl, siteUrl } from "../../../lib/seo";
+import { absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
 
 export const revalidate = 300;
 
@@ -46,16 +46,22 @@ export default async function ServiceDetailPage({ params }: Props) {
     serviceType: service.title,
     areaServed: "Worldwide"
   };
+  const breadcrumbJsonLd = breadcrumbList([
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
+    { name: service.title, path: `/services/${service.slug}` }
+  ]);
 
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <PageHero title={service.title} subtitle={service.shortDescription} eyebrow="Service" />
       <section className="section">
         <div className="container detail-layout">
           <div>
             <img src={assetUrl(service.image)} alt={service.title} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
-            <p className="detail-copy">{service.description}</p>
+            <Prose text={service.description} />
           </div>
           <aside className="meta-panel">
             <div className="meta-row">

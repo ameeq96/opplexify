@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FaqList, PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { fetchApi, getSection, pageMetadata, type Faq, type Page } from "../../lib/api";
-import { absoluteUrl } from "../../lib/seo";
+import { absoluteUrl, breadcrumbList } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -91,6 +91,7 @@ export default async function FaqPage() {
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "FAQ", path: "/faq" }])) }} />
       <PageHero title={intro?.title ?? page?.title ?? "Web development questions about pricing, timelines and SEO"} subtitle={intro?.subtitle ?? page?.summary ?? "Answers about websites, full-stack web applications, SaaS development, mobile apps, admin dashboards, backend APIs, and launch workflows."} eyebrow="FAQ" />
       <section className="section">
         <div className="container rr-container-1650">

@@ -11,12 +11,30 @@ import { TEMPLATE_ASSET_BASE as A, templateCssFiles, templateScriptFiles, withAs
  *   the old client-side injector ran. Execution order is still controlled by the
  *   serial loader in DigitalAgencyRuntime; this only changes fetch timing.
  */
+// Stylesheets with no role in the first paint (lightbox, number counters, scroll
+// progress bar). Shipped with media="print" so they don't block rendering, then
+// swapped to media="all" by DigitalAgencyRuntime once the page is interactive.
+const DEFERRED_CSS = new Set<string>(["magnific-popup.css", "odometer-theme-default.css", "progressbar.css"]);
+
 export function TemplateAssetLinks() {
+  const deferredCss = templateCssFiles.filter((file) => DEFERRED_CSS.has(file));
+
   return (
     <>
-      {templateCssFiles.map((file) => (
-        <link key={file} rel="stylesheet" href={withAssetVersion(`${A}/css/${file}`)} />
-      ))}
+      {templateCssFiles.map((file) =>
+        DEFERRED_CSS.has(file) ? (
+          <link key={file} rel="stylesheet" href={withAssetVersion(`${A}/css/${file}`)} media="print" data-defer="" />
+        ) : (
+          <link key={file} rel="stylesheet" href={withAssetVersion(`${A}/css/${file}`)} />
+        )
+      )}
+      {deferredCss.length ? (
+        <noscript>
+          {deferredCss.map((file) => (
+            <link key={`ns-${file}`} rel="stylesheet" href={withAssetVersion(`${A}/css/${file}`)} />
+          ))}
+        </noscript>
+      ) : null}
       {templateScriptFiles.map((file) => (
         <link key={`preload-${file}`} rel="preload" as="script" href={withAssetVersion(`${A}/js/${file}`)} />
       ))}

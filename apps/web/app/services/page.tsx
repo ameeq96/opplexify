@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { StaticTemplatePage } from "../../components/site/StaticTemplatePage";
 import { serviceHtml } from "../../components/site/templateHtml";
 import { assetUrl, fetchApi, getSection, pageMetadata, type Page, type Service } from "../../lib/api";
-import { absoluteUrl, siteUrl } from "../../lib/seo";
+import { absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -315,6 +315,7 @@ export default async function ServicesPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(renderedJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }])) }} />
       <StaticTemplatePage html={renderServicePageHtml(services, page)} bodyClassName="body-about-us" />
     </>
   );

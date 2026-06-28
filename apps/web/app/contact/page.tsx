@@ -6,9 +6,11 @@ import {
   BUSINESS_EMAIL,
   BUSINESS_MAILING_ADDRESS,
   BUSINESS_PHONE,
+  BUSINESS_POSTAL_ADDRESS,
   LEGAL_NAME,
   LINKEDIN_URL,
   absoluteUrl,
+  breadcrumbList,
   siteUrl
 } from "../../lib/seo";
 
@@ -71,7 +73,7 @@ const contactJsonLd = {
     email: BUSINESS_EMAIL,
     telephone: BUSINESS_PHONE,
     sameAs: [LINKEDIN_URL],
-    address: BUSINESS_MAILING_ADDRESS
+    address: BUSINESS_POSTAL_ADDRESS
   }
 };
 
@@ -219,6 +221,7 @@ export default async function ContactPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "Contact", path: "/contact" }])) }} />
       <StaticTemplatePage html={applyContactCms(contactPageHtml, page, site)} bodyClassName="body-about-us" />
     </>
   );

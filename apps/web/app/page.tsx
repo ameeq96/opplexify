@@ -15,8 +15,8 @@ import {
 } from "../lib/api";
 import {
   BUSINESS_EMAIL,
-  BUSINESS_MAILING_ADDRESS,
   BUSINESS_PHONE,
+  BUSINESS_POSTAL_ADDRESS,
   COMPANY_DESCRIPTION,
   DEFAULT_OG_IMAGE,
   LEGAL_NAME,
@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const homeHtml = String.raw`
   <div class="custom-cursor">
-    <img src="${A}/imgs/cursor/cursor-2-xs.svg" alt="cursor" id="cursorImg">
+    <img src="${A}/imgs/cursor/cursor-2-xs.svg" alt="" id="cursorImg">
   </div>
 
   <div class="loader-wrap">
@@ -149,8 +149,8 @@ const homeHtml = String.raw`
       <main>
         <section class="hero-area">
           <div class="area-bg">
-            <video class="hero-video" loop muted autoplay playsinline preload="auto">
-              <source src="${A}/video/wavy-layer.mp4" type="video/mp4">
+            <video class="hero-video" loop muted playsinline preload="none" style="background-color:#050505">
+              <source data-src="${A}/video/wavy-layer.mp4" type="video/mp4">
             </video>
           </div>
           <div class="container rr-container-1650">
@@ -158,7 +158,7 @@ const homeHtml = String.raw`
               <div class="section-content">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h1 class="section-title rr_title_anim">Custom Websites,
+                    <h1 class="section-title">Custom Websites,
                       SaaS Platforms &
                       Business Software Development</h1>
                   </div>
@@ -197,15 +197,15 @@ const homeHtml = String.raw`
               </div>
               <div class="section-content-wrapper">
                 <div class="area-shape-1">
-                  <img class="fade-anim show-light" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1.webp" alt="image" data-speed="0.8">
-                  <img class="fade-anim show-dark" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1-light.webp" alt="image" data-speed="0.8">
+                  <img class="fade-anim show-light" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1.webp" alt="" data-speed="0.8">
+                  <img class="fade-anim show-dark" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1-light.webp" alt="" data-speed="0.8">
                 </div>
                 <div class="section-subtitle-wrapper fade-anim">
                   <div class="subtitle-wrapper">
                     <span class="section-subtitle-3">(Who we are)</span>
                   </div>
                   <div class="thumb" data-speed="1.2">
-                    <img src="${A}/imgs/gallery/gallery-s-1.webp" alt="image">
+                    <img src="${A}/imgs/gallery/gallery-s-1.webp" alt="Opplexify software development team at work">
                   </div>
                 </div>
                 <div class="section-content fade-anim">
@@ -583,7 +583,7 @@ export default async function HomePage() {
       email: BUSINESS_EMAIL,
       telephone: BUSINESS_PHONE,
       sameAs: [LINKEDIN_URL],
-      address: BUSINESS_MAILING_ADDRESS
+      address: BUSINESS_POSTAL_ADDRESS
     }
   };
   const renderedHtml = applyHomeCms(homeHtml, page, site, portfolioItems, services, team);

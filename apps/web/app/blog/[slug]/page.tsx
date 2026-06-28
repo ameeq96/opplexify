@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { PageHero } from "../../../components/site/Blocks";
+import { PageHero, Prose } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
 import { assetUrl, fetchApi, pageMetadata, type BlogPost } from "../../../lib/api";
-import { absoluteUrl, siteUrl } from "../../../lib/seo";
+import { absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
 
 export const revalidate = 300;
 
@@ -38,27 +38,45 @@ export default async function BlogDetailPage({ params }: Props) {
     description: post.excerpt,
     image: absoluteUrl(assetUrl(post.featuredImage)),
     datePublished: post.publishedAt,
+    dateModified: post.updatedAt ?? post.publishedAt,
+    inLanguage: "en",
     author: {
       "@type": "Person",
-      name: post.author?.name ?? "Opplexify LLC"
+      name: post.author?.name ?? "Opplexify LLC",
+      url: siteUrl()
     },
     publisher: {
       "@type": "Organization",
       name: "Opplexify",
-      url: siteUrl()
+      url: siteUrl(),
+      logo: {
+        "@type": "ImageObject",
+        url: absoluteUrl("/template-assets/dark/assets/imgs/logo/opplexify-logo-full.png")
+      }
     },
     mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`)
   };
+  const breadcrumbJsonLd = breadcrumbList([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.title, path: `/blog/${post.slug}` }
+  ]);
 
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <PageHero title={post.title} subtitle={post.excerpt} eyebrow={post.category?.name ?? "Journal"} />
       <section className="section">
         <div className="container rr-container-1650 detail-layout">
           <div>
             <img src={assetUrl(post.featuredImage)} alt={post.title} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
-            <p className="detail-copy">{post.content}</p>
+            <Prose text={post.content} />
+            <p className="detail-copy">
+              Explore Opplexify&rsquo;s <a href="/services">development services</a>, review{" "}
+              <a href="/pricing">project pricing</a>, browse <a href="/blog">more articles</a>, or{" "}
+              <a href="/contact">request a quote</a>.
+            </p>
           </div>
           <aside className="meta-panel">
             <div className="meta-row">

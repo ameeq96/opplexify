@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { PortfolioGridScroller } from "../../components/site/PortfolioGridScroller";
 import { PublicShell } from "../../components/site/PublicShell";
 import { assetUrl, fetchApi, getSection, pageMetadata, type Page, type PortfolioItem } from "../../lib/api";
-import { absoluteUrl, siteUrl } from "../../lib/seo";
+import { absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -135,6 +135,7 @@ export default async function PortfolioGridPage() {
   return (
     <PublicShell smooth={false} showLoader={false}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(portfolioJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "Portfolio", path: "/portfolio" }])) }} />
       <main>
         <section className="opplexify-portfolio-hero mb-4">
           <div className="container rr-container-1650">

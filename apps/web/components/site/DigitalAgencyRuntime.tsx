@@ -143,17 +143,53 @@ function dismissLoader(delay = 0) {
   }, delay);
 }
 
+// Swap non-critical stylesheets (shipped with media="print" so they don't block
+// the first paint) back to media="all" once the page is interactive.
+function enableDeferredStyles() {
+  document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"][data-defer]').forEach((link) => {
+    if (link.media !== "all") link.media = "all";
+  });
+}
+
+// The hero background video ships with no src (preload="none", data-src) so its
+// ~2.6MB payload never competes with LCP. Attach + play it once the browser is idle.
+function activateHeroVideo() {
+  document.querySelectorAll<HTMLVideoElement>("video.hero-video").forEach((video) => {
+    const source = video.querySelector<HTMLSourceElement>("source[data-src]");
+    if (source && !source.getAttribute("src")) {
+      source.setAttribute("src", source.dataset.src ?? "");
+      video.load();
+    }
+    void video.play().catch(() => {});
+  });
+}
+
 export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", smooth = true }: DigitalAgencyRuntimeProps) {
   useEffect(() => {
     let mounted = true;
     let cursorObserver: MutationObserver | undefined;
     let refreshTimeout: number | undefined;
     let loaderFallbackTimeout: number | undefined;
+    let cancelHeroActivate: (() => void) | undefined;
     const bodyClasses = ["body-wrapper", "dark", ...bodyClassName.split(" ").filter(Boolean)];
 
     window.__opplexifyDigitalAgencyScripts ??= new Set<string>();
     window.__opplexifyDigitalAgencyScriptLoads ??= {};
     document.body.classList.add(...bodyClasses);
+
+    // Non-blocking work that should not wait on the heavy template script chain.
+    enableDeferredStyles();
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (typeof idleWindow.requestIdleCallback === "function") {
+      const id = idleWindow.requestIdleCallback(activateHeroVideo, { timeout: 2500 });
+      cancelHeroActivate = () => idleWindow.cancelIdleCallback?.(id);
+    } else {
+      const id = window.setTimeout(activateHeroVideo, 1200);
+      cancelHeroActivate = () => window.clearTimeout(id);
+    }
 
     const syncSmoother = () => {
       const smoother = window.ScrollSmoother?.get?.();
@@ -202,7 +238,9 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
     });
 
     bindContactForm();
-    loaderFallbackTimeout = dismissLoader(550);
+    // Content is server-rendered, so the loader only needs to cover the brief
+    // hydration gap — dismiss it quickly rather than waiting on the script chain.
+    loaderFallbackTimeout = dismissLoader(200);
 
     templateScriptFiles
       .reduce((promise, file) => promise.then(() => loadTemplateScript(file)), Promise.resolve())
@@ -211,6 +249,8 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
 
         if (loaderFallbackTimeout) window.clearTimeout(loaderFallbackTimeout);
         loaderFallbackTimeout = dismissLoader();
+        enableDeferredStyles();
+        activateHeroVideo();
         fixCursorPath();
         bindContactForm();
         refreshRuntime();
@@ -224,6 +264,7 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
       mounted = false;
       if (refreshTimeout) window.clearTimeout(refreshTimeout);
       if (loaderFallbackTimeout) window.clearTimeout(loaderFallbackTimeout);
+      cancelHeroActivate?.();
       cursorObserver?.disconnect();
       document.body.classList.remove(...bodyClasses);
     };

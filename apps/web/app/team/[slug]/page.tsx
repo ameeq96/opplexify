@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { PageHero } from "../../../components/site/Blocks";
+import { PageHero, Prose } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
 import { assetUrl, fetchApi, pageMetadata, type TeamMember } from "../../../lib/api";
-import { LEGAL_NAME, absoluteUrl, siteUrl } from "../../../lib/seo";
+import { LEGAL_NAME, absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
 
 export const revalidate = 300;
 
@@ -45,10 +45,16 @@ export default async function TeamDetailPage({ params }: Props) {
     },
     url: absoluteUrl(`/team/${member.slug}`)
   };
+  const breadcrumbJsonLd = breadcrumbList([
+    { name: "Home", path: "/" },
+    { name: "Team", path: "/team" },
+    { name: member.name, path: `/team/${member.slug}` }
+  ]);
 
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <PageHero title={member.name} subtitle={member.role} eyebrow="Team" />
       <section className="section">
         <div className="container detail-layout">
@@ -56,7 +62,7 @@ export default async function TeamDetailPage({ params }: Props) {
             <div className="team-detail-portrait">
               <img src={assetUrl(member.image)} alt={member.name} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
             </div>
-            <p className="detail-copy">{member.bio}</p>
+            <Prose text={member.bio} />
           </div>
           <aside className="meta-panel">
             {(member.skills ?? []).map((skill) => (

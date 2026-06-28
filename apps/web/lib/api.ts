@@ -94,6 +94,7 @@ export type Service = {
   seoDescription?: string | null;
   ogImage?: string | null;
   canonicalUrl?: string | null;
+  updatedAt?: string | null;
 };
 
 export type Project = {
@@ -107,6 +108,7 @@ export type Project = {
   gallery?: string[] | null;
   videoUrl?: string | null;
   date?: string | null;
+  updatedAt?: string | null;
   contentBlocks?: Array<Record<string, any>> | null;
   category?: { name: string; slug: string } | null;
   tools?: string | null;
@@ -137,6 +139,7 @@ export type BlogPost = {
   content?: string | null;
   featuredImage?: string | null;
   publishedAt?: string | null;
+  updatedAt?: string | null;
   category?: { name: string; slug: string } | null;
   author?: { name: string } | null;
   seoTitle?: string | null;
@@ -157,6 +160,7 @@ export type TeamMember = {
   seoTitle?: string | null;
   seoDescription?: string | null;
   ogImage?: string | null;
+  updatedAt?: string | null;
 };
 
 export type Faq = {
