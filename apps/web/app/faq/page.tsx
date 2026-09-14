@@ -8,63 +8,63 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/faq", null);
-  return pageMetadata(page, "Web Development FAQ - Pricing, Process, SaaS, Apps & SEO", "/faq");
+  return pageMetadata(page, "Software Development FAQ | Process, Pricing & Support", "/faq");
 }
 
 const fallbackFaqs: Faq[] = [
   {
     id: "services",
-    question: "What services does Opplexify LLC provide?",
+    question: "What can Opplexify design and build?",
     answer:
-      "Opplexify LLC provides custom website development, SaaS platform development, dashboard and admin panel development, mobile app development, backend/API development, and automation and integration services."
+      "Opplexify designs and builds business websites, custom web applications, SaaS products, admin dashboards, mobile apps, backend APIs, and workflow automations. We can handle the full path from product planning and UI/UX design through development, testing, and launch."
   },
   {
-    id: "registered",
-    question: "Is Opplexify LLC a registered US company?",
+    id: "fit",
+    question: "What kinds of projects are a good fit?",
     answer:
-      "Opplexify LLC is a Wyoming-formed limited liability company. For business verification or compliance inquiries, contact admin@opplexify.com."
+      "We are a good fit for founders and growing teams with a clear business problem, a committed decision-maker, and realistic priorities. If the idea is still taking shape, discovery can help turn it into a focused first release before development begins."
   },
   {
-    id: "remote",
-    question: "Do you work with remote or international clients?",
+    id: "existing-products",
+    question: "Can you improve an existing product, or do you only build from scratch?",
     answer:
-      "Yes. Opplexify LLC provides remote software development services and can work with businesses in different locations, subject to project fit, payment terms, and applicable requirements."
+      "Both. We can add features, redesign key screens, connect new APIs, improve admin workflows, or stabilize an existing codebase when the technology and current condition are a sensible fit. We review the product first so the scope reflects what is actually there."
   },
   {
-    id: "start",
-    question: "How does a project start?",
+    id: "process",
+    question: "What does your development process look like?",
     answer:
-      "A project usually starts with a short discovery discussion, written scope, estimated timeline, and proposal. Work begins after the scope, deposit, and billing terms are confirmed."
+      "We start with a discovery conversation, clarify requirements, and prepare a written scope with deliverables, timing, and commercial terms. Once approved, the work moves through agreed milestones with regular updates, review points, testing, and a structured handoff."
   },
   {
-    id: "invoices",
-    question: "Do you provide invoices and contracts?",
+    id: "timelines",
+    question: "How long does a typical project take?",
     answer:
-      "Yes. Opplexify LLC can provide written proposals, invoices, and contracts or statements of work for scoped client projects."
+      "A focused business website may take a few weeks, while a SaaS product, mobile app, or multi-part platform usually takes longer. Complexity, integrations, feedback speed, and content readiness all affect delivery, so the working timeline is confirmed after discovery."
   },
   {
-    id: "milestones",
-    question: "How does milestone-based billing work?",
+    id: "pricing-payment",
+    question: "How are pricing and payments handled?",
     answer:
-      "Larger projects are split into milestones. Each milestone covers a defined stage of work, and payment terms are listed in the quote, proposal, or contract."
+      "Pricing is based on the agreed scope rather than a generic hourly estimate. You receive a written proposal that explains the deliverables, assumptions, payment schedule, and any third-party costs. Larger builds are usually divided into milestones so payment follows clear stages of work."
   },
   {
     id: "revisions",
     question: "How do revisions work?",
     answer:
-      "Revision rounds are defined in the project scope. Included revisions refine agreed deliverables. New features, major direction changes, or extra scope may require a change order."
+      "The scope states how review and revision rounds will work. Included revisions are for refining the agreed deliverables; a new feature, major change in direction, or request outside the original scope is discussed and priced separately before extra work begins."
   },
   {
-    id: "refunds",
-    question: "How do refunds and cancellations work?",
+    id: "ownership",
+    question: "Who owns the finished product and source code?",
     answer:
-      "Deposits, completed milestones, work in progress, and third-party costs may be non-refundable. The Refund Policy explains deposits, milestones, revisions, cancellations, completed work, and delivery terms."
+      "Ownership, licensing, source-code access, and handoff terms are set out in the proposal or contract for your project. Once the agreed payment and delivery conditions are met, the final files and access are provided according to those written terms."
   },
   {
-    id: "compliance",
-    question: "How can business verification or compliance teams contact Opplexify LLC?",
+    id: "post-launch",
+    question: "Do you provide support after launch?",
     answer:
-      "Business verification, KYC, payment processor, or compliance teams can contact admin@opplexify.com. The business phone is +1 (307) 443-5144."
+      "Yes. Launch support, bug-fix coverage, monitoring, maintenance, and future feature work can be included or arranged separately depending on the project. We define the post-launch window before delivery so responsibilities are clear on both sides."
   }
 ];
 
@@ -92,7 +92,7 @@ export default async function FaqPage() {
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "FAQ", path: "/faq" }])) }} />
-      <PageHero title={intro?.title ?? page?.title ?? "Web development questions about pricing, timelines and SEO"} subtitle={intro?.subtitle ?? page?.summary ?? "Answers about websites, full-stack web applications, SaaS development, mobile apps, admin dashboards, backend APIs, and launch workflows."} eyebrow="FAQ" />
+      <PageHero title={intro?.title ?? page?.title ?? "Questions about working with Opplexify"} subtitle={intro?.subtitle ?? page?.summary ?? "Straightforward answers about project fit, our software development process, timelines, pricing, revisions, ownership, and support after launch."} eyebrow="FAQ" />
       <section className="section">
         <div className="container rr-container-1650">
       <FaqList faqs={visibleFaqs} />

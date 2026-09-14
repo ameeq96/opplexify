@@ -14,10 +14,10 @@ export async function generateMetadata({ params }: Props) {
   return pageMetadata(
     project
       ? {
-          title: project.seoTitle ?? `${project.title} Case Study`,
+          title: project.seoTitle ?? `${project.title} | Opplexify`,
           summary:
             project.seoDescription ??
-            `${project.shortDescription ?? ""} Opplexify LLC private work summary for website, SaaS, mobile app, dashboard, backend API, or automation development.`,
+            `${project.shortDescription ?? ""} See how Opplexify approaches custom website, SaaS, mobile app, dashboard, backend API, and automation projects.`,
           ogImage: project.ogImage ?? project.mainImage,
           canonicalUrl: project.canonicalUrl
         }
@@ -72,15 +72,15 @@ export default async function WorkDetailPage({ params }: Props) {
           <aside className="meta-panel">
             <div className="meta-row">
               <span>Client</span>
-              <strong>{project.client ?? "Private client work available upon request"}</strong>
+              <strong>{project.client ?? "Not publicly disclosed"}</strong>
             </div>
             <div className="meta-row">
               <span>Tools</span>
-              <strong>{project.tools ?? "Design"}</strong>
+              <strong>{project.tools ?? "Defined by project needs"}</strong>
             </div>
             <div className="meta-row">
               <span>Duration</span>
-              <strong>{project.duration ?? "Flexible"}</strong>
+              <strong>{project.duration ?? "Defined after discovery"}</strong>
             </div>
             <div className="meta-row">
               <span>Location</span>
@@ -105,7 +105,7 @@ export default async function WorkDetailPage({ params }: Props) {
                     <img src={assetUrl(block.image)} alt={block.title ?? project.title} loading="lazy" decoding="async" sizes="(max-width: 760px) 100vw, 45vw" />
                   </div>
                 ) : null}
-                <h2>{block.title ?? `Project section ${index + 1}`}</h2>
+                <h2>{block.title ?? `Project detail ${index + 1}`}</h2>
                 {block.body ? <p>{block.body}</p> : null}
                 {block.href && block.ctaLabel ? (
                   <a className="btn secondary" href={block.href}>

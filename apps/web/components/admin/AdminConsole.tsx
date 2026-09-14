@@ -1032,7 +1032,7 @@ function isEmptyContent(value: any) {
 function defaultSectionContent(type: string) {
   if (type === "hero") {
     return {
-      eyebrow: "Wyoming-formed software development company",
+      eyebrow: "Custom software development for growing businesses",
       headline: "Page headline",
       primaryCta: { label: "Request a Quote", href: "/contact" },
       secondaryCta: { label: "Book a Consultation", href: "/contact" },
@@ -1040,7 +1040,7 @@ function defaultSectionContent(type: string) {
     };
   }
   if (type === "pricing") return { eyebrow: "Pricing", items: [] };
-  if (type === "work-showcase") return { eyebrow: "Portfolio videos", limit: 4, cta: { label: "Browse all work", href: "/portfolio" }, fallbackItems: [] };
+  if (type === "work-showcase") return { eyebrow: "Project highlights", limit: 4, cta: { label: "View our work", href: "/portfolio" }, fallbackItems: [] };
   if (type === "service-showcase") return { mockupLabel: "Development", mockupCta: { label: "Request a Quote", href: "/contact" } };
   if (type === "team-showcase") return { limit: 1 };
   if (type === "logo-strip") return { logos: [] };

@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props) {
           title: service.seoTitle ?? `${service.title} Service`,
           summary:
             service.seoDescription ??
-            `${service.shortDescription ?? service.description ?? "Opplexify service"} Hire Opplexify for SEO-friendly planning, design, development, backend architecture, and launch support.`,
+            `${service.shortDescription ?? service.description ?? "Opplexify service"} Explore a practical approach to product planning, UI/UX design, development, integration, testing, and launch.`,
           ogImage: service.ogImage ?? service.image,
           canonicalUrl: service.canonicalUrl
         }
@@ -65,8 +65,8 @@ export default async function ServiceDetailPage({ params }: Props) {
           </div>
           <aside className="meta-panel">
             <div className="meta-row">
-              <span>Process</span>
-              <strong>Scope, proposal, milestones, delivery</strong>
+              <span>How we work</span>
+              <strong>Discovery, scope, build, review, launch</strong>
             </div>
             <div className="meta-row">
               <span>Typical timeline</span>
@@ -74,7 +74,7 @@ export default async function ServiceDetailPage({ params }: Props) {
             </div>
             {features.length ? (
               <div className="meta-list-panel">
-                <span>Possible deliverables</span>
+                <span>Potential deliverables</span>
                 <ul>
                   {features.map((feature) => (
                     <li key={feature}>{feature}</li>
@@ -85,7 +85,7 @@ export default async function ServiceDetailPage({ params }: Props) {
             <div className="meta-row">
               <span>Next step</span>
               <strong>
-                <a href="/contact">Request a quote</a>
+                <a href="/contact">Discuss your project</a>
               </strong>
             </div>
           </aside>

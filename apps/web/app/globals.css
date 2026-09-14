@@ -790,6 +790,11 @@ video {
   object-fit: cover;
 }
 
+.admin-media-preview img[src*="opplexify-logo-full"] {
+  object-fit: contain;
+  padding: 6px;
+}
+
 .media-field {
   display: grid;
   gap: 10px;
@@ -3167,5 +3172,25 @@ video {
   .work-area .work-header-meta span:nth-child(3) {
     grid-column: 1 / -1;
     margin-top: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .opplexify-template-page *,
+  .opplexify-template-page *::before,
+  .opplexify-template-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .opplexify-template-page .custom-cursor,
+  .opplexify-template-page .loader-wrap {
+    display: none !important;
   }
 }

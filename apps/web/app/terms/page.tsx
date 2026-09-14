@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
-import { BUSINESS_MAILING_ADDRESS, COMPLIANCE_NOTE, LEGAL_NAME, seoMetadata } from "../../lib/seo";
+import { BUSINESS_MAILING_ADDRESS, LEGAL_NAME, seoMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
   title: "Terms of Service - Opplexify",
@@ -151,7 +151,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: `If you have any questions about these Terms, contact us at admin@opplexify.com. ${COMPLIANCE_NOTE}`
+        text: "If you have any questions about these Terms, contact us at admin@opplexify.com."
       }
     ]
   }

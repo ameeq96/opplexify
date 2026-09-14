@@ -15,7 +15,7 @@ function CursorAndLoader({ site, showLoader }: { site: SitePayload; showLoader: 
   return (
     <>
       <div className="custom-cursor">
-        <img src={`${A}/imgs/cursor/cursor-2-xs.svg`} alt="cursor" id="cursorImg" decoding="async" />
+        <img src={`${A}/imgs/cursor/cursor-2-xs.svg`} alt="" id="cursorImg" decoding="async" aria-hidden="true" />
       </div>
 
       {showLoader ? (
@@ -32,7 +32,7 @@ function CursorAndLoader({ site, showLoader }: { site: SitePayload; showLoader: 
         </div>
       ) : null}
 
-      <div className="progress-wrap">
+      <div className="progress-wrap" aria-hidden="true">
         <svg className="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
           <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
         </svg>
@@ -43,7 +43,7 @@ function CursorAndLoader({ site, showLoader }: { site: SitePayload; showLoader: 
 
 function SideInfo({ site }: { site: SitePayload }) {
   const settings = site.settings.site ?? {};
-  const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-dark.svg`);
+  const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-full.png`);
   const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
   const email = settings.email ?? BUSINESS_EMAIL;
   const phone = settings.phone ?? BUSINESS_PHONE;
@@ -51,7 +51,7 @@ function SideInfo({ site }: { site: SitePayload }) {
 
   return (
     <>
-      <aside className="fix">
+      <aside className="fix" aria-label="Navigation and project contact">
         <div className="side-info">
           <div className="side-info-content">
             <div className="offset-widget offset-header">
@@ -61,11 +61,11 @@ function SideInfo({ site }: { site: SitePayload }) {
                   <img className="show-dark" src={logoLight} alt="Opplexify logo" decoding="async" />
                 </a>
               </div>
-              <button id="side-info-close" className="side-info-close">
+              <button id="side-info-close" className="side-info-close" type="button" aria-label="Close navigation menu">
                 <i className="fas fa-times" />
               </button>
             </div>
-            <div className="mobile-menu d-xl-none fix" />
+            <div className="mobile-menu d-xl-none fix" id="mobile-navigation" />
             <div className="offset-button">
               <a href="/contact" className="rr-btn">
                 <span className="btn-wrap">
@@ -113,7 +113,7 @@ function MainMenu({ items }: { items: MenuItem[] }) {
   const links = items.length ? items : emptySite.menus[0].items;
 
   return (
-    <nav className="main-menu">
+    <nav className="main-menu" aria-label="Primary navigation">
       <ul>
         {links.map((item) => (
           <li key={item.id}>
@@ -152,7 +152,13 @@ function HomepageHeader({ site }: { site: SitePayload }) {
               <MainMenu items={headerItems} />
             </div>
             <div className="header__navicon d-xl-none">
-              <button className="side-toggle">
+              <button
+                className="side-toggle"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-controls="mobile-navigation"
+                aria-expanded="false"
+              >
                 <i className="fa-solid fa-bars" />
               </button>
             </div>
@@ -181,11 +187,11 @@ function HomepageFooter({ site }: { site: SitePayload }) {
               </a>
               <div className="title-wrapper">
                 <h2 className="title rr_title_anim">
-                  {footer.headline ?? "Custom software,"} <br /> {footer.headlineLine2 ?? "websites and SaaS"} <br /> {footer.headlineLine3 ?? "built clearly"}
+                  {footer.headline ?? "Custom software"} <br /> {footer.headlineLine2 ?? "for startups and"} <br /> {footer.headlineLine3 ?? "growing businesses"}
                 </h2>
               </div>
               <a href="/contact" className="rr-btn-underline">
-                {footer.ctaLabel ?? "Get a development quote"}
+                {footer.ctaLabel ?? "Discuss your project"}
               </a>
             </div>
             <div className="footer-widget-box">

@@ -24,7 +24,7 @@ const businessPhone = "+1 (307) 443-5144";
 const businessMailingAddress = "Business mailing address: 525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States";
 const linkedinUrl = "https://www.linkedin.com/company/opplexify-llc/";
 const companyDescription =
-  "Opplexify LLC helps businesses plan, design, and build websites, SaaS platforms, dashboards, backend systems, APIs, mobile apps, and workflow automations.";
+  "Opplexify is a custom software development company that designs and builds business websites, SaaS platforms, web and mobile apps, admin dashboards, backend APIs, and workflow automations.";
 
 type PublicSeedAsset = {
   name: string;
@@ -107,13 +107,14 @@ async function main() {
     where: { email: adminEmail },
     update: {
       password: adminPasswordHash,
+      name: "Opplexify Editorial Team",
       role: "SUPER_ADMIN",
       deletedAt: null
     },
     create: {
       email: adminEmail,
       password: adminPasswordHash,
-      name: "Opplexify Admin",
+      name: "Opplexify Editorial Team",
       role: "SUPER_ADMIN"
     }
   });
@@ -148,9 +149,9 @@ async function seedSettings() {
         email: businessEmail,
         phone: businessPhone,
         address: businessMailingAddress,
-        logoDark: asset("logo/opplexify-logo-dark.svg"),
-        logoLight: asset("logo/opplexify-logo-light.svg"),
-        favicon: asset("logo/favicon.svg")
+        logoDark: asset("logo/opplexify-logo-full.png"),
+        logoLight: asset("logo/opplexify-logo-full.png"),
+        favicon: asset("logo/opplexify-mark-64.webp")
       }
     },
     {
@@ -162,18 +163,20 @@ async function seedSettings() {
     {
       key: "seo",
       value: {
-        defaultTitle: "Opplexify LLC - Custom Websites, SaaS Platforms & Business Software",
+        defaultTitle: "Custom Software Development Company | Opplexify",
         defaultDescription: companyDescription,
         ogImage: portfolioImage(0),
         keywords: [
-          "software development company",
-          "website development services",
-          "Next.js development",
-          "SaaS development company",
-          "mobile app development",
+          "custom software development company",
+          "custom software development services",
+          "custom web application development",
+          "SaaS development services",
+          "business website development",
+          "mobile app development services",
           "admin dashboard development",
-          "NestJS backend development",
-          "SEO-friendly websites"
+          "backend API development",
+          "workflow automation services",
+          "API integration services"
         ]
       }
     },
@@ -189,11 +192,11 @@ async function seedSettings() {
     {
       key: "footer",
       value: {
-        headline: "Custom software,",
-        headlineLine2: "SaaS platform or app",
-        headlineLine3: "with a clear scope",
-        ctaLabel: "Request a Quote",
-        text: companyDescription,
+        headline: "Build the software",
+        headlineLine2: "your business",
+        headlineLine3: "actually needs",
+        ctaLabel: "Discuss Your Project",
+        text: "From a focused business website to a full SaaS product, Opplexify turns clear goals into reliable, maintainable software.",
         copyright: `Copyright 2026 ${legalName}.`,
         serviceLinks: [
           { label: "Custom Websites", href: "/services" },
@@ -251,30 +254,30 @@ async function seedPages() {
       {
         key: "hero",
         type: "hero",
-        title: "Custom Websites, SaaS Platforms & Business Software Development",
+        title: "Custom Software Built Around Your Business",
         subtitle: companyDescription,
         content: {
-          eyebrow: "Wyoming-formed software development company",
-          primaryCta: { label: "Request a Quote", href: "/contact" },
-          secondaryCta: { label: "Book a Consultation", href: "/contact" },
+          eyebrow: "Custom software development for growing businesses",
+          primaryCta: { label: "Discuss Your Project", href: "/contact" },
+          secondaryCta: { label: "Explore Our Services", href: "/services" },
           image: portfolioImage(0),
-          headline: "Custom Websites,\nSaaS Platforms &\nBusiness Software Development",
+          headline: "Custom Software\nBuilt Around\nYour Business",
           metaItems: [
-            "Founded 2026\nWyoming limited liability company\nremote software development",
-            "Business verification\ncontact\nadmin@opplexify.com"
+            "Websites & web apps\nSaaS platforms\nmobile products",
+            "Dashboards & APIs\nWorkflow automation\nproduct delivery"
           ]
         }
       },
       {
         key: "about-preview",
         type: "text-media",
-        title: "We build practical software for businesses with clear requirements.",
-        subtitle: "Who we are",
+        title: "A focused development team for meaningful product work.",
+        subtitle: "How we work",
         content: {
           image: asset("gallery/gallery-s-1.webp"),
           paragraphs: [
-            "Opplexify LLC is a Wyoming-formed software development company providing remote software development services for websites, SaaS platforms, dashboards, mobile apps, backend systems, APIs, and automations.",
-            "Projects start with a written scope, proposal, and invoice. Delivery is planned around agreed milestones, direct communication, and client requirements."
+            "Opplexify partners with founders and growing teams to turn business goals into useful digital products. We build custom websites, SaaS platforms, dashboards, mobile apps, backend APIs, and connected workflows without burying the work in unnecessary complexity.",
+            "Every engagement begins with the problem, the people using the product, and the outcome you need. From there, we define a practical scope, agree on milestones, and keep communication direct through design, development, testing, and launch."
           ],
           cta: { label: "Learn more about Opplexify", href: "/about" }
         }
@@ -282,36 +285,36 @@ async function seedPages() {
       {
         key: "work-showcase",
         type: "work-showcase",
-        title: "recent work",
+        title: "selected work",
         content: {
-          eyebrow: "Portfolio videos",
-          cta: { label: "Browse all work", href: "/portfolio" },
+          eyebrow: "Product and interface work",
+          cta: { label: "View the portfolio", href: "/portfolio" },
           limit: 4,
           fallbackItems: [
             {
-              title: "Private Website UI Sample",
-              tag: "Website Design, Motion",
+              title: "Business Website Experience",
+              tag: "Website Design, Development",
               date: "2026",
               href: "/portfolio",
               mediaUrl: "/portfolio/videos/portfolio-video-1.mp4"
             },
             {
-              title: "Private SaaS UI Sample",
-              tag: "SaaS, Product UI",
+              title: "SaaS Product Interface",
+              tag: "SaaS, Product Design",
               date: "2026",
               href: "/portfolio",
               mediaUrl: "/portfolio/videos/portfolio-video-2.mp4"
             },
             {
-              title: "Private Dashboard Sample",
-              tag: "Dashboard, UI/UX",
+              title: "Operations Dashboard",
+              tag: "Dashboard, Internal Tools",
               date: "2026",
               href: "/portfolio",
               mediaUrl: "/portfolio/videos/portfolio-video-3.mp4"
             },
             {
-              title: "Private App Interface Sample",
-              tag: "Mobile App, Web App",
+              title: "Mobile Product Experience",
+              tag: "Mobile App, Product UI",
               date: "2026",
               href: "/portfolio",
               mediaUrl: "/portfolio/videos/portfolio-video-4.mp4"
@@ -322,71 +325,71 @@ async function seedPages() {
       {
         key: "pricing",
         type: "pricing",
-        title: "Website, SaaS, mobile app and software development pricing.",
+        title: "Clear starting points for custom software development.",
         subtitle:
-          "Starting ranges for custom software work. Final quotes depend on scope, integrations, content, revisions, and delivery requirements.",
+          "Use these ranges to plan an initial budget. Your final quote will reflect the features, integrations, content, revision needs, and delivery schedule we agree on together.",
         content: {
           eyebrow: "Pricing",
           items: [
             {
-              label: "5 Page Presence",
+              label: "Focused Online Presence",
               title: "Custom Website",
               description:
-                "A focused business website with responsive pages, contact routing, basic SEO setup, and service content structure.",
+                "A polished business website that explains your services clearly, works across devices, and gives visitors an easy path to contact you.",
               price: "$150",
               suffix: "starting",
               timeline: "1-3 weeks",
-              features: ["Written scope", "Responsive pages", "Contact form", "Foundational SEO", "One revision round"],
-              ctaLabel: "Request a Quote",
+              features: ["Clear project scope", "Responsive pages", "Contact form", "On-page SEO foundations", "One revision round"],
+              ctaLabel: "Discuss Your Project",
               href: "/contact"
             },
             {
-              label: "Full-Stack App",
+              label: "Custom Business Workflow",
               title: "Complete Web Application",
               description:
-                "A custom web app with database-backed workflows, authentication, dashboards, and backend API development.",
+                "A purpose-built web application with secure accounts, database-backed workflows, a user dashboard, and the APIs needed to keep everything connected.",
               price: "$500",
               suffix: "starting",
               timeline: "3-8 weeks",
-              features: ["Project proposal", "Authentication", "User dashboard", "Backend API", "Milestone billing"],
-              ctaLabel: "Request a Quote",
+              features: ["Defined requirements", "Authentication", "User dashboard", "Backend API", "Milestone delivery"],
+              ctaLabel: "Discuss Your Project",
               href: "/contact"
             },
             {
-              label: "Subscription-Ready",
+              label: "SaaS Product Foundation",
               title: "Complete SaaS Solution",
               description:
-                "A SaaS platform foundation with product workflows, account roles, admin controls, data models, and API architecture.",
+                "A SaaS foundation shaped around your core user journey, account roles, admin controls, data model, and backend architecture.",
               price: "$1,000",
               suffix: "starting",
               timeline: "6-12 weeks",
-              features: ["SaaS workflows", "Admin dashboard", "Database and API", "Launch handover", "Milestone invoices"],
-              ctaLabel: "Request a Quote",
+              features: ["Core product workflows", "Admin dashboard", "Database and API", "Testing and handover", "Milestone delivery"],
+              ctaLabel: "Discuss Your Project",
               href: "/contact",
               featured: true
             },
             {
-              label: "App Plus Control Room",
+              label: "Mobile Operations",
               title: "Mobile App with Admin Dashboard",
               description:
-                "A mobile app experience connected to a backend API and admin dashboard for managing real project workflows.",
+                "A connected mobile experience with the backend services and admin tools your team needs to manage users, content, and day-to-day activity.",
               price: "$1,500",
               suffix: "starting",
               timeline: "5-10 weeks",
-              features: ["Mobile screens", "Admin dashboard", "Backend API", "Testing pass", "Revision terms"],
-              ctaLabel: "Request a Quote",
+              features: ["Mobile app screens", "Admin dashboard", "Backend API", "Testing pass", "Defined revisions"],
+              ctaLabel: "Discuss Your Project",
               href: "/contact"
             },
             {
-              label: "Complete Product Suite",
+              label: "Connected Product Suite",
               title: "Complete Mobile App + Web App",
               description:
-                "A larger scoped build with web app, mobile app, backend API, database, admin dashboard, and handover support.",
+                "A coordinated product build that brings the web app, mobile experience, backend API, database, and admin dashboard into one maintainable system.",
               price: "$2,000",
               suffix: "starting",
               timeline: "8-16 weeks",
-              features: ["Written proposal", "Contract and invoices", "Milestone delivery", "Defined revisions", "Final handover"],
-              ctaLabel: "Request a Quote",
+              features: ["Detailed proposal", "Connected applications", "Milestone delivery", "Defined revisions", "Final handover"],
+              ctaLabel: "Discuss Your Project",
               href: "/contact"
             }
           ]
@@ -395,16 +398,16 @@ async function seedPages() {
       {
         key: "service-showcase",
         type: "service-showcase",
-        title: "Software development services for scoped business projects",
+        title: "Custom software development services that solve real business problems",
         content: {
-          mockupLabel: "Development",
-          mockupCta: { label: "Explore", href: "/services" }
+          mockupLabel: "What we build",
+          mockupCta: { label: "Explore Services", href: "/services" }
         }
       },
       {
         key: "team-showcase",
         type: "team-showcase",
-        title: "Founder-led software development for scoped client projects",
+        title: "A hands-on team from first conversation to final handover",
         content: { limit: 3 }
       },
       {
@@ -413,40 +416,40 @@ async function seedPages() {
         title: "Project approach",
         content: {
           items: [
-            { value: "2026", label: "Wyoming LLC formation year" },
-            { value: "Scope", label: "Written proposals and deliverables" },
-            { value: "Milestones", label: "Project billing and delivery terms" }
+            { value: "01", label: "Discovery and a clear project scope" },
+            { value: "02", label: "Focused milestones and regular feedback" },
+            { value: "03", label: "Testing, launch, and a clean handover" }
           ]
         }
       },
       {
         key: "marquee",
         type: "marquee",
-        title: "Custom websites / SaaS platforms / Mobile apps / Admin dashboards / Backend APIs / Automations"
+        title: "Custom websites / SaaS products / Web applications / Mobile apps / Admin dashboards / Backend APIs / Workflow automation"
       },
       {
         key: "logo-strip",
         type: "logo-strip",
-        title: "Selected private client work is available upon request.",
+        title: "Relevant project examples are available during a consultation.",
         content: {
           logos: [
-            { image: asset("brand/brand-1.webp"), lightImage: asset("brand/brand-1-light.webp"), alt: "Private software project category" },
-            { image: asset("brand/brand-2.webp"), lightImage: asset("brand/brand-2-light.webp"), alt: "Private website project category" },
-            { image: asset("brand/brand-3.webp"), lightImage: asset("brand/brand-3-light.webp"), alt: "Private dashboard project category" }
+            { image: asset("brand/brand-1.webp"), lightImage: asset("brand/brand-1-light.webp"), alt: "Custom software project showcase" },
+            { image: asset("brand/brand-2.webp"), lightImage: asset("brand/brand-2-light.webp"), alt: "Business website project showcase" },
+            { image: asset("brand/brand-3.webp"), lightImage: asset("brand/brand-3-light.webp"), alt: "Dashboard development project showcase" }
           ]
         }
       },
       {
         key: "capability-list",
         type: "capability-list",
-        title: "Transparent scope, clear communication and maintainable systems guide each project",
+        title: "Thoughtful product decisions, clear communication, and maintainable code at every stage",
         content: {
           items: [
-            { category: "Frontend", text: "Next.js interfaces built for speed", year: "01" },
-            { category: "Backend", text: "NestJS APIs with database structure", year: "02" },
-            { category: "SEO", text: "Clean metadata, headings and internal links", year: "03" },
-            { category: "Product", text: "SaaS, mobile and admin workflows", year: "04" },
-            { category: "Launch", text: "Responsive, tested and production-ready builds", year: "05" }
+            { category: "Frontend", text: "Fast, responsive interfaces built with Next.js", year: "01" },
+            { category: "Backend", text: "Structured APIs, databases, and server-side workflows", year: "02" },
+            { category: "SEO", text: "Useful page structure, metadata, headings, and internal links", year: "03" },
+            { category: "Product", text: "Connected SaaS, mobile, dashboard, and admin experiences", year: "04" },
+            { category: "Launch", text: "Careful testing, deployment support, and practical handover", year: "05" }
           ]
         }
       }
@@ -455,10 +458,10 @@ async function seedPages() {
       {
         key: "intro",
         type: "rich-text",
-        title: "A Wyoming-formed software development company for scoped client projects",
-        subtitle: "Opplexify LLC provides remote software development services with written scopes, milestone delivery, proposals, and invoices.",
+        title: "Custom software development with a practical, collaborative process",
+        subtitle: "Opplexify helps founders and growing teams plan, design, and build digital products that fit the way their business actually works.",
         content: {
-          body: "Opplexify LLC helps businesses plan, design, and build custom websites, SaaS platforms, dashboards, mobile apps, backend systems, APIs, and workflow automations based on client requirements.",
+          body: "Good software starts with a shared understanding of the problem. Opplexify works with founders and business teams to turn ideas, manual processes, and product requirements into custom websites, SaaS platforms, web applications, mobile apps, admin dashboards, and backend APIs.\n\nOur process stays deliberately straightforward. We clarify the audience and core workflow, define what belongs in the first release, and create a written scope with realistic milestones. During development, you see progress, share feedback, and know what is coming next.\n\nWe care about the work behind the interface as much as the interface itself: maintainable code, sensible data structures, reliable integrations, responsive layouts, and a handover your team can use after launch.",
           image: portfolioImage(3)
         }
       }
@@ -467,15 +470,15 @@ async function seedPages() {
       {
         key: "contact-hero",
         type: "contact",
-        title: "Contact Opplexify LLC",
+        title: "Tell us what you are building",
         subtitle:
-          "Share your website, SaaS platform, mobile app, dashboard, backend API, or automation requirements. For business verification or compliance inquiries, contact admin@opplexify.com."
+          "Planning a business website, SaaS product, custom web application, mobile app, admin dashboard, backend API, or automation? Share the goal, must-have features, and timeline, and we will help you define a sensible next step."
       },
       {
         key: "contact-info",
         type: "contact-info",
-        title: "Business contact details",
-        subtitle: "Use these details for project inquiries and compliance review.",
+        title: "Talk to the Opplexify team",
+        subtitle: "Use the details below for project questions, estimates, and partnership inquiries.",
         content: {
           email: businessEmail,
           phone: businessPhone,
@@ -487,46 +490,46 @@ async function seedPages() {
       {
         key: "faq-intro",
         type: "faq",
-        title: "Opplexify LLC FAQ for services, process and compliance",
+        title: "Frequently asked questions about working with Opplexify",
         subtitle:
-          "Clear answers about services, company registration, remote work, proposals, invoices, milestones, revisions, refunds, cancellations, and business verification."
+          "Straightforward answers about our software development services, project fit, proposals, pricing, milestones, revisions, remote collaboration, and delivery process."
       }
     ]),
     pageSeed("Services", "services", "services", [
       {
         key: "intro",
         type: "services",
-        title: "Software development services for businesses",
+        title: "Custom software development services built for real workflows",
         subtitle:
-          "Custom websites, SaaS platforms, dashboards, mobile apps, backend APIs, and automation services planned around client requirements, written scopes, timelines, and milestones.",
+          "From business websites and SaaS platforms to mobile apps, admin dashboards, backend APIs, and workflow automation, Opplexify builds software around clear goals and practical requirements.",
         content: { image: "/services/services-overview.webp" }
       }
     ]),
-    pageSeed("Private Project Work", "work", "work", [
+    pageSeed("Work", "work", "work", [
       {
         key: "intro",
         type: "projects",
-        title: "Selected private client work",
+        title: "Representative software concepts",
         subtitle:
-          "Selected private client work is available upon request. Opplexify LLC does not publish client names, results, or project details unless approved."
+          "Explore clearly labelled concepts showing how Opplexify approaches business websites, SaaS products, dashboards, mobile experiences, and backend systems. These examples are not presented as named client case studies."
       }
     ]),
     pageSeed("Blog", "blog", "blog", [
       {
         key: "intro",
         type: "blog",
-        title: "Software development notes and project planning",
+        title: "Practical guides for planning and building better software",
         subtitle:
-          "Practical articles about websites, SaaS platforms, dashboards, mobile apps, backend APIs, automations, project scope, and delivery planning."
+          "Clear, useful articles on website strategy, SaaS product planning, mobile app development, admin dashboards, backend APIs, workflow automation, and smoother project delivery."
       }
     ]),
     pageSeed("Team", "team", "team", [
       {
         key: "intro",
         type: "team",
-        title: "Founder-led software development",
+        title: "Meet the team behind Opplexify",
         subtitle:
-          "Opplexify LLC is led by Muhammad Emmad Khan and provides remote software development services for scoped client projects."
+          "A focused team bringing product planning, full-stack development, quality assurance, and delivery coordination together for every client project."
       }
     ]),
     pageSeed("Creative Agency", "creative-agency", "landing", [
@@ -596,9 +599,9 @@ async function seedPages() {
       {
         key: "intro",
         type: "portfolio",
-        title: "Private client work available upon request",
+        title: "A visual portfolio of websites, SaaS products, and app interfaces",
         subtitle:
-          "Opplexify LLC keeps private client names, dashboards, source code, business data, and project results confidential unless a client approves public sharing. Service categories show the types of work available for review during project scoping."
+          "Browse interface and product work across websites, SaaS platforms, dashboards, mobile apps, backend systems, and automation. We protect client-sensitive information while sharing enough context to show the range of work Opplexify can deliver."
       }
     ]),
     pageSeed("Agency Portfolio", "agency-portfolio", "portfolio", [
@@ -740,7 +743,7 @@ function pageSeed(
     slug,
     pageType,
     summary: sections[0]?.subtitle,
-    seoTitle: `${title} - Opplexify LLC`,
+    seoTitle: `${title} | Opplexify`,
     seoDescription:
       sections[0]?.subtitle ??
       companyDescription,
@@ -779,92 +782,92 @@ async function seedServices() {
     {
       title: "Custom Website Development",
       slug: "custom-website-development",
-      shortDescription: "Responsive business websites for clear service presentation, contact routing, basic SEO setup, and launch readiness.",
+      shortDescription: "Custom business websites with responsive design, clear service pages, dependable contact forms, and strong on-page SEO foundations.",
       description:
-        "Opplexify LLC builds custom websites for businesses that need a professional web presence, clear service pages, contact forms, basic SEO foundations, responsive layouts, and a manageable content structure. Typical deliverables can include discovery, written scope, page design, frontend development, contact form routing, metadata, testing, and launch handover. Typical timeline: 1-3 weeks depending on scope.",
+        "Your website should help the right customer understand what you do and take the next step with confidence. Opplexify provides custom website development for businesses that need a polished, responsive site with clear service pages, intuitive navigation, and dependable contact routing.\n\nA typical project can include discovery, content structure, UI design, frontend development, on-page SEO foundations, performance checks, testing, and launch handover. We shape the scope around the pages and functionality you actually need, so the finished site is easier to manage and ready to evolve with the business.\n\nTypical timeline: 1-3 weeks, depending on scope, content readiness, and integrations.",
       icon: asset("icon/icon-s-1.webp"),
       image: "/services/business-websites.webp",
       gallery: ["Discovery and scope", "Responsive pages", "Contact form routing", "SEO foundations", "Launch handover"],
       featured: true,
       sortOrder: 1,
-      seoTitle: "Custom Website Development Service - Opplexify LLC",
+      seoTitle: "Custom Website Development Services | Opplexify",
       seoDescription:
-        "Custom website development by Opplexify LLC for responsive business websites, service pages, contact forms, basic SEO setup, testing, and launch handover."
+        "Custom website development for responsive business websites, clear service pages, contact forms, on-page SEO foundations, testing, and launch support."
     },
     {
       title: "SaaS Platform Development",
       slug: "saas-platform-development",
-      shortDescription: "SaaS platforms with user accounts, product workflows, admin controls, database models, and backend APIs.",
+      shortDescription: "SaaS product development with user accounts, core workflows, admin controls, database design, and reliable backend APIs.",
       icon: asset("icon/icon-s-2.webp"),
       image: "/services/saas-platforms.webp",
       gallery: ["Requirements planning", "Authentication", "Database models", "Admin workflows", "Milestone delivery"],
       featured: true,
       sortOrder: 2,
       description:
-        "Opplexify LLC develops SaaS platforms for founders and businesses that need account-based workflows, authentication, role handling, dashboards, data models, backend APIs, and product screens. Possible deliverables include requirements planning, UI screens, database schema, API endpoints, admin panel, testing, and launch handover. Typical timeline: 6-12 weeks depending on complexity.",
-      seoTitle: "SaaS Platform Development Service - Opplexify LLC",
+        "A useful SaaS product starts with a focused problem and a workflow people can understand without a manual. Opplexify offers SaaS development services for founders and businesses building account-based products, customer portals, subscription-ready tools, and internal platforms.\n\nWe can take a SaaS MVP from requirements and product screens through authentication, role-based access, database design, backend APIs, user dashboards, admin controls, testing, and launch handover. The first release stays focused on the product's core value while the technical foundation leaves room for sensible growth.\n\nTypical timeline: 6-12 weeks, depending on product complexity, integrations, and launch requirements.",
+      seoTitle: "SaaS Platform Development Services | Opplexify",
       seoDescription:
-        "SaaS platform development by Opplexify LLC for account workflows, authentication, dashboards, database models, backend APIs, and milestone-based delivery."
+        "SaaS platform and MVP development with authentication, account workflows, admin dashboards, database design, backend APIs, testing, and launch handover."
     },
     {
       title: "Dashboard & Admin Panel Development",
       slug: "dashboard-admin-panel-development",
-      shortDescription: "Operational dashboards and admin panels for managing users, content, requests, reports, and workflows.",
+      shortDescription: "Custom dashboards, admin panels, and internal tools for managing users, content, requests, reports, and daily operations.",
       description:
-        "Opplexify LLC builds dashboards and admin panels for businesses that need to manage users, content, requests, reports, orders, or internal workflows. Possible deliverables include role-based access, tables, forms, filters, charts, API integrations, permissions, and documentation. Typical timeline: 3-8 weeks depending on data and workflow complexity.",
+        "A good admin panel removes busywork and gives the right people a clear view of what needs attention. Opplexify provides custom dashboard development for teams managing users, content, requests, orders, reports, approvals, or other operational workflows.\n\nDepending on the job, the build can include role-based access, searchable tables, forms, filters, charts, permissions, audit-friendly activity, and third-party API integrations. We organize the interface around real tasks rather than filling the screen with metrics that nobody uses.\n\nTypical timeline: 3-8 weeks, depending on data sources, user roles, and workflow complexity.",
       icon: asset("icon/icon-s-3.webp"),
       image: "/services/admin-dashboards.webp",
       gallery: ["Role-based access", "Data tables", "Forms and filters", "Reports", "API integration"],
       featured: true,
       sortOrder: 3,
-      seoTitle: "Dashboard and Admin Panel Development Service - Opplexify LLC",
+      seoTitle: "Dashboard & Admin Panel Development | Opplexify",
       seoDescription:
-        "Dashboard and admin panel development by Opplexify LLC for users, content, requests, reports, orders, workflows, permissions, and API integrations."
+        "Custom dashboard and admin panel development for user management, reports, internal workflows, role-based access, data tools, and API integrations."
     },
     {
       title: "Mobile App Development",
       slug: "mobile-app-development",
-      shortDescription: "Mobile app interfaces connected to secure APIs, admin workflows, and backend systems when required.",
+      shortDescription: "Mobile app development with thoughtful user flows, secure backend APIs, authentication, and practical admin tools.",
       description:
-        "Opplexify LLC designs and builds mobile app experiences for customer or internal workflows, with backend API connections, admin workflows, authentication, and testing support when required. Possible deliverables include screen planning, UI implementation, API integration, admin connection, testing, and handoff. Typical timeline: 5-10 weeks depending on scope.",
+        "Successful mobile apps need more than a set of attractive screens. Opplexify designs and builds mobile experiences around the complete user journey, including the backend services and operational tools required to run the product after launch.\n\nA project can cover screen planning, UI implementation, authentication, backend API integration, account data, media handling, admin workflows, testing, and handover. We prioritize the features that make the first release useful and keep future additions in mind without overbuilding the MVP.\n\nTypical timeline: 5-10 weeks, depending on the number of workflows, integrations, and release requirements.",
       icon: asset("icon/icon-s-4.webp"),
       image: "/services/mobile-apps.webp",
       gallery: ["Mobile screens", "API connection", "Admin workflow", "Testing support", "Store-ready handoff"],
       featured: true,
       sortOrder: 4,
-      seoTitle: "Mobile App Development Service - Opplexify LLC",
+      seoTitle: "Mobile App Development Services | Opplexify",
       seoDescription:
-        "Mobile app development by Opplexify LLC for app screens, backend API connections, admin workflows, testing support, and project handoff."
+        "Mobile app development with user-focused screens, authentication, backend API integration, admin workflows, testing, and a practical launch handover."
     },
     {
       title: "Backend/API Development",
       slug: "backend-api-development",
-      shortDescription: "Backend systems and APIs with databases, authentication, validation, documentation, and maintainable service structure.",
+      shortDescription: "Backend API development with structured databases, authentication, validation, documentation, and maintainable server-side logic.",
       description:
-        "Opplexify LLC builds backend systems for applications that need secure APIs, databases, authentication, validation, file handling, documentation, and maintainable server-side logic. Possible deliverables include API design, database schema, authentication, authorization, validation, testing, and deployment support. Typical timeline: 3-8 weeks depending on requirements.",
+        "Reliable digital products depend on a backend that handles data and permissions consistently. Opplexify builds backend systems and APIs for web apps, SaaS platforms, mobile products, dashboards, and third-party integrations.\n\nWork can include API design, database schema, authentication, authorization, input validation, file handling, error management, documentation, automated checks, and deployment support. The goal is a clear service structure that another developer can understand and your product can build on.\n\nTypical timeline: 3-8 weeks, depending on data complexity, security requirements, and external services.",
       icon: asset("icon/icon-s-5.webp"),
       image: "/services/backend-systems.webp",
       gallery: ["API design", "Database schema", "Authentication", "Validation", "Documentation"],
       featured: true,
       sortOrder: 5,
-      seoTitle: "Backend API Development Service - Opplexify LLC",
+      seoTitle: "Backend API Development Services | Opplexify",
       seoDescription:
-        "Backend and API development by Opplexify LLC for databases, authentication, validation, documentation, testing, and maintainable server-side systems."
+        "Backend API development for web and mobile products, including database design, authentication, authorization, validation, documentation, and testing."
     },
     {
       title: "Automation & Integrations",
       slug: "automation-integrations",
-      shortDescription: "Workflow automations and integrations that connect business tools, forms, dashboards, APIs, and data processes.",
+      shortDescription: "Business workflow automation and API integrations that connect tools, move data, and reduce repetitive manual work.",
       description:
-        "Opplexify LLC builds automations and integrations for businesses that need tools, forms, dashboards, APIs, or services to share data reliably. Possible deliverables include workflow mapping, API integration, data sync, admin tools, scheduled jobs, testing, and handoff notes. Typical timeline: 2-6 weeks depending on connected systems.",
+        "Manual handoffs slow teams down and create avoidable errors. Opplexify builds workflow automations and API integrations that help forms, business tools, dashboards, databases, and external services exchange information more reliably.\n\nWe begin by mapping the current process and identifying where automation will make a meaningful difference. A project can include third-party API integration, data synchronization, scheduled jobs, notifications, lightweight admin tools, failure handling, testing, and clear handover notes.\n\nTypical timeline: 2-6 weeks, depending on the number of connected systems and the quality of their APIs.",
       icon: asset("icon/icon-s-5.webp"),
       image: "/services/web-applications.webp",
       gallery: ["Workflow mapping", "API integrations", "Admin tools", "Data sync", "Testing and handoff"],
       featured: true,
       sortOrder: 6,
-      seoTitle: "Automation and Integrations Service - Opplexify LLC",
+      seoTitle: "Workflow Automation & API Integration | Opplexify",
       seoDescription:
-        "Automation and integration services by Opplexify LLC for API integrations, workflow mapping, data sync, admin tools, testing, and handoff."
+        "Workflow automation and API integration services for connecting business tools, syncing data, scheduling jobs, reducing manual work, and improving reliability."
     }
   ];
 
@@ -891,9 +894,9 @@ async function seedServices() {
 
 async function seedProjectCategories() {
   const categories = [
-    { name: "Private Website Work", slug: "branding" },
-    { name: "Private SaaS and Dashboard Work", slug: "web-experience" },
-    { name: "Private Mobile and API Work", slug: "product" }
+    { name: "Business Websites", slug: "branding" },
+    { name: "SaaS & Dashboards", slug: "web-experience" },
+    { name: "Mobile Apps & APIs", slug: "product" }
   ];
 
   const map = new Map<string, string>();
@@ -911,72 +914,77 @@ async function seedProjectCategories() {
 async function seedProjects(categoryMap: Map<string, string>) {
   const projects = [
     {
-      title: "Private Website Development Work",
-      slug: "nova-identity-system",
+      title: "Business Website Design Concept",
+      slug: "business-website-design-concept",
       client: null,
       categoryId: categoryMap.get("branding"),
       location: "Remote",
       tools: "Website planning, responsive UI, contact forms, SEO foundations",
       duration: "Scoped by project",
       shortDescription:
-        "Selected private client website work is available upon request.",
+        "A representative website concept exploring responsive design, service-page structure, contact journeys, and SEO foundations.",
       description:
-        "Opplexify LLC does not publish this client's name, results, or detailed project information without approval. Private website development examples can be discussed during a consultation when appropriate.",
+        "A business website has to do two jobs well: explain the offer quickly and guide the visitor toward a useful next step. This representative concept shows Opplexify's approach to custom website development, with responsive layouts, clear service-page structure, focused calls to action, dependable contact routing, and on-page SEO foundations.\n\nThis is not presented as a client case study, and no client identity or performance results are claimed. During a consultation, we can discuss the design and technical decisions that may apply to your goals.",
       mainImage: portfolioImage(0),
       gallery: [portfolioImage(0), portfolioImage(3)],
       featured: true,
       sortOrder: 1,
-      seoTitle: "Private Website Development Work - Opplexify LLC",
+      seoTitle: "Business Website Design Concept | Opplexify",
       seoDescription:
-        "Private website development work by Opplexify LLC. Selected private client work is available upon request."
+        "Explore a representative Opplexify website concept covering responsive design, service-page structure, contact journeys, and on-page SEO foundations."
     },
     {
-      title: "Private SaaS and Dashboard Work",
-      slug: "orbit-studio-website",
+      title: "SaaS Product & Operations Dashboard Concept",
+      slug: "saas-product-operations-dashboard-concept",
       client: null,
       categoryId: categoryMap.get("web-experience"),
       location: "Remote",
       tools: "SaaS workflows, dashboard planning, backend APIs, data models",
       duration: "Scoped by project",
       shortDescription:
-        "Selected private SaaS and dashboard work is available upon request.",
+        "A representative SaaS concept connecting account workflows, operational dashboards, structured data, and backend APIs.",
       description:
-        "Opplexify LLC does not publish this client's name, results, or detailed project information without approval. Private SaaS and dashboard examples can be discussed during a consultation when appropriate.",
+        "SaaS products work best when the customer experience and the internal operation are designed together. This representative concept shows our approach to user accounts, role-based workflows, product dashboards, admin controls, database structure, and backend API development.\n\nThis is not presented as a client case study, and it does not claim proprietary workflows or performance results. If you are planning a SaaS MVP or improving an existing platform, we can walk through comparable product decisions during the scoping conversation.",
       mainImage: portfolioImage(12),
       gallery: [portfolioImage(12), portfolioImage(18)],
       featured: true,
       sortOrder: 2,
-      seoTitle: "Private SaaS and Dashboard Work - Opplexify LLC",
+      seoTitle: "SaaS Product & Dashboard Concept | Opplexify",
       seoDescription:
-        "Private SaaS and dashboard development work by Opplexify LLC. Selected private client work is available upon request."
+        "Explore a representative Opplexify SaaS concept covering user accounts, admin dashboards, data workflows, database design, and backend APIs."
     },
     {
-      title: "Private Mobile App and API Work",
-      slug: "pulse-product-platform",
+      title: "Mobile Product & API Foundation Concept",
+      slug: "mobile-product-api-foundation-concept",
       client: null,
       categoryId: categoryMap.get("product"),
       location: "Remote",
       tools: "Mobile screens, backend APIs, admin workflows, integrations",
       duration: "Scoped by project",
       shortDescription:
-        "Selected private mobile app and API work is available upon request.",
+        "A representative mobile product concept supported by account flows, backend APIs, admin tools, and external integrations.",
       description:
-        "Opplexify LLC does not publish this client's name, results, or detailed project information without approval. Private mobile app and API examples can be discussed during a consultation when appropriate.",
+        "A maintainable mobile product connects the user-facing app with the systems that support it. This representative concept highlights the relationship between mobile screens, authentication, backend APIs, data handling, admin workflows, and external integrations.\n\nThis is not presented as a client case study, and it does not claim a named customer or released product. We can discuss how these product decisions relate to your users, operational needs, and launch scope.",
       mainImage: portfolioImage(24),
       gallery: [portfolioImage(24), portfolioImage(30)],
       featured: true,
       sortOrder: 3,
-      seoTitle: "Private Mobile App and API Work - Opplexify LLC",
+      seoTitle: "Mobile Product & Backend API Concept | Opplexify",
       seoDescription:
-        "Private mobile app and API development work by Opplexify LLC. Selected private client work is available upon request."
+        "Explore a representative Opplexify mobile product concept covering authentication, backend APIs, data handling, admin workflows, and third-party integrations."
     }
   ];
+
+  await prisma.project.updateMany({
+    where: { slug: { in: ["nova-identity-system", "orbit-studio-website", "pulse-product-platform"] } },
+    data: { status: "ARCHIVED", deletedAt: new Date() }
+  });
 
   for (const project of projects) {
     await prisma.project.upsert({
       where: { slug: project.slug },
-      update: { ...project, status: "PUBLISHED", date: new Date("2026-06-05"), ogImage: project.mainImage },
-      create: { ...project, status: "PUBLISHED", date: new Date("2026-06-05"), ogImage: project.mainImage }
+      update: { ...project, status: "PUBLISHED", date: null, ogImage: project.mainImage, deletedAt: null },
+      create: { ...project, status: "PUBLISHED", date: null, ogImage: project.mainImage }
     });
   }
 }
@@ -987,7 +995,7 @@ async function seedPortfolioItems(userId: string) {
 
   for (const [index, item] of images.entries()) {
     const tag = portfolioTags[index % portfolioTags.length];
-    const title = `Private ${tag} category reference`;
+    const title = `${tag} portfolio sample ${String(index + 1).padStart(2, "0")}`;
 
     await prisma.portfolioItem.upsert({
       where: { mediaUrl: item.url },
@@ -1017,7 +1025,7 @@ async function seedPortfolioItems(userId: string) {
   }
 
   for (const [index, item] of videos.entries()) {
-    const title = "Private interface motion reference";
+    const title = `Interface motion sample ${String(index + 1).padStart(2, "0")}`;
 
     await prisma.portfolioItem.upsert({
       where: { mediaUrl: item.url },
@@ -1093,46 +1101,46 @@ async function seedPosts(categoryMap: Map<string, string>, tagMap: Map<string, s
       title: "How to Build an SEO-Friendly Business Website That Converts",
       slug: "seo-friendly-business-website-guide",
       excerpt:
-        "A practical guide to service pages, headings, metadata, internal links, page speed, and lead capture for a business website.",
+        "A practical guide to planning service pages, on-page SEO, internal links, website performance, and a clearer path from search visit to enquiry.",
       content:
-        "An SEO-friendly business website starts with clear service keywords, useful page titles, descriptive headings, fast responsive layouts, internal links, optimized images, and a contact path that is easy to find. Opplexify builds website pages around search intent and conversion goals so visitors can understand the offer, compare services, and request a quote without friction.",
+        "An SEO-friendly business website has to work for two audiences at once: the person looking for help and the search engine trying to understand the page. The best starting point is not a list of keywords. It is a clear answer to three questions: who is this service for, what problem does it solve, and what should the visitor do next?\n\nGive each important service its own useful page. Choose one primary topic for that page, then use related phrases naturally where they add clarity. A custom website development page, for example, can explain responsive design, content structure, contact forms, on-page SEO, testing, and launch support without repeating the same phrase in every paragraph. The page title, main heading, introduction, and metadata should describe the offer in plain language.\n\nSite structure matters too. Link related services to one another, connect helpful articles to the pages they support, and make sure every important page can be reached through straightforward navigation. Descriptive link text gives visitors context and helps search engines understand how the content fits together.\n\nTechnical quality supports the content. Use responsive layouts, compressed images, sensible heading levels, descriptive image text, canonical URLs, and pages that load without unnecessary scripts. Structured data can add useful context, but it cannot rescue thin or confusing copy.\n\nFinally, make the conversion path easy to follow. Use a specific call to action, keep contact forms focused, and tell people what information will help you prepare a useful response. Before launch, read every page as a potential customer: if the offer, proof, process, and next step are not clear, refine the page before adding more keywords.",
       featuredImage: portfolioImage(0),
       categoryId: categoryMap.get("insights"),
       tags: ["brand", "growth"],
       featured: true,
       seoTitle: "SEO-Friendly Business Website Guide - Opplexify",
       seoDescription:
-        "Learn how to build an SEO-friendly business website with service keywords, page titles, headings, metadata, internal links, image optimization, speed, and lead capture."
+        "Learn how to plan an SEO-friendly business website with useful service pages, natural keywords, clear headings, internal links, better performance, and stronger enquiries."
     },
     {
       title: "What a SaaS MVP Needs Before Launch",
       slug: "saas-mvp-launch-checklist",
       excerpt:
-        "The core SaaS launch checklist: authentication, database models, admin dashboards, APIs, onboarding, analytics, and SEO pages.",
+        "A practical SaaS MVP checklist covering the core workflow, authentication, data, admin tools, onboarding, analytics, and launch readiness.",
       content:
-        "A SaaS MVP needs more than screens. Before launch, the product should have secure authentication, role-based access, database structure, API validation, admin dashboards, billing-ready architecture, onboarding flows, marketing pages, SEO metadata, and a deployment process that supports future releases. Opplexify plans SaaS products so founders can launch quickly without creating technical debt on day one.",
+        "A SaaS MVP is not simply a smaller version of the final product. It is the smallest dependable release that lets a specific customer complete a valuable job and gives the team useful evidence about what to build next. Before development begins, write down that core job and remove features that do not support it.\n\nMap the complete user journey from sign-up to the first meaningful result. Decide how accounts are created, which roles exist, what each role can see, and what happens when something goes wrong. Authentication, password recovery, permissions, validation, and understandable empty states are part of the product experience, not tasks to leave until launch week.\n\nThe data model and backend API should reflect the real workflow instead of the first set of screens. Define the key records, their relationships, and who can create or change them. An admin dashboard is equally important: someone on the business side will need to manage users, review activity, correct data, or respond to support issues.\n\nLaunch planning also includes the less visible pieces. Think through transactional email, billing readiness if subscriptions are part of the model, analytics events, error monitoring, backups, privacy and terms pages, and a repeatable deployment process. A short onboarding flow and useful product messages can prevent avoidable support requests.\n\nTreat the checklist as a prioritization tool, not permission to overbuild. Secure the core workflow, make the product operable, test it with realistic data, and document what is intentionally postponed. That creates a SaaS MVP you can learn from without pretending the first release has to solve every future problem.",
       featuredImage: portfolioImage(12),
       categoryId: categoryMap.get("process"),
       tags: ["design", "admin-dashboards", "backend-apis"],
       featured: true,
       seoTitle: "SaaS MVP Launch Checklist - Web App, Admin Dashboard and Backend",
       seoDescription:
-        "SaaS MVP launch checklist covering authentication, dashboards, database models, APIs, onboarding, SEO pages, billing-ready structure, and deployment planning."
+        "Use this SaaS MVP launch checklist to plan the core workflow, authentication, database, backend API, admin dashboard, onboarding, analytics, and deployment."
     },
     {
       title: "Mobile App Development with a Backend and Admin Dashboard",
       slug: "mobile-app-development-backend-admin-dashboard",
       excerpt:
-        "Why most mobile app projects need secure APIs, admin controls, notification-ready workflows, and a maintainable backend.",
+        "How backend APIs, authentication, data models, admin controls, and operational workflows turn a mobile interface into a manageable product.",
       content:
-        "A professional mobile app usually needs a backend API, authentication, user records, media handling, push notification readiness, admin dashboard controls, reporting, and role-based operations. Opplexify connects mobile app interfaces with backend systems so the product can be managed after launch instead of becoming a static prototype.",
+        "A mobile app may be what customers see, but the product usually depends on several systems behind it. User accounts, saved data, media, payments, notifications, and support workflows need a reliable place to live. Planning those pieces alongside the interface prevents the app from becoming a polished prototype that the business cannot operate.\n\nStart with the mobile workflows and identify what data each step reads or changes. The backend API should enforce the same business rules for every user, validate incoming information, and return useful errors when a request cannot be completed. Authentication and authorization need separate attention: signing in confirms who someone is, while permissions decide what that person is allowed to do.\n\nAn admin dashboard gives the internal team a safe way to manage the product. Depending on the app, that might include reviewing accounts, updating content, handling requests, changing statuses, viewing reports, or resolving support issues. Role-based access helps keep sensitive actions limited to the people who need them.\n\nNotifications and integrations should be designed around events that matter rather than added as an afterthought. Decide which actions trigger an email, push notification, payment update, or external data sync. Also plan for slow connections, duplicate requests, failed uploads, and other conditions that real users will eventually encounter.\n\nBefore handover, test the app, API, and admin workflow as one connected system. Document the deployment process, important integrations, environment settings, and routine operational tasks. Mobile app development is much easier to maintain when the customer experience and the business controls are treated as parts of the same product.",
       featuredImage: portfolioImage(24),
       categoryId: categoryMap.get("insights"),
       tags: ["mobile-apps", "admin-dashboards", "backend-apis"],
       featured: false,
       seoTitle: "Mobile App Development with Backend API and Admin Dashboard",
       seoDescription:
-        "Learn why mobile app development needs backend APIs, admin dashboards, authentication, media handling, push notification-ready workflows, and maintainable architecture."
+        "Learn how mobile app development connects user journeys with authentication, backend APIs, data models, notifications, admin dashboards, and operational tools."
     }
   ];
 
@@ -1189,42 +1197,42 @@ async function seedTeam() {
       slug: "muhammad-emmad-khan",
       role: "Founder and Owner",
       bio:
-        "Muhammad Emmad Khan is the founder and owner of Opplexify LLC. He leads client communication, project scoping, software planning, and delivery coordination for custom websites, SaaS platforms, dashboards, mobile apps, backend APIs, and automations.",
+        "Muhammad Emmad Khan is the Founder and Owner of Opplexify.",
       image: "/team/emmad-khan.webp",
-      socialLinks: { linkedin: linkedinUrl },
-      skills: ["Project scoping", "Software planning", "Client communication", "Milestone delivery", "Custom development"],
+      socialLinks: json({}),
+      skills: json([]),
       sortOrder: 1,
-      seoTitle: "Muhammad Emmad Khan - Founder and Owner of Opplexify LLC",
+      seoTitle: "Muhammad Emmad Khan | Founder of Opplexify",
       seoDescription:
-        "Muhammad Emmad Khan is the founder and owner of Opplexify LLC, a Wyoming-formed software development company."
+        "Muhammad Emmad Khan is the Founder and Owner of Opplexify."
     },
     {
       name: "Ameeq Khan",
       slug: "ameeq-khan",
       role: "Full-Stack Developer",
       bio:
-        "Ameeq Khan works on frontend, backend, integrations, and implementation support for Opplexify software development projects.",
+        "Ameeq Khan is a Full-Stack Developer at Opplexify.",
       image: "/team/ameeq-khan.webp",
-      socialLinks: { linkedin: linkedinUrl },
-      skills: ["Frontend development", "Backend development", "API integration", "Dashboards", "Responsive UI"],
+      socialLinks: json({}),
+      skills: json([]),
       sortOrder: 2,
       seoTitle: "Ameeq Khan - Full-Stack Developer at Opplexify",
       seoDescription:
-        "Ameeq Khan supports Opplexify software development projects across frontend, backend, dashboards, and integrations."
+        "Ameeq Khan is a Full-Stack Developer at Opplexify."
     },
     {
       name: "Atiq Khan",
       slug: "atiq-khan",
       role: "Project Coordinator",
       bio:
-        "Atiq Khan supports project coordination, requirement tracking, QA follow-up, and delivery organization for Opplexify client work.",
+        "Atiq Khan is a Project Coordinator at Opplexify.",
       image: "/team/atiq-khan.webp",
-      socialLinks: { linkedin: linkedinUrl },
-      skills: ["Project coordination", "Requirements tracking", "QA follow-up", "Client support", "Delivery organization"],
+      socialLinks: json({}),
+      skills: json([]),
       sortOrder: 3,
       seoTitle: "Atiq Khan - Project Coordinator at Opplexify",
       seoDescription:
-        "Atiq Khan supports Opplexify client projects with coordination, requirement tracking, QA follow-up, and delivery organization."
+        "Atiq Khan is a Project Coordinator at Opplexify."
     }
   ];
 
@@ -1249,7 +1257,10 @@ async function seedFaqs() {
         in: [
           "Can every homepage section be edited from admin?",
           "Do services, work, blog, and team pages use API data?",
-          "Can uploaded media be reused across content?"
+          "Can uploaded media be reused across content?",
+          "What services does Opplexify LLC provide?",
+          "Is Opplexify LLC a registered US company?",
+          "How can business verification or compliance teams contact Opplexify LLC?"
         ]
       }
     },
@@ -1258,66 +1269,66 @@ async function seedFaqs() {
 
   const faqs = [
     {
-      question: "What services does Opplexify LLC provide?",
+      question: "What can Opplexify build?",
       answer:
-        "Opplexify LLC provides custom website development, SaaS platform development, dashboard and admin panel development, mobile app development, backend/API development, and automation and integration services.",
+        "We design and develop custom websites, web applications, SaaS products, mobile apps, admin dashboards, backend APIs, and workflow automations. The right approach depends on the problem you are solving, your users, and what needs to be ready for the first release.",
       category: "Services",
       sortOrder: 1
     },
     {
-      question: "Is Opplexify LLC a registered US company?",
+      question: "Who is Opplexify a good fit for?",
       answer:
-        "Opplexify LLC is a Wyoming-formed limited liability company. For business verification or compliance inquiries, contact admin@opplexify.com.",
-      category: "Company",
+        "We work best with founders, startups, and growing businesses that have a real problem to solve and want direct involvement from the people designing and building the product. If the scope is still rough, discovery helps us turn it into a practical first plan.",
+      category: "Working Together",
       sortOrder: 2
     },
     {
-      question: "Do you work with remote or international clients?",
+      question: "Can you improve an existing product, or only build from scratch?",
       answer:
-        "Yes. Opplexify LLC provides remote software development services and can work with businesses in different locations, subject to project fit, payment terms, and applicable requirements.",
-      category: "Process",
+        "Both. We can review an existing website or application, add focused features, improve a workflow, connect an API, or plan a larger rebuild. We start by understanding the current codebase and constraints so we can recommend the safest useful next step.",
+      category: "Working Together",
       sortOrder: 3
     },
     {
       question: "How does a project start?",
       answer:
-        "A project usually starts with a short discovery discussion, written scope, estimated timeline, and proposal. Work begins after the scope, deposit, and billing terms are confirmed.",
-      category: "Process",
+        "We begin with a short discovery conversation about your users, goals, must-have features, timeline, and budget. If the project is a good fit, you receive a written proposal covering the scope, deliverables, estimated schedule, price, and payment plan.",
+      category: "Project Process",
       sortOrder: 4
     },
     {
-      question: "Do you provide invoices and contracts?",
+      question: "How long does a software project take?",
       answer:
-        "Yes. Opplexify LLC can provide written proposals, invoices, and contracts or statements of work for scoped client projects.",
-      category: "Billing",
+        "A focused business website may take a few weeks, while a SaaS platform, mobile app, or complex internal tool can take several months. Timing depends on feature depth, integrations, content readiness, and feedback. We confirm a realistic estimate after discovery.",
+      category: "Project Process",
       sortOrder: 5
     },
     {
-      question: "How does milestone-based billing work?",
+      question: "How do pricing and milestone payments work?",
       answer:
-        "Larger projects are split into milestones. Each milestone covers a defined stage of work, and payment terms are listed in the quote, proposal, or contract.",
-      category: "Billing",
+        "Pricing is based on the agreed scope, not a one-size-fits-all hourly estimate. Smaller projects may use a deposit and final payment. Larger builds can be divided into milestones, each with defined deliverables and payment timing in the proposal.",
+      category: "Pricing & Billing",
       sortOrder: 6
     },
     {
-      question: "How do revisions work?",
+      question: "How do revisions and change requests work?",
       answer:
-        "Revision rounds are defined in the project scope. Included revisions refine agreed deliverables. New features, major direction changes, or extra scope may require a change order.",
-      category: "Process",
+        "The proposal explains the revision rounds included for the agreed deliverables. Those rounds are for refining the approved direction. New features or major changes are discussed separately so you can approve the added cost and timeline before work continues.",
+      category: "Project Process",
       sortOrder: 7
     },
     {
-      question: "How do refunds and cancellations work?",
+      question: "Who owns the final design and source code?",
       answer:
-        "Deposits, completed milestones, work in progress, and third-party costs may be non-refundable. The Refund Policy explains deposits, milestones, revisions, cancellations, completed work, and delivery terms.",
-      category: "Billing",
+        "After the final invoice is paid, ownership of the final deliverables created specifically for your project transfers to you, subject to any third-party licences. The proposal and Terms of Service explain the exact handover for your project.",
+      category: "Ownership",
       sortOrder: 8
     },
     {
-      question: "How can business verification or compliance teams contact Opplexify LLC?",
+      question: "What happens after launch?",
       answer:
-        "Business verification, KYC, payment processor, or compliance teams can contact admin@opplexify.com. The business phone is +1 (307) 443-5144.",
-      category: "Compliance",
+        "We complete a final testing and handover step so you understand the delivered product and any accounts or documentation included in scope. Ongoing maintenance, support, or a next development phase can be planned separately when needed.",
+      category: "Support",
       sortOrder: 9
     }
   ];
@@ -1354,12 +1365,12 @@ async function upsertMediaAsset(item: PublicSeedAsset, alt: string, folder: stri
 async function seedMedia(userId: string) {
   const media = [
     {
-      url: asset("logo/opplexify-logo-light.svg"),
-      filename: "opplexify-logo-light.svg",
-      originalName: "opplexify-logo-light.svg",
-      mimeType: "image/svg+xml",
-      size: 10603,
-      alt: "Opplexify light logo",
+      url: asset("logo/opplexify-logo-full.png"),
+      filename: "opplexify-logo-full.png",
+      originalName: "opplexify-logo-full.png",
+      mimeType: "image/png",
+      size: 277999,
+      alt: "Opplexify logo",
       folder: "template",
       createdById: userId
     },

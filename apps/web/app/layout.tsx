@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import {
   absoluteUrl,
   BUSINESS_EMAIL,
@@ -20,6 +21,9 @@ import {
 } from "../lib/seo";
 import { pricingOfferCatalog } from "../lib/pricing";
 import "./globals.css";
+
+const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID?.trim();
+const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 
 export const metadata: Metadata = {
   metadataBase: metadataBaseUrl(),
@@ -77,7 +81,8 @@ export const metadata: Metadata = {
       "max-snippet": -1,
       "max-video-preview": -1
     }
-  }
+  },
+  verification: GOOGLE_SITE_VERIFICATION ? { google: GOOGLE_SITE_VERIFICATION } : undefined
 };
 
 export const viewport: Viewport = {
@@ -101,7 +106,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     address: BUSINESS_POSTAL_ADDRESS,
     contactPoint: {
       "@type": "ContactPoint",
-      contactType: "business verification and project inquiries",
+      contactType: "sales and project inquiries",
       email: BUSINESS_EMAIL,
       telephone: BUSINESS_PHONE,
       areaServed: "Worldwide",
@@ -123,7 +128,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Backend API development" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Automation and integrations" } }
     ],
-    hasOfferCatalog: pricingOfferCatalog("Opplexify software development packages")
+    hasOfferCatalog: pricingOfferCatalog("Opplexify custom software development services")
   };
   const websiteJsonLd = {
     "@context": "https://schema.org",
@@ -144,6 +149,21 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body suppressHydrationWarning>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+        {GOOGLE_ANALYTICS_ID ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GOOGLE_ANALYTICS_ID)}`}
+              strategy="afterInteractive"
+            />
+            <Script id="opplexify-google-analytics" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){window.dataLayer.push(arguments);}
+window.gtag = gtag;
+gtag('js', new Date());
+gtag('config', ${JSON.stringify(GOOGLE_ANALYTICS_ID)}, { anonymize_ip: true });`}
+            </Script>
+          </>
+        ) : null}
         {children}
       </body>
     </html>

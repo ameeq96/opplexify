@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props) {
           title: member.seoTitle ?? `${member.name} - ${member.role}`,
           summary:
             member.seoDescription ??
-            `${member.bio ?? member.role} Opplexify LLC profile for custom software development, websites, SaaS platforms, dashboards, mobile apps, APIs, and automations.`,
+            `${member.bio ?? member.role} Meet the people behind Opplexify's custom software, web application, SaaS, mobile app, and API development work.`,
           ogImage: member.ogImage ?? member.image
         }
       : null,

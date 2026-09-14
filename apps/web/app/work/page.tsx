@@ -7,8 +7,22 @@ import { absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await fetchApi<Page | null>("/public/pages/work", null);
-  return pageMetadata(page, "Private Project Work - Opplexify LLC", "/work");
+  const [page, projects] = await Promise.all([
+    fetchApi<Page | null>("/public/pages/work", null),
+    fetchApi<Project[]>("/public/projects", [])
+  ]);
+  const metadata = pageMetadata(page, "Selected Software Projects | Opplexify", "/work");
+
+  return projects.length
+    ? metadata
+    : {
+        ...metadata,
+        robots: {
+          index: false,
+          follow: true,
+          googleBot: { index: false, follow: true }
+        }
+      };
 }
 
 export default async function WorkPage() {
@@ -20,17 +34,17 @@ export default async function WorkPage() {
   const workJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Opplexify LLC private project work",
+    name: "Selected Opplexify software projects",
     url: absoluteUrl("/work"),
     description:
-      "Private client work summaries for websites, SaaS platforms, mobile apps, dashboards, backend APIs, and automation projects. Details are available upon request.",
+      "Representative project summaries showing how Opplexify approaches websites, SaaS products, mobile apps, admin dashboards, backend APIs, and workflow automation.",
     isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() }
   };
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(workJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "Work", path: "/work" }])) }} />
-      <PageHero title={intro?.title ?? page?.title ?? "Selected private client work"} subtitle={intro?.subtitle ?? page?.summary ?? "Selected private client work is available upon request. Opplexify LLC does not publish client names, results, or project details unless approved."} eyebrow="Work" />
+      <PageHero title={intro?.title ?? page?.title ?? "Selected software projects"} subtitle={intro?.subtitle ?? page?.summary ?? "A practical look at the websites, SaaS products, apps, dashboards, and backend systems we can deliver. Identifying details are omitted where work is confidential."} eyebrow="Work" />
       <section className="section">
         <div className="container rr-container-1650">
           <ProjectGrid projects={projects} />

@@ -7,8 +7,22 @@ import { absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await fetchApi<Page | null>("/public/pages/team", null);
-  return pageMetadata(page, "Founder - Opplexify LLC", "/team");
+  const [page, team] = await Promise.all([
+    fetchApi<Page | null>("/public/pages/team", null),
+    fetchApi<TeamMember[]>("/public/team", [])
+  ]);
+  const metadata = pageMetadata(page, "Meet the Opplexify Team | Software & Product Development", "/team");
+
+  return team.length
+    ? metadata
+    : {
+        ...metadata,
+        robots: {
+          index: false,
+          follow: true,
+          googleBot: { index: false, follow: true }
+        }
+      };
 }
 
 export default async function TeamPage() {
@@ -20,17 +34,17 @@ export default async function TeamPage() {
   const teamJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Opplexify LLC founder",
+    name: "Opplexify software development team",
     url: absoluteUrl("/team"),
     description:
-      "Founder and ownership information for Opplexify LLC, a Wyoming-formed software development company.",
+      "Meet the people behind Opplexify and the product strategy, UI/UX design, full-stack development, and project coordination that shape each build.",
     isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() }
   };
   return (
     <PublicShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(teamJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "Team", path: "/team" }])) }} />
-      <PageHero title={intro?.title ?? page?.title ?? "Founder-led software development"} subtitle={intro?.subtitle ?? page?.summary ?? "Opplexify LLC is led by Muhammad Emmad Khan and provides remote software development services for scoped client projects."} eyebrow="Team" />
+      <PageHero title={intro?.title ?? page?.title ?? "A focused team for thoughtful software development"} subtitle={intro?.subtitle ?? page?.summary ?? "Opplexify brings product thinking, design, engineering, and clear project coordination together to build useful digital products."} eyebrow="Team" />
       <section className="section">
         <div className="container rr-container-1650">
           <TeamGrid team={team} />

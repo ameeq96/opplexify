@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props) {
           title: post.seoTitle ?? post.title,
           summary:
             post.seoDescription ??
-            `${post.excerpt ?? ""} Opplexify insights for SEO-friendly websites, SaaS development, web apps, mobile apps, dashboards, and backend systems.`,
+            `${post.excerpt ?? ""} Practical guidance from Opplexify for planning, building, and improving digital products.`,
           ogImage: post.ogImage ?? post.featuredImage,
           canonicalUrl: post.canonicalUrl
         }
@@ -31,6 +31,9 @@ export default async function BlogDetailPage({ params }: Props) {
   const { slug } = await params;
   const post = await fetchApi<BlogPost | null>(`/public/blog/${slug}`, null);
   if (!post) notFound();
+  const storedAuthorName = post.author?.name?.trim();
+  const hasNamedAuthor = Boolean(storedAuthorName && !["Opplexify", "Opplexify LLC", "Opplexify Admin"].includes(storedAuthorName));
+  const authorName = hasNamedAuthor ? storedAuthorName : "Opplexify Editorial Team";
   const blogJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -41,9 +44,9 @@ export default async function BlogDetailPage({ params }: Props) {
     dateModified: post.updatedAt ?? post.publishedAt,
     inLanguage: "en",
     author: {
-      "@type": "Person",
-      name: post.author?.name ?? "Opplexify LLC",
-      url: siteUrl()
+      "@type": hasNamedAuthor ? "Person" : "Organization",
+      name: authorName,
+      ...(hasNamedAuthor ? {} : { url: siteUrl() })
     },
     publisher: {
       "@type": "Organization",
@@ -73,15 +76,14 @@ export default async function BlogDetailPage({ params }: Props) {
             <img src={assetUrl(post.featuredImage)} alt={post.title} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
             <Prose text={post.content} />
             <p className="detail-copy">
-              Explore Opplexify&rsquo;s <a href="/services">development services</a>, review{" "}
-              <a href="/pricing">project pricing</a>, browse <a href="/blog">more articles</a>, or{" "}
-              <a href="/contact">request a quote</a>.
+              Have a similar product challenge? Explore Opplexify&rsquo;s <a href="/services">software development services</a>,
+              review <a href="/pricing">starting project prices</a>, or <a href="/contact">tell us what you need</a>.
             </p>
           </div>
           <aside className="meta-panel">
             <div className="meta-row">
               <span>Author</span>
-              <strong>{post.author?.name ?? "Opplexify LLC"}</strong>
+              <strong>{authorName}</strong>
             </div>
             <div className="meta-row">
               <span>Published</span>

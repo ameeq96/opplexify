@@ -4,9 +4,9 @@ import { breadcrumbList, seoMetadata } from "../../lib/seo";
 import { PRICING_PACKAGES as packages, pricingOfferCatalog } from "../../lib/pricing";
 
 export const metadata: Metadata = seoMetadata({
-  title: "Pricing - Website, Web App, SaaS & Mobile App Development | Opplexify",
+  title: "Custom Software Development Pricing | Opplexify",
   description:
-    "Starting ranges for Opplexify LLC custom website, SaaS, dashboard, mobile app, backend API, and automation projects. Final pricing depends on project scope.",
+    "Explore starting prices for Opplexify website development, custom web applications, SaaS products, mobile apps, dashboards, and backend systems.",
   path: "/pricing"
 });
 
@@ -33,11 +33,11 @@ export default function PricingPage() {
                 <span className="section-subtitle">Pricing</span>
                 <div className="pricing-title-wrap">
                   <h1 className="pricing-title rr_title_anim">
-                    Website, web app, SaaS and mobile app development pricing.
+                    Clear starting points for your next digital product.
                   </h1>
                   <p>
-                    Starting ranges for custom software projects. Final pricing depends on scope, integrations,
-                    content, revisions, and delivery requirements.
+                    These packages make early budgeting easier. Your final quote reflects the actual scope,
+                    integrations, content, revision needs, and delivery plan—so you know what is included before work begins.
                   </p>
                 </div>
               </div>

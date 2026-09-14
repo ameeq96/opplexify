@@ -8,7 +8,7 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/about", null);
-  return pageMetadata(page, "About Opplexify LLC - Custom Software Development Company", "/about");
+  return pageMetadata(page, "About Opplexify | Custom Software Development Team", "/about");
 }
 
 const capabilityCategories = ["Websites", "Web Apps", "SaaS", "SEO Planning", "UI/UX Design"];
@@ -70,39 +70,39 @@ const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
   aboutHtml
   .replace(
     /<p class="text">— We help <br>[\s\S]*?<\/p>/,
-    `<p class="text">— We help <br>
-                                                businesses plan <br>
-                                                and build custom <br>
+    `<p class="text">— We turn <br>
+                                                business ideas <br>
+                                                into useful, reliable <br>
                                                 software</p>`
   )
   .replace(/\(2017 - 2025\)/g, "(Websites - SaaS - Apps)")
   .replace(
     /<h2 class="section-title-2 rr_title_anim">[\s\S]*?<\/h2>/,
-    `<h1 class="section-title-2 rr_title_anim">Opplexify LLC builds
-                                            websites, SaaS platforms,
-                                            mobile apps and <span>dashboards</span> </h1>`
+    `<h1 class="section-title-2 rr_title_anim">Custom software built
+                                            around the way your
+                                            business <span>works</span> </h1>`
   )
   .replace(
     /<p class="designation text-gray mb-40 fade-anim">[\s\S]*?<\/p>/,
     `<p class="designation text-gray mb-40 fade-anim">
-                                    Opplexify LLC is a Wyoming-formed software development company providing remote software development services.
-                                    The company helps businesses plan, design, and build websites, SaaS platforms, dashboards,
-                                    mobile apps, backend systems, APIs, and workflow automations.
+                                    Opplexify is a custom software development company for businesses that need more than an off-the-shelf solution.
+                                    We design and build business websites, web applications, SaaS platforms, admin dashboards,
+                                    mobile apps, backend APIs, and workflow automations.
                                 </p>`
   )
   .replace(
     /<p class="designation text-gray fade-anim">[\s\S]*?<\/p>/,
-    `<p class="designation text-gray fade-anim">Our process connects product strategy, UI/UX design,
-                                    frontend development, backend architecture, database planning, admin workflows, and launch support.
-                                    Projects use written scopes, milestone-based delivery, clear communication, proposals, and invoices.</p>`
+    `<p class="designation text-gray fade-anim">We begin by understanding the problem, the people using the product,
+                                    and the result the business needs. From there, we shape a practical scope and bring product planning,
+                                    UI/UX design, frontend development, backend architecture, testing, and launch support into one clear process.</p>`
   )
   .replace(/<!-- choose-us area start  -->[\s\S]*?<!-- choose-us area end  -->/g, "")
-  .replace(/<span class="section-subtitle">Why choose us<\/span>/g, `<span class="section-subtitle">Why choose Opplexify LLC</span>`)
+  .replace(/<span class="section-subtitle">Why choose us<\/span>/g, `<span class="section-subtitle">Why work with Opplexify</span>`)
   .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-1.webp"/g, `src="/team/emmad-khan.webp"`)
   .replace(
     /<h2 class="section-title rr_title_anim">Mee the <span>squad<\/span> <br>[\s\S]*?<\/h2>/,
-    `<h2 class="section-title rr_title_anim">Founder-led software development <br>
-                                        for scoped client projects
+    `<h2 class="section-title rr_title_anim">Meet the people behind <br>
+                                        the work
                                     </h2>`
   )
   .replace(/CEO & Founder/g, "Founder and Owner")
@@ -115,20 +115,20 @@ const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
       return () => `<span class="category">${capabilityCategories[index++] ?? "Launch Support"}</span>`;
     })()
   )
-  .replace(/We make brand big and bolder/g, "Custom websites, SaaS platforms, dashboards, mobile apps, APIs and automations")
+  .replace(/We make brand big and bolder/g, "Strategy, design, and development for useful digital products")
   .replace(/3x creative <br> agency of the day/g, "Custom website <br> development")
   .replace(/1x agency of <br> the year/g, "Full-stack <br> web applications")
   .replace(/5x honorable <br> mentioned/g, "SaaS platform <br> development")
   .replace(/2x Featured <br> design of the week/g, "SEO planning <br> and structure")
   .replace(/8x Best design <br> of the day/g, "UI/UX and <br> frontend design")
-  .replace(/Help to brands growing up and show their\s*success stories to the world/g, "Helping businesses plan and build custom software through written scopes and milestones")
-  .replace(/We <span>learn<\/span> and[\s\S]*?together\./, "We <span>scope</span> and <span>build</span> <br> <span>custom</span> software")
+  .replace(/Help to brands growing up and show their\s*success stories to the world/g, "Helping businesses move from a clear idea to reliable, maintainable software")
+  .replace(/We <span>learn<\/span> and[\s\S]*?together\./, "We <span>listen</span>, <span>plan</span>, <br> and <span>build</span> with purpose")
 ));
 
 const aboutJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  name: "About Opplexify LLC",
+  name: "About Opplexify",
   url: absoluteUrl("/about"),
   description: COMPANY_DESCRIPTION,
   isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() },
@@ -221,8 +221,8 @@ function applyAboutCms(html: string, page: Page | null, team: TeamMember[]) {
   }
 
   rendered = rendered.replace(
-    /<h2 class="section-title rr_title_anim">Founder-led software development[\s\S]*?<\/h2>/,
-    `<h2 class="section-title rr_title_anim">Founder-led software development</h2>`
+    /<h2 class="section-title rr_title_anim">Meet the people behind[\s\S]*?<\/h2>/,
+    `<h2 class="section-title rr_title_anim">Meet the people behind the work</h2>`
   );
   const teamHtml = renderTeam(teamSection, team);
   if (teamHtml) rendered = replaceDivBlock(rendered, '<div class="team-wrapper fade-anim">', teamHtml);

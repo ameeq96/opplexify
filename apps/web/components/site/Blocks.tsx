@@ -58,24 +58,24 @@ export function Prose({ text, className = "detail-copy" }: { text?: string | nul
 
 export function HomeHero({ section }: { section?: Section }) {
   const content = section?.content ?? {};
-  const primary = content.primaryCta ?? { label: "View portfolio", href: "/portfolio" };
-  const secondary = content.secondaryCta ?? { label: "Get a development quote", href: "/contact" };
+  const primary = content.primaryCta ?? { label: "See Our Work", href: "/portfolio" };
+  const secondary = content.secondaryCta ?? { label: "Start a Project", href: "/contact" };
 
   return (
     <section className="container hero">
       <div>
-        <p className="eyebrow">{content.eyebrow ?? "Wyoming-formed software development company"}</p>
-        <h1>{section?.title ?? "Custom websites, SaaS platforms and business software development"}</h1>
+        <p className="eyebrow">{content.eyebrow ?? "Custom software development for growing businesses"}</p>
+        <h1>{section?.title ?? "Useful software, designed around your business"}</h1>
         <p>
           {section?.subtitle ??
-            "Opplexify LLC helps businesses plan, design, and build websites, SaaS platforms, dashboards, backend systems, APIs, mobile apps, and workflow automations."}
+            "Opplexify plans, designs, and builds business websites, custom web applications, SaaS products, mobile apps, admin dashboards, backend APIs, and workflow automations."}
         </p>
         <div className="hero-actions">
           <Link className="btn accent" href={primary.href ?? "/portfolio"}>
-            {primary.label ?? "Request a Quote"} <ArrowRight size={18} />
+            {primary.label ?? "See Our Work"} <ArrowRight size={18} />
           </Link>
           <Link className="btn secondary" href={secondary.href ?? "/contact"}>
-            {secondary.label ?? "Book a Consultation"}
+            {secondary.label ?? "Start a Project"}
           </Link>
         </div>
       </div>

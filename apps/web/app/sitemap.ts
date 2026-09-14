@@ -58,8 +58,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     fetchApi<TeamMember[]>("/public/team", [])
   ]);
 
+  const availableStaticRoutes = staticRoutes.filter(({ url }) => {
+    if (url === absoluteUrl("/blog")) return posts.length > 0;
+    if (url === absoluteUrl("/work")) return projects.length > 0;
+    if (url === absoluteUrl("/team")) return team.length > 0;
+    return true;
+  });
+
   return [
-    ...staticRoutes.map((item) => ({ ...item, lastModified: BUILD_TIME })),
+    ...availableStaticRoutes.map((item) => ({ ...item, lastModified: BUILD_TIME })),
     ...services.map((item) => route(`/services/${item.slug}`, 0.75, pickDate(item.updatedAt), "monthly")),
     ...projects.map((item) => route(`/work/${item.slug}`, 0.75, pickDate(item.updatedAt, item.date), "monthly")),
     ...posts.map((item) => route(`/blog/${item.slug}`, 0.65, pickDate(item.updatedAt, item.publishedAt), "weekly")),

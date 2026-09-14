@@ -263,14 +263,14 @@ export const emptySite: SitePayload = {
       title: SITE_NAME,
       description: DEFAULT_DESCRIPTION,
       logoLight: "/template-assets/dark/assets/imgs/logo/opplexify-logo-full.png",
-      logoDark: "/template-assets/dark/assets/imgs/logo/opplexify-logo-dark.svg",
+      logoDark: "/template-assets/dark/assets/imgs/logo/opplexify-logo-full.png",
       email: BUSINESS_EMAIL,
       phone: BUSINESS_PHONE,
       address: BUSINESS_MAILING_ADDRESS
     },
     footer: {
       text: DEFAULT_DESCRIPTION,
-      copyright: "Copyright 2026 Opplexify LLC."
+      copyright: "Copyright 2026 Opplexify. All rights reserved."
     },
     social: { linkedin: LINKEDIN_URL }
   },

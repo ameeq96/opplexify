@@ -18,22 +18,22 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/contact", null);
-  return pageMetadata(page, "Contact Opplexify LLC - Software Development Inquiries", "/contact");
+  return pageMetadata(page, "Contact Opplexify | Discuss Your Software Project", "/contact");
 }
 
 const contactPageHtml = contactHtml
   .replace(
     /<h2 class="page-title ">Let’s <span>talk<\/span><\/h2>/,
-    `<h1 class="page-title ">Contact <span>Opplexify LLC</span></h1>`
+    `<h1 class="page-title ">Let’s build something <span>useful</span></h1>`
   )
   .replace(
     /Let's work together\. feel free to drop ua line <br>\s*about your project\./,
-    "Tell us about your website, SaaS platform, mobile app, dashboard, backend API, or automation project. For business verification or compliance inquiries, contact admin@opplexify.com."
+    "Tell us what you are building, who it is for, and where you need help—from product planning and UI/UX to development, integration, and launch."
   )
-  .replace(/Direct Contact/g, "Business Contact")
-  .replace(/The topic you want to talk/g, "Website, SaaS, mobile app, dashboard, or API project")
-  .replace(/Write your message\*/g, "Share your goals, timeline, features, budget, and launch requirements")
-  .replace(/<h3 class="title"> Offices <br> world-wide\s*<\/h3>/, `<h3 class="title"> Business <br> contact</h3>`)
+  .replace(/Direct Contact/g, "Project Contact")
+  .replace(/The topic you want to talk/g, "What would you like to build or improve?")
+  .replace(/Write your message\*/g, "Share your goals, priorities, timeline, and any useful context")
+  .replace(/<h3 class="title"> Offices <br> world-wide\s*<\/h3>/, `<h3 class="title"> Let’s discuss <br> your project</h3>`)
   .replace(/<h3 class="title">Montreal<\/h3>/g, `<h3 class="title">Business Mailing Address</h3>`)
   .replace(/<h3 class="title">Toronto<\/h3>/g, `<h3 class="title">Business Email</h3>`)
   .replace(/<h3 class="title">New York<\/h3>/g, `<h3 class="title">Business Phone</h3>`)
@@ -49,7 +49,7 @@ const contactPageHtml = contactHtml
                                                 </a>
                                                 <div class="text">
                                                     <a href="${LINKEDIN_URL}">LinkedIn</a>
-                                                    <span>Opplexify LLC</span>
+                                                    <span>Opplexify</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -63,7 +63,7 @@ const contactJsonLd = {
   name: "Contact Opplexify",
   url: absoluteUrl("/contact"),
   description:
-    "Contact Opplexify LLC for custom website, SaaS, mobile app, dashboard, backend API, and automation development inquiries.",
+    "Contact Opplexify to discuss custom website development, SaaS products, web applications, mobile apps, admin dashboards, backend APIs, or workflow automation.",
   isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() },
   mainEntity: {
     "@type": "Organization",
@@ -110,7 +110,7 @@ function renderSocialHtml(site: SitePayload) {
       .map(
         ([name]) => `<div class="socail-media__item">
           <a href="${escapeHtml(LINKEDIN_URL)}" class="icon"><i class="fa-brands ${escapeHtml(socialIcon(name))}"></i></a>
-          <div class="text"><a href="${escapeHtml(LINKEDIN_URL)}">${escapeHtml(socialLabel(name))}</a><span>Opplexify LLC</span></div>
+          <div class="text"><a href="${escapeHtml(LINKEDIN_URL)}">${escapeHtml(socialLabel(name))}</a><span>Opplexify</span></div>
         </div>`
       )
       .join("")}
@@ -189,7 +189,7 @@ function applyContactCms(html: string, page: Page | null, site: SitePayload) {
 
   let rendered = html
     .replace(/<h1 class="page-title ">[\s\S]*?<\/h1>/, title ? `<h1 class="page-title ">${escapeHtml(title)}</h1>` : "$&")
-    .replace(/Tell us about your website, web app, SaaS platform, mobile app, admin dashboard, or backend API project\./, subtitle ? escapeHtml(subtitle) : "$&");
+    .replace(/Tell us what you are building, who it is for, and where you need help—from product planning and UI\/UX to development, integration, and launch\./, subtitle ? escapeHtml(subtitle) : "$&");
 
   const socialHtml = renderSocialHtml(site);
   if (socialHtml) {

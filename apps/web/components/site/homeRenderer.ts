@@ -82,7 +82,7 @@ function renderHomeAbout(item?: Section | null) {
                 <div class="section-title-wrapper">
                   <div class="title-wrapper rr_title_anim">
                     <h2 class="section-title font-bdogrotesk-regular">${escapeHtml(
-                      item.title ?? "We build high-converting digital products for businesses ready to grow."
+                      item.title ?? "A practical development partner for ambitious teams."
                     )}</h2>
                   </div>
                 </div>
@@ -134,8 +134,8 @@ function renderHomeWork(item: Section | null | undefined, portfolioItems: Portfo
   const fallbackItems = asArray(content.fallbackItems);
   const items = cmsVideos.length ? cmsVideos : fallbackItems;
   if (!items.length) return null;
-  const titleParts = String(item.title ?? "recent work").split(/\s+/).filter(Boolean);
-  const first = titleParts.slice(0, -1).join(" ") || titleParts[0] || "recent";
+  const titleParts = String(item.title ?? "selected work").split(/\s+/).filter(Boolean);
+  const first = titleParts.slice(0, -1).join(" ") || titleParts[0] || "selected";
   const last = titleParts.length > 1 ? titleParts[titleParts.length - 1] : "work";
 
   return String.raw`
@@ -143,10 +143,10 @@ function renderHomeWork(item: Section | null | undefined, portfolioItems: Portfo
           <div class="container rr-container-1650">
             <div class="work-area-inner section-spacing-top">
               <div class="work-header-meta fade-anim">
-                <span>(${escapeHtml(content.eyebrow ?? "Portfolio videos")})</span>
+                <span>(${escapeHtml(content.eyebrow ?? "Project highlights")})</span>
                 <span>(All - ${items.length})</span>
                 <span><a class="rr-btn-underline" href="${escapeHtml(stringValue(cta.href, "/portfolio"))}">${escapeHtml(
-                  stringValue(cta.label, "Browse all work")
+                  stringValue(cta.label, "View our work")
                 )}</a></span>
               </div>
               <div class="section-header">
@@ -198,7 +198,7 @@ function renderHomePricing(item?: Section | null) {
               <div class="pricing-header fade-anim">
                 <span class="section-subtitle">${escapeHtml(content.eyebrow ?? "Pricing")}</span>
                 <div class="pricing-title-wrap">
-                  <h2 class="pricing-title rr_title_anim">${escapeHtml(item.title ?? "Development pricing")}</h2>
+                  <h2 class="pricing-title rr_title_anim">${escapeHtml(item.title ?? "Custom software pricing")}</h2>
                   <p>${escapeHtml(item.subtitle ?? "")}</p>
                 </div>
               </div>
@@ -248,7 +248,7 @@ function renderHomeServices(item: Section | null | undefined, services: Service[
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">${escapeHtml(item.title ?? "Development services")}</h2>
+                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">${escapeHtml(item.title ?? "Custom software development services")}</h2>
                   </div>
                 </div>
               </div>
@@ -256,7 +256,7 @@ function renderHomeServices(item: Section | null | undefined, services: Service[
                 <div class="phone-mockup">
                   <div class="mockup-header">
                     <div class="mockup-logo">
-                      <img class="show-light" src="${A}/imgs/logo/opplexify-logo-dark.svg" alt="Opplexify logo" decoding="async">
+                      <img class="show-light" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo" decoding="async">
                       <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo" decoding="async">
                     </div>
                     <div class="mockup-offcanvas">
@@ -268,9 +268,9 @@ function renderHomeServices(item: Section | null | undefined, services: Service[
                     </div>
                   </div>
                   <ul class="mockup-text">
-                    <li>${escapeHtml(content.mockupLabel ?? "Development")}</li>
+                    <li>${escapeHtml(content.mockupLabel ?? "Services")}</li>
                     <li><a href="${escapeHtml(stringValue(mockupCta.href, "/services"))}"><span class="underline">${escapeHtml(
-                      stringValue(mockupCta.label, "Explore")
+                      stringValue(mockupCta.label, "View services")
                     )}</span></a></li>
                   </ul>
                 </div>
@@ -349,7 +349,7 @@ function renderHomeTeam(item: Section | null | undefined, team: TeamMember[]) {
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">${escapeHtml(item.title ?? "A focused team")}</h2>
+                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">${escapeHtml(item.title ?? "A focused team, involved from scope to launch")}</h2>
                   </div>
                 </div>
               </div>
@@ -411,9 +411,9 @@ function renderHomeLogoStrip(item?: Section | null) {
                           const darkImage = assetUrl(stringValue(record.image, stringValue(record.lightImage)));
                           return `<div class="swiper-slide"><img class="show-light" src="${escapeHtml(
                             lightImage
-                          )}" alt="${escapeHtml(record.alt ?? "Private project category")}" loading="lazy" decoding="async"><img class="show-dark" src="${escapeHtml(
+                          )}" alt="${escapeHtml(record.alt ?? "Software project category")}" loading="lazy" decoding="async"><img class="show-dark" src="${escapeHtml(
                             darkImage
-                          )}" alt="${escapeHtml(record.alt ?? "Private project category")}" loading="lazy" decoding="async"></div>`;
+                          )}" alt="${escapeHtml(record.alt ?? "Software project category")}" loading="lazy" decoding="async"></div>`;
                         })
                         .join("")}
                     </div>
@@ -471,7 +471,7 @@ export function applyHomeCms(
   const title =
     typeof content.headline === "string"
       ? content.headline
-      : hero?.title ?? "Custom Websites,\nSaaS Platforms &\nBusiness Software Development";
+      : hero?.title ?? "Custom Software Development\nfor Startups & Growing Businesses";
   const subtitle =
     hero?.subtitle ??
     COMPANY_DESCRIPTION;
@@ -482,7 +482,7 @@ export function applyHomeCms(
 
   let rendered = normalizeTemplateHtml(html, site)
     .replace(/<h1 class="section-title(?: rr_title_anim)?">[\s\S]*?<\/h1>/, `<h1 class="section-title">${headlineHtml(normalizeFoundingCopy(title))}</h1>`)
-    .replace(/<p class="text">Opplexify is[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(normalizeFoundingCopy(subtitle))}</p>`)
+    .replace(/<p class="text">Opplexify(?: LLC)? (?:is|helps)[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(normalizeFoundingCopy(subtitle))}</p>`)
     .replace(/<span class="text">Remote web development team<\/span>/g, `<span class="text">${escapeHtml(siteSettings.address ?? BUSINESS_MAILING_ADDRESS)}</span>`)
     .replace(/<a href="mailto:hello@opplexify\.com">hello@opplexify\.com<\/a>/g, `<a href="mailto:${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}">${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}</a>`)
     .replace(

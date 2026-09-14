@@ -23,64 +23,64 @@ export type PricingPackage = {
  */
 export const PRICING_PACKAGES: PricingPackage[] = [
   {
-    label: "5 Page Presence",
-    title: "Simple Website",
+    label: "Business Website",
+    title: "5-Page Website",
     price: "$150",
     priceValue: 150,
     timeline: "1-3 weeks",
     description:
-      "A concise, responsive, SEO-friendly business website designed for credibility, lead capture, and clear service presentation.",
-    features: ["5 responsive pages", "Contact form", "Foundational SEO", "Performance-focused structure"],
-    ctaLabel: "Request Package",
+      "A focused, responsive website that explains what you do, builds trust, and gives potential customers a clear way to contact you.",
+    features: ["5 responsive pages", "Contact form", "On-page SEO foundations", "Performance-focused build"],
+    ctaLabel: "Discuss This Package",
     href: "/contact"
   },
   {
-    label: "Full-Stack App",
-    title: "Complete Web Application",
+    label: "Custom Web Application",
+    title: "Full-Stack Web App",
     price: "$500",
     priceValue: 500,
     timeline: "3-8 weeks",
     description:
-      "A full-stack web application with authentication, dashboards, APIs, database integration, and structured workflows.",
-    features: ["Authentication", "User dashboard", "Backend API", "Database integration"],
-    ctaLabel: "Request Package",
+      "A custom web application for a defined business workflow, with the frontend, backend, and data layer working as one system.",
+    features: ["Secure authentication", "User dashboard", "Backend API", "Database integration"],
+    ctaLabel: "Discuss This Package",
     href: "/contact"
   },
   {
-    label: "Subscription-Ready",
-    title: "Complete SaaS Solution",
+    label: "SaaS Product",
+    title: "SaaS MVP Foundation",
     price: "$1,000",
     priceValue: 1000,
     timeline: "6-12 weeks",
     description:
-      "A scalable SaaS development foundation with product workflows, admin controls, database models, and subscription-ready architecture.",
-    features: ["SaaS platform", "Admin dashboard", "Subscription-ready structure", "Database and API"],
-    ctaLabel: "Request Package",
+      "A practical SaaS development foundation for validating your core product experience with users, administration, data, and billing-ready workflows.",
+    features: ["Core SaaS workflow", "Admin dashboard", "Billing-ready structure", "Database and API"],
+    ctaLabel: "Discuss This Package",
     href: "/contact",
     featured: true
   },
   {
-    label: "App Plus Control Room",
+    label: "Mobile Product",
     title: "Mobile App with Admin Dashboard",
     price: "$1,500",
     priceValue: 1500,
     timeline: "5-10 weeks",
     description:
-      "A mobile application connected to a secure backend API and an operational admin dashboard for real business workflows.",
-    features: ["Mobile app", "Admin dashboard", "Backend API", "Push notification-ready"],
-    ctaLabel: "Request Package",
+      "A mobile app connected to a secure backend API and a practical admin dashboard for managing users, content, and daily operations.",
+    features: ["Mobile app", "Admin dashboard", "Secure backend API", "Notification-ready structure"],
+    ctaLabel: "Discuss This Package",
     href: "/contact"
   },
   {
-    label: "Complete Product Suite",
-    title: "Complete Mobile App + Web App",
+    label: "Connected Product Suite",
+    title: "Mobile App + Web Platform",
     price: "$2,000",
     priceValue: 2000,
     timeline: "8-16 weeks",
     description:
-      "A coordinated mobile app, web app, API, database, and admin dashboard system for a complete digital product launch.",
-    features: ["Mobile app", "Web app", "Admin dashboard", "Complete full-stack solution"],
-    ctaLabel: "Request Package",
+      "A connected mobile and web product backed by one API, database, and admin system, planned for a coordinated launch and easier day-to-day management.",
+    features: ["Mobile app", "Web application", "Admin dashboard", "Shared backend system"],
+    ctaLabel: "Discuss This Package",
     href: "/contact"
   }
 ];
@@ -90,7 +90,7 @@ export const PRICING_PACKAGES: PricingPackage[] = [
  * WITHOUT an @context so it can be nested (e.g. Organization.hasOfferCatalog)
  * or spread into a top-level node with its own @context on the pricing page.
  */
-export function pricingOfferCatalog(name = "Opplexify software development packages") {
+export function pricingOfferCatalog(name = "Opplexify custom software development packages") {
   return {
     "@type": "OfferCatalog",
     name,

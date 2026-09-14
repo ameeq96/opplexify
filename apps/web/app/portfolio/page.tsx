@@ -12,7 +12,7 @@ const portfolioImageFolder = "portfolio/images";
 const portfolioThumbnailFolder = "portfolio/thumbs";
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/portfolio", null);
-  return pageMetadata(page, "Portfolio - Website Design, SaaS UI, Web App & Mobile App Work", "/portfolio");
+  return pageMetadata(page, "Software Design Portfolio | Websites, SaaS & Apps", "/portfolio");
 }
 
 const imageExtensions = new Set([".avif", ".jpg", ".jpeg", ".png", ".webp"]);
@@ -58,7 +58,7 @@ function readPublicAssets(folder: string, extensions: Set<string>): PublicAsset[
 function projectTitle(index: number) {
   const projectNumber = String(index + 1).padStart(2, "0");
 
-  return `Private client work sample ${projectNumber}`;
+  return `Interface design sample ${projectNumber}`;
 }
 
 function fallbackImages() {
@@ -127,7 +127,7 @@ export default async function PortfolioGridPage() {
     name: "Opplexify web development portfolio",
     url: absoluteUrl("/portfolio"),
     description:
-      "Selected Opplexify LLC portfolio visuals for websites, SaaS interfaces, mobile app screens, dashboards, and business software. Private client details are available upon request.",
+      "A curated Opplexify portfolio of website design, SaaS interfaces, mobile app screens, admin dashboards, and custom software experiences.",
     isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() }
   };
   const intro = getSection(page, "intro");
@@ -142,25 +142,25 @@ export default async function PortfolioGridPage() {
             <div className="opplexify-portfolio-hero__inner">
               <div className="opplexify-portfolio-hero__content fade-anim">
                 <span className="section-subtitle">Portfolio</span>
-                <h1>{intro?.title ?? page?.title ?? "Web development portfolio for websites, SaaS products and apps."}</h1>
+                <h1>{intro?.title ?? page?.title ?? "Digital products designed for clarity and everyday use"}</h1>
                 <p>
                   {intro?.subtitle ??
                     page?.summary ??
-                    "Selected private client work is available upon request. Public portfolio visuals show the types of websites, SaaS interfaces, mobile app screens, dashboards, and business software Opplexify LLC can build."}
+                    "Explore interface work across business websites, SaaS products, web applications, mobile apps, and admin dashboards. These visuals show our approach without making claims about confidential client results."}
                 </p>
 
                 <div className="opplexify-portfolio-hero__stats" aria-label="Portfolio overview">
                   <span>
-                    <strong>Private</strong>
-                    <small> client work</small>
+                    <strong>Web</strong>
+                    <small> experiences</small>
                   </span>
                   <span>
-                    <strong>Upon request</strong>
-                    <small> details</small>
+                    <strong>Product</strong>
+                    <small> interfaces</small>
                   </span>
                   <span>
-                    <strong>Scoped</strong>
-                    <small> services</small>
+                    <strong>Full-stack</strong>
+                    <small> thinking</small>
                   </span>
                 </div>
               </div>
@@ -209,8 +209,8 @@ export default async function PortfolioGridPage() {
             <div className="container rr-container-1650">
               <div className="portfolio-video-head">
                 <span className="section-subtitle">Motion</span>
-                <h2 className="section-title rr_title_anim">Private interface video samples</h2>
-                <p>{videos.length} private video samples for websites, SaaS products, dashboards, and app interfaces.</p>
+                <h2 className="section-title rr_title_anim">Interface motion samples</h2>
+                <p>{videos.length} motion samples showing website, SaaS, dashboard, and app interface ideas.</p>
               </div>
               <div className="portfolio-video-grid fade-anim">
                 {videos.map((video, index) => (
@@ -220,7 +220,7 @@ export default async function PortfolioGridPage() {
                     </video>
                     <div className="portfolio-video-caption">
                       <span>{String(index + 1).padStart(2, "0")}</span>
-                      <strong>{video.title ?? `Private portfolio video sample ${String(index + 1).padStart(2, "0")}`}</strong>
+                      <strong>{video.title ?? `Interface motion sample ${String(index + 1).padStart(2, "0")}`}</strong>
                     </div>
                   </div>
                 ))}

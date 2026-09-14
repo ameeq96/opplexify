@@ -29,7 +29,7 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await fetchApi<Page | null>("/public/pages/home", null);
-  return pageMetadata(page, "Custom Websites, SaaS Platforms & Business Software Development", "/");
+  return pageMetadata(page, "Custom Software Development for Startups & Growing Businesses", "/");
 }
 
 const homeHtml = String.raw`
@@ -69,7 +69,7 @@ const homeHtml = String.raw`
         <div class="offset-widget offset-header">
           <div class="offset-logo">
             <a href="/">
-              <img class="show-light" src="${A}/imgs/logo/opplexify-logo-dark.svg" alt="Opplexify logo">
+              <img class="show-light" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo">
               <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo">
             </a>
           </div>
@@ -158,23 +158,22 @@ const homeHtml = String.raw`
               <div class="section-content">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h1 class="section-title">Custom Websites,
-                      SaaS Platforms &
-                      Business Software Development</h1>
+                    <h1 class="section-title">Custom Software Development
+                      for Startups & Growing Businesses</h1>
                   </div>
                   <div class="text-wrapper">
-                    <p class="text">Opplexify LLC helps businesses plan, design, and build websites, SaaS platforms,
-                      dashboards, backend systems, APIs, mobile apps, and workflow automations.</p>
+                    <p class="text">Opplexify is a custom software development partner for startups and growing businesses,
+                      building websites, web apps, SaaS products, dashboards, mobile apps, backend APIs, and workflow automation.</p>
                   </div>
                 </div>
                 <div class="meta-list">
                   <ul>
-                    <li>Founded 2026 <br>
-                      Wyoming limited liability company <br>
-                      remote software development</li>
-                    <li>Business verification <br>
-                      contact <br>
-                      admin@opplexify.com</li>
+                    <li>Websites & web apps <br>
+                      SaaS products <br>
+                      admin dashboards</li>
+                    <li>Mobile apps <br>
+                      backend APIs <br>
+                      workflow automation</li>
                   </ul>
                 </div>
               </div>
@@ -188,10 +187,10 @@ const homeHtml = String.raw`
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper rr_title_anim">
-                    <h2 class="section-title font-bdogrotesk-regular">We build
-                      practical software
-                      for businesses
-                      with clear requirements. </h2>
+                    <h2 class="section-title font-bdogrotesk-regular">A practical
+                      development partner
+                      for ambitious
+                      teams. </h2>
                   </div>
                 </div>
               </div>
@@ -205,15 +204,15 @@ const homeHtml = String.raw`
                     <span class="section-subtitle-3">(Who we are)</span>
                   </div>
                   <div class="thumb" data-speed="1.2">
-                    <img src="${A}/imgs/gallery/gallery-s-1.webp" alt="Opplexify software development team at work">
+                    <img src="${A}/imgs/gallery/gallery-s-1.webp" alt="Opplexify team planning a custom software project">
                   </div>
                 </div>
                 <div class="section-content fade-anim">
                   <div class="text-wrapper">
-                    <p class="text">Opplexify LLC is a Wyoming-formed software development company providing remote
-                      development services for websites, SaaS platforms, dashboards, mobile apps, APIs, and automations.</p>
-                    <p class="text">Projects start with a written scope, proposal, and invoice. Delivery is planned
-                      around agreed milestones, direct communication, and client requirements.</p>
+                    <p class="text">Opplexify works with startups and growing businesses that need dependable software
+                      without unnecessary complexity.</p>
+                    <p class="text">We turn requirements into a clear plan, build in focused milestones, and keep
+                      communication direct from the first conversation through launch.</p>
                   </div>
                   <div class="btn-wrapper">
                     <a href="/about" class="rr-btn-underline">Learn more about Opplexify</a>
@@ -228,14 +227,14 @@ const homeHtml = String.raw`
           <div class="container rr-container-1650">
             <div class="work-area-inner section-spacing-top">
               <div class="work-header-meta fade-anim">
-                <span>(Portfolio videos)</span>
+                <span>(Project highlights)</span>
                 <span>(All - 4)</span>
-                <span><a class="rr-btn-underline" href="/portfolio">Browse all work</a></span>
+                <span><a class="rr-btn-underline" href="/portfolio">View our work</a></span>
               </div>
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h2 class="section-title work-title"><span class="first">recent</span> <span class="last">work</span></h2>
+                    <h2 class="section-title work-title"><span class="first">selected</span> <span class="last">work</span></h2>
                   </div>
                 </div>
               </div>
@@ -243,19 +242,19 @@ const homeHtml = String.raw`
                 <div class="works-wrapper">
                   <div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-1.mp4" type="video/mp4"></video></a></div></div>
-                    <div class="content"><h3 class="title"><a href="/portfolio">Private Website UI Sample</a></h3><div class="meta"><span class="tag">Website Design, Motion</span><span class="date">(2026)</span></div></div>
+                    <div class="content"><h3 class="title"><a href="/portfolio">Business Website Experience</a></h3><div class="meta"><span class="tag">Web Design, Development</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-2.mp4" type="video/mp4"></video></a></div></div>
-                    <div class="content"><h3 class="title"><a href="/portfolio">Private SaaS UI Sample</a></h3><div class="meta"><span class="tag">SaaS, Product UI</span><span class="date">(2026)</span></div></div>
+                    <div class="content"><h3 class="title"><a href="/portfolio">SaaS Product Experience</a></h3><div class="meta"><span class="tag">SaaS, Product Design</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-3.mp4" type="video/mp4"></video></a></div></div>
-                    <div class="content"><h3 class="title"><a href="/portfolio">Private Dashboard Sample</a></h3><div class="meta"><span class="tag">Dashboard, UI/UX</span><span class="date">(2026)</span></div></div>
+                    <div class="content"><h3 class="title"><a href="/portfolio">Operations Dashboard</a></h3><div class="meta"><span class="tag">Dashboard, Internal Tools</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-4.mp4" type="video/mp4"></video></a></div></div>
-                    <div class="content"><h3 class="title"><a href="/portfolio">Private App Interface Sample</a></h3><div class="meta"><span class="tag">Mobile App, Web App</span><span class="date">(2026)</span></div></div>
+                    <div class="content"><h3 class="title"><a href="/portfolio">Mobile App Experience</a></h3><div class="meta"><span class="tag">Mobile App, Product UI</span><span class="date">(2026)</span></div></div>
                   </div>
                 </div>
               </div>
@@ -269,15 +268,15 @@ const homeHtml = String.raw`
               <div class="pricing-header fade-anim">
                 <span class="section-subtitle">Pricing</span>
                 <div class="pricing-title-wrap">
-                  <h2 class="pricing-title rr_title_anim">Website, web app, SaaS and mobile app development pricing.</h2>
-                  <p>Starting ranges for custom software projects. Final pricing depends on scope, integrations, content, revisions, and delivery requirements.</p>
+                  <h2 class="pricing-title rr_title_anim">Straightforward starting points for custom software projects.</h2>
+                  <p>Every project is scoped around the features, integrations, content, and delivery plan it actually needs.</p>
                 </div>
               </div>
               <div class="pricing-grid fade-anim">
                 <div class="pricing-card">
                   <span class="pricing-label">5 Page Presence</span>
                   <h3>Simple Website</h3>
-                  <p class="pricing-copy">A concise, responsive, SEO-friendly business website designed for credibility, lead capture, and clear service presentation.</p>
+                  <p class="pricing-copy">A focused, responsive business website that explains what you do, builds trust, and turns visits into enquiries.</p>
                   <div class="pricing-price"><strong>$150</strong><span>starting</span></div>
                   <span class="pricing-time">1-3 weeks</span>
                   <ul class="pricing-features">
@@ -286,13 +285,13 @@ const homeHtml = String.raw`
                     <li>Foundational SEO</li>
                     <li>Performance-focused structure</li>
                   </ul>
-                  <a href="/contact" class="pricing-btn">Request Package</a>
+                  <a href="/contact" class="pricing-btn">Discuss This Package</a>
                 </div>
 
                 <div class="pricing-card">
                   <span class="pricing-label">Full-Stack App</span>
                   <h3>Complete Web Application</h3>
-                  <p class="pricing-copy">A full-stack web application with authentication, dashboards, APIs, database integration, and structured workflows.</p>
+                  <p class="pricing-copy">A custom web application built around the way your users and team work, with secure accounts, dashboards, APIs, and connected data.</p>
                   <div class="pricing-price"><strong>$500</strong><span>starting</span></div>
                   <span class="pricing-time">3-8 weeks</span>
                   <ul class="pricing-features">
@@ -301,13 +300,13 @@ const homeHtml = String.raw`
                     <li>Backend API</li>
                     <li>Database integration</li>
                   </ul>
-                  <a href="/contact" class="pricing-btn">Request Package</a>
+                  <a href="/contact" class="pricing-btn">Discuss This Package</a>
                 </div>
 
                 <div class="pricing-card featured">
                   <span class="pricing-label">Subscription-Ready</span>
                   <h3>Complete SaaS Solution</h3>
-                  <p class="pricing-copy">A scalable SaaS development foundation with product workflows, admin controls, database models, and subscription-ready architecture.</p>
+                  <p class="pricing-copy">A launch-ready SaaS foundation with the core product experience, admin controls, data model, and room for subscriptions and future features.</p>
                   <div class="pricing-price"><strong>$1,000</strong><span>starting</span></div>
                   <span class="pricing-time">6-12 weeks</span>
                   <ul class="pricing-features">
@@ -316,13 +315,13 @@ const homeHtml = String.raw`
                     <li>Subscription-ready structure</li>
                     <li>Database and API</li>
                   </ul>
-                  <a href="/contact" class="pricing-btn">Request Package</a>
+                  <a href="/contact" class="pricing-btn">Discuss This Package</a>
                 </div>
 
                 <div class="pricing-card">
                   <span class="pricing-label">App Plus Control Room</span>
                   <h3>Mobile App with Admin Dashboard</h3>
-                  <p class="pricing-copy">A mobile application connected to a secure backend API and an operational admin dashboard for real business workflows.</p>
+                  <p class="pricing-copy">A mobile app connected to a secure backend and practical admin dashboard, so your team can manage users, content, and daily activity.</p>
                   <div class="pricing-price"><strong>$1,500</strong><span>starting</span></div>
                   <span class="pricing-time">5-10 weeks</span>
                   <ul class="pricing-features">
@@ -331,13 +330,13 @@ const homeHtml = String.raw`
                     <li>Backend API</li>
                     <li>Push notification-ready</li>
                   </ul>
-                  <a href="/contact" class="pricing-btn">Request Package</a>
+                  <a href="/contact" class="pricing-btn">Discuss This Package</a>
                 </div>
 
                 <div class="pricing-card">
                   <span class="pricing-label">Complete Product Suite</span>
                   <h3>Complete Mobile App + Web App</h3>
-                  <p class="pricing-copy">A coordinated mobile app, web app, API, database, and admin dashboard system for a complete digital product launch.</p>
+                  <p class="pricing-copy">One connected product across mobile and web, supported by a shared API, database, and admin dashboard.</p>
                   <div class="pricing-price"><strong>$2,000</strong><span>starting</span></div>
                   <span class="pricing-time">8-16 weeks</span>
                   <ul class="pricing-features">
@@ -346,7 +345,7 @@ const homeHtml = String.raw`
                     <li>Admin dashboard</li>
                     <li>Complete full-stack solution</li>
                   </ul>
-                  <a href="/contact" class="pricing-btn">Request Package</a>
+                  <a href="/contact" class="pricing-btn">Discuss This Package</a>
                 </div>
               </div>
             </div>
@@ -359,9 +358,9 @@ const homeHtml = String.raw`
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">Full-stack development
-                      services for defined
-                      business requirements</h2>
+                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">Custom software development
+                      from first idea
+                      to launch</h2>
                   </div>
                 </div>
               </div>
@@ -369,7 +368,7 @@ const homeHtml = String.raw`
                 <div class="phone-mockup">
                   <div class="mockup-header">
                     <div class="mockup-logo">
-                      <img class="show-light" src="${A}/imgs/logo/opplexify-logo-dark.svg" alt="Opplexify logo">
+                      <img class="show-light" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo">
                       <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo">
                     </div>
                     <div class="mockup-offcanvas">
@@ -411,15 +410,15 @@ const homeHtml = String.raw`
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">Founder-led software
-                      development for
-                      scoped client projects</h2>
+                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">A focused team,
+                      closely involved
+                      from scope to launch</h2>
                   </div>
                 </div>
               </div>
               <div class="team-wrapper-box">
                 <div class="team-wrapper fade-anim">
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/muhammad-emmad-khan"><img src="/team/emmad-khan.webp" alt="Muhammad Emmad Khan, founder and owner of Opplexify LLC"></a></div><div class="content"><h3 class="name"><a href="/team/muhammad-emmad-khan">Muhammad Emmad Khan</a></h3><span class="post">Founder and Owner</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/muhammad-emmad-khan"><img src="/team/emmad-khan.webp" alt="Muhammad Emmad Khan, founder of Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/muhammad-emmad-khan">Muhammad Emmad Khan</a></h3><span class="post">Founder and Owner</span></div></div>
                   <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/ameeq-khan"><img src="/team/ameeq-khan.webp" alt="Ameeq Khan, full-stack developer at Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/ameeq-khan">Ameeq Khan</a></h3><span class="post">Full-Stack Developer</span></div></div>
                   <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/atiq-khan"><img src="/team/atiq-khan.webp" alt="Atiq Khan, project coordinator at Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/atiq-khan">Atiq Khan</a></h3><span class="post">Project Coordinator</span></div></div>
                 </div>
@@ -431,7 +430,7 @@ const homeHtml = String.raw`
         <section class="marquee-text-area rr-bg-primary marquee-text-area--padding section-spacing-bottom">
           <div class="moving-text section">
             <div class="wrapper-text">
-              <h2 class="section-title">Next.js websites, SaaS platforms, mobile apps and admin dashboards</h2>
+              <h2 class="section-title">Websites, web apps, SaaS products, dashboards, mobile apps, APIs and workflow automation</h2>
             </div>
           </div>
         </section>
@@ -442,7 +441,7 @@ const homeHtml = String.raw`
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper">
-                    <h2 class="section-title rr_title_anim">Selected private client work is available upon request.</h2>
+                    <h2 class="section-title rr_title_anim">A closer look at the products and interfaces we build.</h2>
                   </div>
                 </div>
               </div>
@@ -450,9 +449,9 @@ const homeHtml = String.raw`
                 <div class="clients-wrapper">
                   <div class="swiper client-slider-active">
                     <div class="swiper-wrapper">
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-1-light.webp" alt="Private software project category"><img class="show-dark" src="${A}/imgs/brand/brand-1.webp" alt="Private software project category"></div>
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-2-light.webp" alt="Private website project category"><img class="show-dark" src="${A}/imgs/brand/brand-2.webp" alt="Private website project category"></div>
-                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-3-light.webp" alt="Private dashboard project category"><img class="show-dark" src="${A}/imgs/brand/brand-3.webp" alt="Private dashboard project category"></div>
+                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-1-light.webp" alt="Custom software project showcase"><img class="show-dark" src="${A}/imgs/brand/brand-1.webp" alt="Custom software project showcase"></div>
+                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-2-light.webp" alt="Business website project showcase"><img class="show-dark" src="${A}/imgs/brand/brand-2.webp" alt="Business website project showcase"></div>
+                      <div class="swiper-slide"><img class="show-light" src="${A}/imgs/brand/brand-3-light.webp" alt="Dashboard development project showcase"><img class="show-dark" src="${A}/imgs/brand/brand-3.webp" alt="Dashboard development project showcase"></div>
                     </div>
                   </div>
                 </div>
@@ -467,20 +466,19 @@ const homeHtml = String.raw`
               <div class="section-header">
                 <div class="section-title-wrapper">
                   <div class="title-wrapper fade-anim" data-direction="left">
-                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">Clean code, fast pages <br>
-                      and maintainable systems
-                      are the foundation of
-                      every launch</h2>
+                    <h2 class="section-title font-bdogrotesk-regular rr_title_anim">Thoughtful engineering <br>
+                      behind every
+                      digital product</h2>
                   </div>
                 </div>
               </div>
               <div class="award-wrapper-box">
                 <div class="award-wrapper fade-anim" data-direction="right">
-                  <div class="award-box"><span class="category">Frontend</span><p class="award">Next.js interfaces built for speed</p><span class="year">01</span></div>
-                  <div class="award-box"><span class="category">Backend</span><p class="award">NestJS APIs with database structure</p><span class="year">02</span></div>
-                  <div class="award-box"><span class="category">SEO</span><p class="award">Clean metadata, headings and internal links</p><span class="year">03</span></div>
-                  <div class="award-box"><span class="category">Product</span><p class="award">SaaS, mobile and admin workflows</p><span class="year">04</span></div>
-                  <div class="award-box"><span class="category">Launch</span><p class="award">Responsive, tested and production-ready builds</p><span class="year">05</span></div>
+                  <div class="award-box"><span class="category">Frontend</span><p class="award">Fast, accessible web experiences built with Next.js</p><span class="year">01</span></div>
+                  <div class="award-box"><span class="category">Backend</span><p class="award">Reliable APIs and well-structured data</p><span class="year">02</span></div>
+                  <div class="award-box"><span class="category">Search</span><p class="award">Search-ready pages with a useful content structure</p><span class="year">03</span></div>
+                  <div class="award-box"><span class="category">Product</span><p class="award">Connected SaaS, mobile, dashboard, and admin workflows</p><span class="year">04</span></div>
+                  <div class="award-box"><span class="category">Delivery</span><p class="award">Responsive testing and a production-ready handoff</p><span class="year">05</span></div>
                 </div>
               </div>
             </div>
@@ -497,11 +495,11 @@ const homeHtml = String.raw`
                   <img src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo" decoding="async">
                 </a>
                 <div class="title-wrapper">
-                  <h2 class="title rr_title_anim">Custom software, <br> websites and SaaS
-                    built <br> clearly
+                  <h2 class="title rr_title_anim">Custom software <br> for startups and
+                    growing <br> businesses
                   </h2>
                 </div>
-                <a href="/contact" class="rr-btn-underline">Request a Quote</a>
+                <a href="/contact" class="rr-btn-underline">Discuss Your Project</a>
               </div>
               <div class="footer-widget-box">
                 <h2 class="title">Company</h2>
@@ -516,10 +514,10 @@ const homeHtml = String.raw`
               <div class="footer-widget-box">
                 <h2 class="title">Services</h2>
                 <ul class="footer-nav-list">
-                  <li><a href="/services">Custom Websites</a></li>
-                  <li><a href="/services">SaaS Platforms</a></li>
-                  <li><a href="/services">Mobile Apps</a></li>
-                  <li><a href="/services">Backend/API Development</a></li>
+                  <li><a href="/services">Websites & Web Apps</a></li>
+                  <li><a href="/services">SaaS Development</a></li>
+                  <li><a href="/services">Mobile App Development</a></li>
+                  <li><a href="/services">APIs & Automation</a></li>
                 </ul>
               </div>
               <div class="footer-widget-box">
@@ -545,7 +543,7 @@ const homeHtml = String.raw`
         <div class="copyright-area">
           <div class="copyright-area-inner">
             <div class="copyright-text">
-              <p class="text">Copyright 2026 Opplexify LLC.</p>
+              <p class="text">Copyright 2026 Opplexify. All rights reserved.</p>
             </div>
             <a class="copyright-social" href="${LINKEDIN_URL}" aria-label="Opplexify on LinkedIn">
               <i class="fa-brands fa-linkedin-in"></i>
@@ -568,7 +566,7 @@ export default async function HomePage() {
   const homeJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "Custom Websites, SaaS Platforms & Business Software Development",
+    name: "Custom Software Development for Startups & Growing Businesses",
     url: siteUrl(),
     image: absoluteUrl(page?.ogImage ?? site.settings.seo?.ogImage ?? DEFAULT_OG_IMAGE),
     description:

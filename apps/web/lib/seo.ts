@@ -12,31 +12,30 @@ export const BUSINESS_ADDRESS_REGION = "WY";
 export const BUSINESS_POSTAL_CODE = "82001";
 export const BUSINESS_ADDRESS_COUNTRY = "US";
 export const LINKEDIN_URL = "https://www.linkedin.com/company/opplexify-llc/";
-export const COMPLIANCE_NOTE = "For business verification or compliance inquiries, contact admin@opplexify.com.";
 export const COMPANY_DESCRIPTION =
-  "Opplexify LLC helps businesses plan, design, and build websites, SaaS platforms, dashboards, backend systems, APIs, mobile apps, and workflow automations.";
-export const DEFAULT_TITLE = "Opplexify LLC - Custom Websites, SaaS Platforms & Business Software";
+  "Opplexify builds custom software for startups and growing businesses: websites, web apps, SaaS products, dashboards, mobile apps, backend APIs, and automation.";
+export const DEFAULT_TITLE = "Custom Software Development for Startups | Opplexify";
 export const DEFAULT_DESCRIPTION =
   COMPANY_DESCRIPTION;
-export const DEFAULT_OG_IMAGE = "/portfolio/thumbs/portfolio-001.webp";
-export const DEFAULT_OG_IMAGE_ALT = "Opplexify web development portfolio preview";
+export const DEFAULT_OG_IMAGE = "/opengraph-image";
+export const DEFAULT_OG_IMAGE_ALT = "Opplexify custom software development";
 export const SITE_LOCALE = "en_US";
 export const THEME_COLOR = "#050505";
 export const DEFAULT_KEYWORDS = [
-  "software development company",
+  "custom software development",
+  "custom web application development",
   "website development services",
-  "Next.js development",
-  "full-stack web application development",
-  "SaaS development company",
-  "mobile app development",
-  "admin dashboard development",
-  "NestJS backend development",
-  "Prisma development",
-  "SEO-friendly websites",
+  "SaaS development services",
+  "dashboard and admin panel development",
+  "mobile app development services",
+  "backend API development",
+  "workflow automation services",
+  "API integration services",
+  "startup software development",
   "Opplexify"
 ];
 
-export const DEFAULT_OG_IMAGE_TYPE = "image/webp";
+export const DEFAULT_OG_IMAGE_TYPE = "image/png";
 
 /** Shared schema.org PostalAddress so every entity declares the address identically. */
 export const BUSINESS_POSTAL_ADDRESS = {
@@ -130,7 +129,7 @@ export function seoMetadata({
   const imageUrl = absoluteUrl(image || DEFAULT_OG_IMAGE);
 
   return {
-    title,
+    title: { absolute: title },
     description: resolvedDescription,
     alternates: { canonical: canonicalUrl },
     robots: robots(noIndex),

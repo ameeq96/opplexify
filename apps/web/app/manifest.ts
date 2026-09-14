@@ -3,7 +3,7 @@ import { DEFAULT_DESCRIPTION, SITE_NAME, THEME_COLOR } from "../lib/seo";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Opplexify LLC - Software Development",
+    name: "Opplexify - Custom Software Development",
     short_name: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
     start_url: "/",

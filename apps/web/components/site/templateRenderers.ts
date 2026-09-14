@@ -8,14 +8,14 @@ type FooterServiceLink = {
 };
 
 const defaultServiceLinks: FooterServiceLink[] = [
-  { label: "Custom Websites", href: "/services" },
-  { label: "SaaS Platforms", href: "/services" },
-  { label: "Mobile Apps", href: "/services" },
-  { label: "Backend/API Development", href: "/services" }
+  { label: "Websites & Web Apps", href: "/services" },
+  { label: "SaaS Development", href: "/services" },
+  { label: "Mobile App Development", href: "/services" },
+  { label: "APIs & Automation", href: "/services" }
 ];
 
 const socialOrder = ["instagram", "facebook", "twitter", "linkedin"];
-const DEFAULT_FOOTER_COPYRIGHT = "Copyright 2026 Opplexify LLC.";
+const DEFAULT_FOOTER_COPYRIGHT = "Copyright 2026 Opplexify. All rights reserved.";
 
 export function escapeHtml(value: unknown) {
   return String(value ?? "")
@@ -139,9 +139,9 @@ export function renderTemplateFooterHtml(site: SitePayload) {
             <img src="${escapeHtml(logoLight)}" alt="Opplexify logo" decoding="async">
           </a>
           <div class="title-wrapper">
-            <h2 class="title rr_title_anim">${escapeHtml(footer.headline ?? "Custom software,")} <br> ${escapeHtml(footer.headlineLine2 ?? "websites and SaaS")} <br> ${escapeHtml(footer.headlineLine3 ?? "built clearly")}</h2>
+            <h2 class="title rr_title_anim">${escapeHtml(footer.headline ?? "Custom software")} <br> ${escapeHtml(footer.headlineLine2 ?? "for startups and")} <br> ${escapeHtml(footer.headlineLine3 ?? "growing businesses")}</h2>
           </div>
-          <a href="/contact" class="rr-btn-underline">${escapeHtml(footer.ctaLabel ?? "Get a development quote")}</a>
+          <a href="/contact" class="rr-btn-underline">${escapeHtml(footer.ctaLabel ?? "Discuss your project")}</a>
         </div>
         <div class="footer-widget-box">
           <h2 class="title">Company</h2>
