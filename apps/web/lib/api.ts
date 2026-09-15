@@ -250,7 +250,7 @@ export function pageMetadata(page?: Partial<Page> | null, fallbackTitle = SITE_N
 }
 
 export function getMenu(site: SitePayload, location: string) {
-  return site.menus.find((menu) => menu.location === location)?.items ?? [];
+  return (site.menus.find((menu) => menu.location === location)?.items ?? []).filter((item) => item.url !== "/portfolio");
 }
 
 export function getSection(page: Page | null | undefined, key: string) {

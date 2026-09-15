@@ -503,7 +503,7 @@ export function applyHomeCms(
   }
 
   rendered = replaceWhen(rendered, /<section class="about-area-2">[\s\S]*?<\/section>/, renderHomeAbout(section(page, "about-preview")));
-  rendered = replaceWhen(rendered, /<section class="work-area">[\s\S]*?<\/section>/, renderHomeWork(section(page, "work-showcase"), portfolioItems));
+  rendered = rendered.replace(/<section class="work-area">[\s\S]*?<\/section>/, "");
   rendered = replaceWhen(rendered, /<section class="pricing-area rr-bg-primary">[\s\S]*?<\/section>/, renderHomePricing(section(page, "pricing")));
   rendered = replaceWhen(rendered, /<section class="service-area rr-ov-hidden">[\s\S]*?<\/section>/, renderHomeServices(section(page, "service-showcase"), services));
   rendered = replaceWhen(rendered, /<section class="team-area-1 rr-bg-primary opplexify-home-team">[\s\S]*?<\/section>/, renderHomeTeam(section(page, "team-showcase"), team));
