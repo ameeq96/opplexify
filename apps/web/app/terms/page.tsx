@@ -2,22 +2,29 @@ import type { Metadata } from "next";
 import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
-import { BUSINESS_MAILING_ADDRESS, LEGAL_NAME, seoMetadata } from "../../lib/seo";
+import {
+  BUSINESS_MAILING_ADDRESS,
+  LEGAL_NAME,
+  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  PAKISTAN_SUPPORT_PHONE,
+  SAFEPAY_MERCHANT_NAME,
+  seoMetadata
+} from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
-  title: "Terms of Service - Opplexify",
+  title: "Terms and Conditions - Opplexify",
   description:
-    "The terms governing use of Opplexify LLC's website and custom software development services.",
+    "The terms and conditions governing use of the Opplexify website and custom software development services.",
   path: "/terms"
 });
 
 const sections: LegalSection[] = [
   {
-    heading: "1. Acceptance of these terms",
+    heading: "1. Acceptance of these terms and business identity",
     blocks: [
       {
         type: "p",
-        text: `These Terms of Service (the "Terms") govern your use of the Opplexify website and the web, mobile, SaaS, dashboard, backend API, and automation services provided by ${LEGAL_NAME}, a Wyoming-formed limited liability company (the "Services"). By accessing our website, requesting a quote, or engaging us for a project, you agree to these Terms. ${BUSINESS_MAILING_ADDRESS}.`
+        text: `These Terms and Conditions (the "Terms") govern your use of the Opplexify website and the web, mobile, SaaS, dashboard, backend API, and automation services offered under the Opplexify name (the "Services"). For Services paid for through Safepay, the merchant and contracting service provider is ${SAFEPAY_MERCHANT_NAME}, an independent freelancer operating from ${PAKISTAN_BUSINESS_OPERATING_ADDRESS} ("Opplexify", "we", "us", or "our"). ${LEGAL_NAME}, a Wyoming-formed limited liability company, is the contracting provider only where it is expressly named in the applicable written quote, proposal, or invoice. ${BUSINESS_MAILING_ADDRESS}. The applicable contracting provider will be identified before payment. By accessing our website, requesting a quote, or engaging us for a project, you agree to these Terms.`
       }
     ]
   },
@@ -26,7 +33,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Opplexify LLC provides custom website development, SaaS platform development, dashboard and admin panel development, mobile app development, backend/API development, and automation and integration services. Services are delivered as custom project work, scoped individually for each client. Starting prices shown on the Pricing page are estimates; the final scope, deliverables, timeline, revision terms, and price are confirmed in a written quote or proposal before work begins."
+        text: "Opplexify provides custom website development, SaaS platform development, dashboard and admin panel development, mobile app development, backend/API development, and automation and integration services. Services are delivered as custom project work, scoped individually for each client. Starting prices shown on the Pricing page are estimates in US dollars (USD); the final scope, deliverables, timeline, revision terms, price, currency, and contracting provider are confirmed in a written quote or proposal before work begins."
       }
     ]
   },
@@ -49,7 +56,7 @@ const sections: LegalSection[] = [
       {
         type: "list",
         items: [
-          "The deposit is required before work begins and may be non-refundable as described in the Refund Policy.",
+          "The deposit is required before work begins. Cancellation charges and deposit refund eligibility are governed by our Cancellation, Return and Refund Policy.",
           "Milestone payments are due as set out in your quote or proposal.",
           "Final deliverables, source code, and handover are provided after the final invoice is paid in full.",
           "Late or missed payments may pause work and affect agreed timelines."
@@ -57,7 +64,7 @@ const sections: LegalSection[] = [
       },
       {
         type: "p",
-        text: "Refund eligibility is governed by our Refund Policy, available at /refund-policy."
+        text: "Where Safepay is offered as a payment method, Safepay and its processing partners securely process the transaction. We do not store complete payment-card credentials on our servers. Refund eligibility is governed by our Cancellation, Return and Refund Policy, available at /refund-policy."
       }
     ]
   },
@@ -84,7 +91,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Upon full payment for a project, ownership of the final, paid-for deliverables created specifically for you transfers to you, subject to any third-party licenses. Until full payment is received, all work product remains the property of Opplexify LLC."
+        text: "Upon full payment for a project, ownership of the final, paid-for deliverables created specifically for you transfers to you, subject to any third-party licenses. Until full payment is received, all work product remains the property of the contracting service provider identified in your written quote, proposal, or invoice."
       },
       {
         type: "p",
@@ -115,7 +122,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "To the maximum extent permitted by law, Opplexify LLC will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any loss of profits, revenue, data, or goodwill. Our total aggregate liability arising out of or relating to a project will not exceed the total fees actually paid to us for that project."
+        text: "To the maximum extent permitted by law, the contracting service provider identified in the applicable written quote, proposal, or invoice will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any loss of profits, revenue, data, or goodwill. Our total aggregate liability arising out of or relating to a project will not exceed the total fees actually paid to us for that project."
       }
     ]
   },
@@ -124,7 +131,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Either party may terminate an engagement in writing. If you terminate, you remain responsible for fees for work completed up to the termination date, and the deposit remains non-refundable. We may suspend or terminate work for non-payment or material breach of these Terms."
+        text: "Either party may terminate an engagement in writing. If you terminate, you remain responsible for fees for completed and in-progress work and for any non-recoverable third-party costs up to the termination date. Cancellation charges and any deposit refund are determined under our Cancellation, Return and Refund Policy. We may suspend or terminate work for non-payment or material breach of these Terms."
       }
     ]
   },
@@ -142,7 +149,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "These Terms are governed by the laws of the State of Wyoming, United States, without regard to conflict-of-law principles, unless mandatory law requires otherwise. We aim to resolve disputes informally and in good faith before either party starts a formal proceeding."
+        text: `Where ${SAFEPAY_MERCHANT_NAME} is the contracting provider for a Safepay transaction, these Terms are governed by the applicable laws of Pakistan and disputes are subject to the competent courts in Karachi, subject to any mandatory consumer rights. Where a written quote, proposal, or invoice expressly identifies ${LEGAL_NAME} as the contracting provider, the laws of the State of Wyoming, United States apply without regard to conflict-of-law principles, unless mandatory law requires otherwise. We aim to resolve disputes informally and in good faith before either party starts a formal proceeding.`
       }
     ]
   },
@@ -151,7 +158,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If you have any questions about these Terms, contact us at admin@opplexify.com."
+        text: `If you have any questions about these Terms, contact us at admin@opplexify.com or ${PAKISTAN_SUPPORT_PHONE}. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}.`
       }
     ]
   }
@@ -162,10 +169,10 @@ export default async function TermsPage() {
     <PublicShell>
       <PageHero
         eyebrow="Legal"
-        title="Terms of Service"
-        subtitle="The agreement between you and Opplexify LLC when you use our website or engage our development services."
+        title="Terms and Conditions"
+        subtitle="The agreement that applies when you use our website or engage our custom software development services."
       />
-      <LegalDoc lastUpdated="June 10, 2026" sections={sections} />
+      <LegalDoc lastUpdated="September 16, 2026" sections={sections} />
     </PublicShell>
   );
 }

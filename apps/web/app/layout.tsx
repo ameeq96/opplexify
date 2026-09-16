@@ -14,6 +14,9 @@ import {
   LEGAL_NAME,
   LINKEDIN_URL,
   metadataBaseUrl,
+  PAKISTAN_BUSINESS_POSTAL_ADDRESS,
+  PAKISTAN_SUPPORT_PHONE,
+  SAFEPAY_MERCHANT_NAME,
   SITE_LOCALE,
   SITE_NAME,
   siteUrl,
@@ -94,6 +97,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${siteUrl()}#organization`,
     name: SITE_NAME,
     legalName: LEGAL_NAME,
     url: siteUrl(),
@@ -130,13 +134,34 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     ],
     hasOfferCatalog: pricingOfferCatalog("Opplexify custom software development services")
   };
+  const safepayMerchantJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${siteUrl()}#safepay-merchant`,
+    name: SAFEPAY_MERCHANT_NAME,
+    jobTitle: "Independent Freelancer",
+    url: absoluteUrl("/ownership-statement"),
+    email: BUSINESS_EMAIL,
+    telephone: PAKISTAN_SUPPORT_PHONE,
+    address: PAKISTAN_BUSINESS_POSTAL_ADDRESS,
+    knowsAbout: [
+      "custom website development",
+      "SaaS platform development",
+      "mobile app development",
+      "backend API development"
+    ]
+  };
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_NAME,
     url: siteUrl(),
     description: DEFAULT_DESCRIPTION,
-    inLanguage: "en"
+    inLanguage: "en",
+    publisher: [
+      { "@id": `${siteUrl()}#organization` },
+      { "@id": `${siteUrl()}#safepay-merchant` }
+    ]
   };
 
   return (
@@ -148,6 +173,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body suppressHydrationWarning>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(safepayMerchantJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         {GOOGLE_ANALYTICS_ID ? (
           <>

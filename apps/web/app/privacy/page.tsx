@@ -2,12 +2,19 @@ import type { Metadata } from "next";
 import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
-import { BUSINESS_MAILING_ADDRESS, LEGAL_NAME, seoMetadata } from "../../lib/seo";
+import {
+  BUSINESS_MAILING_ADDRESS,
+  LEGAL_NAME,
+  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  PAKISTAN_SUPPORT_PHONE,
+  SAFEPAY_MERCHANT_NAME,
+  seoMetadata
+} from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
   title: "Privacy Policy - Opplexify",
   description:
-    "How Opplexify LLC collects, uses, shares, and protects information when you use our website or custom software development services.",
+    "How Opplexify collects, uses, shares, and protects information when you use our website or custom software development services.",
   path: "/privacy"
 });
 
@@ -17,7 +24,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: `${LEGAL_NAME} ("we", "us", or "our") is a Wyoming-formed limited liability company that provides custom software development services. This Privacy Policy explains how we collect, use, share, and protect information when you visit our website, request a quote, contact us, or engage our services. ${BUSINESS_MAILING_ADDRESS}.`
+        text: `This Privacy Policy explains how information is collected, used, shared, and protected when you visit the Opplexify website, request a quote, contact us, or engage our services. For general website operation and initial enquiries, the responsible business is ${LEGAL_NAME}, a Wyoming-formed limited liability company. ${BUSINESS_MAILING_ADDRESS}. For Pakistan-based freelance services and Safepay transactions, the responsible merchant and service provider is ${SAFEPAY_MERCHANT_NAME}, an independent freelancer operating from ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}. References to "we", "us", or "our" mean the business responsible for the relevant website interaction or engagement.`
       }
     ]
   },
@@ -27,7 +34,7 @@ const sections: LegalSection[] = [
       { type: "subheading", text: "Information you provide" },
       {
         type: "p",
-        text: "When you contact us, request a quote, or work with us on a project, we collect the information you choose to share, such as your name, email address, phone number, company name, and the details of your message or project."
+        text: "When you contact us, request a quote, pay for, or work with us on a project, we collect the information you choose to share, such as your name, email address, phone number, company name, billing details, and the details of your message or project. We may also receive transaction information such as the invoice or project reference, amount, currency, payment status, and processor transaction reference."
       },
       { type: "subheading", text: "Information collected automatically" },
       {
@@ -79,12 +86,13 @@ const sections: LegalSection[] = [
           "Hosting and infrastructure providers that store and serve our website and applications.",
           "Payment processors that handle billing and process transactions securely.",
           "Analytics providers that help us understand how our website is used.",
+          `Where an enquiry concerns Pakistan-based freelance services or a Safepay transaction, ${LEGAL_NAME} and ${SAFEPAY_MERCHANT_NAME} may share with each other the contact, project, quote, invoice, transaction-reference, and support information reasonably necessary to respond to the enquiry, provide the service, support the client, and meet payment or legal obligations.`,
           "Professional advisers and authorities where required by law."
         ]
       },
       {
         type: "p",
-        text: "Payment card details entered during checkout are handled directly by our payment processor and are not stored on our own servers."
+        text: "When you choose to pay through Safepay, Safepay and its processing partners process the payment and related transaction information under their own privacy terms. We may receive transaction status and reference information needed for invoicing, reconciliation, customer support, refunds, fraud prevention, and legal compliance. We do not store complete payment-card credentials on our servers."
       }
     ]
   },
@@ -120,7 +128,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Opplexify LLC provides remote software development services and may work with clients in different locations. The third parties we rely on may process information in different countries. Where information is transferred across borders, we take steps to ensure it remains protected in line with this policy and applicable law."
+        text: "Opplexify provides remote software development services and may work with clients in different locations. The third parties we rely on may process information in different countries. Where information is transferred across borders, we take steps to ensure it remains protected in line with this policy and applicable law."
       }
     ]
   },
@@ -156,7 +164,7 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "If you have any questions or requests regarding this Privacy Policy or your personal information, contact us at admin@opplexify.com."
+        text: `If you have any questions or requests regarding this Privacy Policy or your personal information, contact us at admin@opplexify.com or ${PAKISTAN_SUPPORT_PHONE}. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}.`
       }
     ]
   }
@@ -168,9 +176,9 @@ export default async function PrivacyPage() {
       <PageHero
         eyebrow="Legal"
         title="Privacy Policy"
-        subtitle="How Opplexify LLC collects, uses, and protects information when you use our website and services."
+        subtitle="How Opplexify collects, uses, shares, and protects information when you use our website and services."
       />
-      <LegalDoc lastUpdated="June 10, 2026" sections={sections} />
+      <LegalDoc lastUpdated="September 16, 2026" sections={sections} />
     </PublicShell>
   );
 }

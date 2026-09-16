@@ -21,6 +21,9 @@ import {
   DEFAULT_OG_IMAGE,
   LEGAL_NAME,
   LINKEDIN_URL,
+  PAKISTAN_BUSINESS_POSTAL_ADDRESS,
+  PAKISTAN_SUPPORT_PHONE,
+  SAFEPAY_MERCHANT_NAME,
   absoluteUrl,
   siteUrl
 } from "../lib/seo";
@@ -277,7 +280,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">5 Page Presence</span>
                   <h3>Simple Website</h3>
                   <p class="pricing-copy">A focused, responsive business website that explains what you do, builds trust, and turns visits into enquiries.</p>
-                  <div class="pricing-price"><strong>$150</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>USD 150</strong><span>starting</span></div>
                   <span class="pricing-time">1-3 weeks</span>
                   <ul class="pricing-features">
                     <li>5 responsive pages</li>
@@ -292,7 +295,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Full-Stack App</span>
                   <h3>Complete Web Application</h3>
                   <p class="pricing-copy">A custom web application built around the way your users and team work, with secure accounts, dashboards, APIs, and connected data.</p>
-                  <div class="pricing-price"><strong>$500</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>USD 500</strong><span>starting</span></div>
                   <span class="pricing-time">3-8 weeks</span>
                   <ul class="pricing-features">
                     <li>Authentication</li>
@@ -307,7 +310,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Subscription-Ready</span>
                   <h3>Complete SaaS Solution</h3>
                   <p class="pricing-copy">A launch-ready SaaS foundation with the core product experience, admin controls, data model, and room for subscriptions and future features.</p>
-                  <div class="pricing-price"><strong>$1,000</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>USD 1,000</strong><span>starting</span></div>
                   <span class="pricing-time">6-12 weeks</span>
                   <ul class="pricing-features">
                     <li>SaaS platform</li>
@@ -322,7 +325,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">App Plus Control Room</span>
                   <h3>Mobile App with Admin Dashboard</h3>
                   <p class="pricing-copy">A mobile app connected to a secure backend and practical admin dashboard, so your team can manage users, content, and daily activity.</p>
-                  <div class="pricing-price"><strong>$1,500</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>USD 1,500</strong><span>starting</span></div>
                   <span class="pricing-time">5-10 weeks</span>
                   <ul class="pricing-features">
                     <li>Mobile app</li>
@@ -337,7 +340,7 @@ const homeHtml = String.raw`
                   <span class="pricing-label">Complete Product Suite</span>
                   <h3>Complete Mobile App + Web App</h3>
                   <p class="pricing-copy">One connected product across mobile and web, supported by a shared API, database, and admin dashboard.</p>
-                  <div class="pricing-price"><strong>$2,000</strong><span>starting</span></div>
+                  <div class="pricing-price"><strong>USD 2,000</strong><span>starting</span></div>
                   <span class="pricing-time">8-16 weeks</span>
                   <ul class="pricing-features">
                     <li>Mobile app</li>
@@ -573,16 +576,29 @@ export default async function HomePage() {
       page?.seoDescription ??
       page?.summary ??
       COMPANY_DESCRIPTION,
-    about: {
-      "@type": "Organization",
-      name: "Opplexify",
-      legalName: LEGAL_NAME,
-      url: siteUrl(),
-      email: BUSINESS_EMAIL,
-      telephone: BUSINESS_PHONE,
-      sameAs: [LINKEDIN_URL],
-      address: BUSINESS_POSTAL_ADDRESS
-    }
+    about: [
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl()}#organization`,
+        name: "Opplexify",
+        legalName: LEGAL_NAME,
+        url: siteUrl(),
+        email: BUSINESS_EMAIL,
+        telephone: BUSINESS_PHONE,
+        sameAs: [LINKEDIN_URL],
+        address: BUSINESS_POSTAL_ADDRESS
+      },
+      {
+        "@type": "Person",
+        "@id": `${siteUrl()}#safepay-merchant`,
+        name: SAFEPAY_MERCHANT_NAME,
+        jobTitle: "Independent Freelancer",
+        url: absoluteUrl("/ownership-statement"),
+        email: BUSINESS_EMAIL,
+        telephone: PAKISTAN_SUPPORT_PHONE,
+        address: PAKISTAN_BUSINESS_POSTAL_ADDRESS
+      }
+    ]
   };
   const renderedHtml = applyHomeCms(homeHtml, page, site, portfolioItems, services, team);
 

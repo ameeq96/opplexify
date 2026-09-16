@@ -1,6 +1,15 @@
 import { DigitalAgencyRuntime } from "./DigitalAgencyRuntime";
 import { assetUrl, emptySite, fetchApi, getMenu, type MenuItem, type SitePayload } from "../../lib/api";
-import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE, BUSINESS_PHONE_TEL, LINKEDIN_URL } from "../../lib/seo";
+import {
+  BUSINESS_EMAIL,
+  BUSINESS_MAILING_ADDRESS,
+  BUSINESS_PHONE,
+  BUSINESS_PHONE_TEL,
+  LINKEDIN_URL,
+  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  PAKISTAN_SUPPORT_PHONE,
+  PAKISTAN_SUPPORT_PHONE_TEL
+} from "../../lib/seo";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
 import { TemplateAssetLinks } from "./TemplateAssetLinks";
 import { footerContactInfo, footerCopyright, footerServiceLinks } from "./templateRenderers";
@@ -97,6 +106,20 @@ function SideInfo({ site }: { site: SitePayload }) {
                   </span>
                   <span className="text">
                     <a href={`tel:${phone.replace(/[^\d+]/g, "") || BUSINESS_PHONE_TEL}`}>{phone}</a>
+                  </span>
+                </div>
+                <div className="contact-item">
+                  <span className="icon">
+                    <i className="fa-solid fa-location-dot" />
+                  </span>
+                  <span className="text">Pakistan operating address: {PAKISTAN_BUSINESS_OPERATING_ADDRESS}</span>
+                </div>
+                <div className="contact-item">
+                  <span className="icon">
+                    <i className="fa-solid fa-phone" />
+                  </span>
+                  <span className="text">
+                    <a href={`tel:${PAKISTAN_SUPPORT_PHONE_TEL}`}>Pakistan support: {PAKISTAN_SUPPORT_PHONE}</a>
                   </span>
                 </div>
               </div>
@@ -223,13 +246,16 @@ function HomepageFooter({ site }: { site: SitePayload }) {
                   <a href="/pricing">Pricing</a>
                 </li>
                 <li>
-                  <a href="/terms">Terms of Service</a>
+                  <a href="/terms">Terms and Conditions</a>
                 </li>
                 <li>
                   <a href="/privacy">Privacy Policy</a>
                 </li>
                 <li>
-                  <a href="/refund-policy">Refund Policy</a>
+                  <a href="/refund-policy">Cancellation, Return and Refund Policy</a>
+                </li>
+                <li>
+                  <a href="/ownership-statement">Ownership Statement</a>
                 </li>
               </ul>
             </div>
@@ -243,7 +269,13 @@ function HomepageFooter({ site }: { site: SitePayload }) {
                   <a href={`tel:${contact.tel}`}>{contact.phone}</a>
                 </li>
                 <li>
+                  <a href={`tel:${PAKISTAN_SUPPORT_PHONE_TEL}`}>Pakistan support: {PAKISTAN_SUPPORT_PHONE}</a>
+                </li>
+                <li>
                   <span>{contact.address}</span>
+                </li>
+                <li>
+                  <span>Pakistan operating address: {PAKISTAN_BUSINESS_OPERATING_ADDRESS}</span>
                 </li>
               </ul>
             </div>

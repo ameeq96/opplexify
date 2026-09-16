@@ -1,5 +1,14 @@
 import { assetUrl, emptySite, getMenu, type MenuItem, type SitePayload } from "../../lib/api";
-import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE, BUSINESS_PHONE_TEL, LINKEDIN_URL } from "../../lib/seo";
+import {
+  BUSINESS_EMAIL,
+  BUSINESS_MAILING_ADDRESS,
+  BUSINESS_PHONE,
+  BUSINESS_PHONE_TEL,
+  LINKEDIN_URL,
+  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  PAKISTAN_SUPPORT_PHONE,
+  PAKISTAN_SUPPORT_PHONE_TEL
+} from "../../lib/seo";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
 
 type FooterServiceLink = {
@@ -155,9 +164,10 @@ export function renderTemplateFooterHtml(site: SitePayload) {
           <h2 class="title">Legal</h2>
           <ul class="footer-nav-list">
             <li><a href="/pricing">Pricing</a></li>
-            <li><a href="/terms">Terms of Service</a></li>
+            <li><a href="/terms">Terms and Conditions</a></li>
             <li><a href="/privacy">Privacy Policy</a></li>
-            <li><a href="/refund-policy">Refund Policy</a></li>
+            <li><a href="/refund-policy">Cancellation, Return and Refund Policy</a></li>
+            <li><a href="/ownership-statement">Ownership Statement</a></li>
           </ul>
         </div>
         <div class="footer-widget-box">
@@ -165,7 +175,9 @@ export function renderTemplateFooterHtml(site: SitePayload) {
           <ul class="footer-nav-list footer-contact-list">
             <li><a href="mailto:${escapeHtml(contact.email)}">${escapeHtml(contact.email)}</a></li>
             <li><a href="tel:${escapeHtml(contact.tel)}">${escapeHtml(contact.phone)}</a></li>
+            <li><a href="tel:${escapeHtml(PAKISTAN_SUPPORT_PHONE_TEL)}">Pakistan support: ${escapeHtml(PAKISTAN_SUPPORT_PHONE)}</a></li>
             <li><span>${escapeHtml(contact.address)}</span></li>
+            <li><span>Pakistan operating address: ${escapeHtml(PAKISTAN_BUSINESS_OPERATING_ADDRESS)}</span></li>
           </ul>
         </div>
       </div>

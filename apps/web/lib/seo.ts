@@ -11,6 +11,17 @@ export const BUSINESS_ADDRESS_LOCALITY = "Cheyenne";
 export const BUSINESS_ADDRESS_REGION = "WY";
 export const BUSINESS_POSTAL_CODE = "82001";
 export const BUSINESS_ADDRESS_COUNTRY = "US";
+export const SAFEPAY_MERCHANT_NAME = "Muhammad Ameeq Khan";
+export const PAKISTAN_BUSINESS_OPERATING_ADDRESS =
+  "A-67, House No. A-67, Muhalla Malir Colony, Kalaboard, Karachi, Pakistan";
+export const PAKISTAN_SUPPORT_PHONE = "+923008092395";
+export const PAKISTAN_SUPPORT_PHONE_TEL = "+923008092395";
+export const PAKISTAN_BUSINESS_POSTAL_ADDRESS = {
+  "@type": "PostalAddress",
+  streetAddress: "A-67, House No. A-67, Muhalla Malir Colony, Kalaboard",
+  addressLocality: "Karachi",
+  addressCountry: "PK"
+} as const;
 export const LINKEDIN_URL = "https://www.linkedin.com/company/opplexify-llc/";
 export const COMPANY_DESCRIPTION =
   "Opplexify builds custom software for startups and growing businesses: websites, web apps, SaaS products, dashboards, mobile apps, backend APIs, and automation.";

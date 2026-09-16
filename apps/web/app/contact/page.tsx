@@ -9,6 +9,11 @@ import {
   BUSINESS_POSTAL_ADDRESS,
   LEGAL_NAME,
   LINKEDIN_URL,
+  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  PAKISTAN_BUSINESS_POSTAL_ADDRESS,
+  PAKISTAN_SUPPORT_PHONE,
+  PAKISTAN_SUPPORT_PHONE_TEL,
+  SAFEPAY_MERCHANT_NAME,
   absoluteUrl,
   breadcrumbList,
   siteUrl
@@ -65,16 +70,40 @@ const contactJsonLd = {
   description:
     "Contact Opplexify to discuss custom website development, SaaS products, web applications, mobile apps, admin dashboards, backend APIs, or workflow automation.",
   isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() },
-  mainEntity: {
-    "@type": "Organization",
-    name: "Opplexify",
-    legalName: LEGAL_NAME,
-    url: siteUrl(),
-    email: BUSINESS_EMAIL,
-    telephone: BUSINESS_PHONE,
-    sameAs: [LINKEDIN_URL],
-    address: BUSINESS_POSTAL_ADDRESS
-  }
+  mainEntity: [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl()}#organization`,
+      name: "Opplexify",
+      legalName: LEGAL_NAME,
+      url: siteUrl(),
+      email: BUSINESS_EMAIL,
+      telephone: BUSINESS_PHONE,
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: BUSINESS_PHONE,
+        contactType: "international customer service"
+      },
+      sameAs: [LINKEDIN_URL],
+      address: BUSINESS_POSTAL_ADDRESS
+    },
+    {
+      "@type": "Person",
+      "@id": `${siteUrl()}#safepay-merchant`,
+      name: SAFEPAY_MERCHANT_NAME,
+      jobTitle: "Independent Freelancer",
+      url: absoluteUrl("/ownership-statement"),
+      email: BUSINESS_EMAIL,
+      telephone: PAKISTAN_SUPPORT_PHONE,
+      address: PAKISTAN_BUSINESS_POSTAL_ADDRESS,
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: PAKISTAN_SUPPORT_PHONE,
+        contactType: "customer service",
+        areaServed: "PK"
+      }
+    }
+  ]
 };
 
 function escapeHtml(value: unknown) {
@@ -171,8 +200,16 @@ function renderContactInfoHtml(email: string, phone: string, address: string) {
       <a class="contact-value" href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>
     </div>
     <div class="contact-us__item opplexify-contact-card">
-      <h3 class="title">Business Phone</h3>
+      <h3 class="title">International Business Phone</h3>
       <a class="contact-value" href="tel:${escapeHtml(tel)}">${escapeHtml(phone)}</a>
+    </div>
+    <div class="contact-us__item opplexify-contact-card">
+      <h3 class="title">Pakistan Operating Address</h3>
+      <p class="contact-value">${escapeHtml(PAKISTAN_BUSINESS_OPERATING_ADDRESS)}</p>
+    </div>
+    <div class="contact-us__item opplexify-contact-card">
+      <h3 class="title">Pakistan Support Phone</h3>
+      <a class="contact-value" href="tel:${escapeHtml(PAKISTAN_SUPPORT_PHONE_TEL)}">${escapeHtml(PAKISTAN_SUPPORT_PHONE)}</a>
     </div>
   </div>`;
 }

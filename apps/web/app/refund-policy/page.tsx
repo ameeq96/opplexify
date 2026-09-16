@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
-import { BUSINESS_MAILING_ADDRESS, LEGAL_NAME, seoMetadata } from "../../lib/seo";
+import {
+  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  PAKISTAN_SUPPORT_PHONE,
+  SAFEPAY_MERCHANT_NAME,
+  seoMetadata
+} from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
-  title: "Refund Policy - Opplexify",
+  title: "Cancellation, Return and Refund Policy - Opplexify",
   description:
-    "Opplexify LLC's refund policy for custom website, SaaS, mobile app, dashboard, backend API, and automation projects.",
+    "Cancellation, return, exchange, complaint, digital delivery, and refund terms for Opplexify custom software development services.",
   path: "/refund-policy"
 });
 
@@ -17,91 +22,105 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: `${LEGAL_NAME} provides custom, project-based software development services. Because each project is scoped and performed for a specific client, this Refund Policy explains when payments are and are not refundable. By engaging our services and paying a deposit or invoice, you agree to this policy. It should be read together with our Terms of Service. ${BUSINESS_MAILING_ADDRESS}.`
+        text: `${SAFEPAY_MERCHANT_NAME}, an independent freelancer operating under the Opplexify name, provides custom, project-based software development services and is the merchant for payments processed through Safepay. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}. Because each project is scoped and performed for a specific client, this policy explains our digital delivery, cancellation, return, exchange, complaint, and refund terms. It should be read together with our Terms and Conditions.`
       }
     ]
   },
   {
-    heading: "2. Deposits are non-refundable",
+    heading: "2. Digital delivery and shipping",
     blocks: [
       {
         type: "p",
-        text: "Most projects begin with an upfront deposit. The deposit reserves your start date and covers initial discovery, planning, setup, scheduling, and administrative work."
+        text: "Opplexify provides custom digital services and electronically delivered software only. We do not ship physical goods, so physical shipping does not apply. Deliverables may be provided through a secure repository, file-transfer service, staging environment, production deployment, app distribution platform, or another electronic method agreed in writing."
       },
       {
         type: "list",
         items: [
-          "The deposit may be non-refundable once work has been scheduled, discovery has started, or project setup has begun.",
-          "If you cancel before any work has begun, we may, at our discretion, refund part of the deposit after deducting time already spent on discovery and planning.",
-          "The deposit is applied toward the total project fee."
+          "The expected schedule, milestones, and delivery method are confirmed in the written quote or proposal before work begins.",
+          "Typical package estimates currently range from 1 to 16 weeks, depending on the selected package, project scope, integrations, revisions, and delivery requirements.",
+          "Client delays in supplying content, access, credentials, feedback, or approvals may extend delivery dates.",
+          "A milestone is treated as delivered when it is made available through the agreed electronic delivery method or deployed to the agreed environment."
         ]
       }
     ]
   },
   {
-    heading: "3. Milestone-based payments",
+    heading: "3. Cancellations and deposits",
     blocks: [
       {
         type: "p",
-        text: "Larger projects are invoiced in milestones, as set out in your quote, proposal, or contract. Each milestone payment covers a defined stage of work."
+        text: `You may request cancellation at any time by emailing admin@opplexify.com or contacting ${PAKISTAN_SUPPORT_PHONE}. To avoid charges for the next project milestone, the request must be received before that milestone begins. Most projects begin with an upfront deposit that reserves the start date and covers discovery, planning, setup, scheduling, and administration.`
       },
       {
         type: "list",
         items: [
-          "Payments for completed, approved, or delivered milestones are non-refundable.",
+          "If a cancellation request is received before chargeable work has started, the unused payment amount is refundable after deducting documented discovery, planning, administrative, and non-recoverable third-party costs.",
+          "After work starts, completed and in-progress work and non-recoverable third-party costs remain payable.",
+          "Unstarted milestones that have not been invoiced are not charged if cancellation is received before they begin.",
+          "If a milestone is partly complete at cancellation, we may retain or invoice the reasonable value of work performed up to the cancellation date.",
+          "Any remaining eligible amount will be handled under the refund-processing timeframe below."
+        ]
+      }
+    ]
+  },
+  {
+    heading: "4. Milestone-based payments",
+    blocks: [
+      {
+        type: "p",
+        text: "Larger projects are invoiced in milestones, as set out in the written quote, proposal, or contract. Each milestone payment covers a defined stage of work."
+      },
+      {
+        type: "list",
+        items: [
+          "Payments for completed, approved, accepted, or delivered milestones are non-refundable except where the delivered work materially differs from the approved written scope and cannot reasonably be corrected.",
           "Work that is in progress at the time of cancellation is chargeable for the effort already performed.",
-          "Any unstarted milestones that have not yet been invoiced are not charged if you cancel before they begin.",
-          "If a milestone is partly complete at cancellation, we may invoice for the reasonable value of work performed up to that date."
+          "Requests outside the agreed scope may require a new estimate or change order.",
+          "Final files, production deployment, source code, or handover materials may be withheld until the final invoice is paid."
         ]
       }
     ]
   },
   {
-    heading: "4. Revisions and delivery terms",
+    heading: "5. Returns, exchanges, and service dissatisfaction",
     blocks: [
       {
         type: "p",
-        text: "Revision terms are defined in the written proposal or scope. Included revision rounds are intended to refine agreed deliverables, not to add new features or change the approved scope."
+        text: "Because our deliverables are digital and custom-made, physical returns and exchanges do not apply. A client who believes a delivered milestone materially differs from the approved written scope must notify us within 7 calendar days of delivery."
       },
       {
         type: "list",
         items: [
-          "Requests outside the agreed scope may require a new estimate or change order.",
-          "Final files, production deployment, source code, or handover materials may be withheld until the final invoice is paid.",
-          "Delays caused by missing client content, approvals, credentials, or feedback may affect delivery dates."
+          "We will assess the reported issue and, where the work materially differs from the approved scope, correct or re-perform the affected work within the agreed scope at no additional charge.",
+          "The client must provide reasonable information, access, and cooperation needed to reproduce and assess the issue.",
+          "If a confirmed material issue cannot reasonably be corrected or re-performed, we will approve an appropriate refund for the eligible undelivered or unusable portion of the affected milestone.",
+          "Preference changes, new requirements, or requests outside the approved scope are handled as revisions or change requests and are not treated as defects."
         ]
       }
     ]
   },
   {
-    heading: "5. What is not refundable",
+    heading: "6. What is not refundable",
     blocks: [
       {
         type: "list",
         items: [
-          "Work that has already been completed, delivered, or is in progress.",
-          "Deposits, once a project is scheduled or started.",
+          "Work that has already been completed, approved, accepted, or delivered in accordance with the approved written scope.",
+          "Completed or in-progress work at the time of cancellation.",
           "Third-party costs we have paid on your behalf (for example domains, licenses, hosting, or paid plugins).",
-          "Change requests or additional scope that has already been delivered."
+          "Change requests or additional scope that has already been delivered.",
+          "Delays or additional work caused by missing client content, credentials, access, feedback, or approvals.",
+          "Change-of-mind requests where the delivered work matches the approved written scope."
         ]
       }
     ]
   },
   {
-    heading: "6. How to request a refund or cancellation",
+    heading: "7. Complaints, cancellations, and refund requests",
     blocks: [
       {
         type: "p",
-        text: "If you wish to cancel a project or request consideration of a refund, email admin@opplexify.com with your project details and the reason for your request. We will review each request individually and in good faith, assess the work completed to date, and respond within a reasonable time."
-      }
-    ]
-  },
-  {
-    heading: "7. Disputes and chargebacks",
-    blocks: [
-      {
-        type: "p",
-        text: "If you are unhappy with any part of your project, please contact us first. We are committed to resolving concerns fairly and will work with you to find a reasonable solution. Filing a payment dispute or chargeback before contacting us can delay resolution; we ask that you raise any issue with us directly so we have the opportunity to address it."
+        text: `Email admin@opplexify.com or contact ${PAKISTAN_SUPPORT_PHONE} with your full name, project or invoice reference, a clear description of the issue, relevant supporting material, and the resolution you are requesting. We will acknowledge the complaint or request within 2 business days and provide a resolution or proposed solution within 10 business days. If additional information or a third-party investigation is required, we will explain the reason for any delay and provide an updated timeframe.`
       }
     ]
   },
@@ -110,25 +129,34 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Where a refund is approved, it will be issued using the original payment method where possible. Once processed, refunds are typically completed within a reasonable period, subject to the timelines of our payment processor and your bank."
+        text: "Where a refund is approved, we will submit it to the original payment method within 10 business days after approval. Safepay, the card network, and the receiving bank may require additional processing time before the amount appears in the customer's account. We will provide confirmation when the refund has been submitted."
       }
     ]
   },
   {
-    heading: "9. Changes to this policy",
+    heading: "9. Disputes, chargebacks, and consumer rights",
     blocks: [
       {
         type: "p",
-        text: "We may update this Refund Policy from time to time. The current version is always available on this page, and the \"Last updated\" date reflects the most recent change. The policy in effect at the time you engage us applies to your project."
+        text: "If you are unhappy with any part of your project, please contact us first so we can assess and try to resolve the concern. Filing a payment dispute or chargeback before contacting us can delay resolution. Nothing in this policy limits any non-waivable statutory consumer rights or any rights available under applicable payment-network rules."
       }
     ]
   },
   {
-    heading: "10. Contact us",
+    heading: "10. Changes to this policy",
     blocks: [
       {
         type: "p",
-        text: "If you have any questions about this Refund Policy, contact us at admin@opplexify.com."
+        text: "We may update this Cancellation, Return and Refund Policy from time to time. The current version is always available on this page, and the \"Last updated\" date reflects the most recent change. The policy in effect at the time you engage us applies to your project."
+      }
+    ]
+  },
+  {
+    heading: "11. Contact us",
+    blocks: [
+      {
+        type: "p",
+        text: `For questions, complaints, cancellations, or refund requests, contact admin@opplexify.com or ${PAKISTAN_SUPPORT_PHONE}. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}.`
       }
     ]
   }
@@ -139,10 +167,10 @@ export default async function RefundPolicyPage() {
     <PublicShell>
       <PageHero
         eyebrow="Legal"
-        title="Refund Policy"
-        subtitle="How refunds, deposits, and cancellations work for our custom, project-based development services."
+        title="Cancellation, Return and Refund Policy"
+        subtitle="How digital delivery, complaints, cancellations, returns, exchanges, and refunds work for our custom services."
       />
-      <LegalDoc lastUpdated="June 10, 2026" sections={sections} />
+      <LegalDoc lastUpdated="September 16, 2026" sections={sections} />
     </PublicShell>
   );
 }

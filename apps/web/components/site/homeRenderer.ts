@@ -211,7 +211,7 @@ function renderHomePricing(item?: Section | null) {
                   <span class="pricing-label">${escapeHtml(record.label ?? "")}</span>
                   <h3>${escapeHtml(record.title ?? "Package")}</h3>
                   <p class="pricing-copy">${escapeHtml(record.description ?? "")}</p>
-                  <div class="pricing-price"><strong>${escapeHtml(record.price ?? "")}</strong><span>${escapeHtml(
+                  <div class="pricing-price"><strong>${escapeHtml(String(record.price ?? "").replace(/^\$/, "USD "))}</strong><span>${escapeHtml(
                     record.suffix ?? "starting"
                   )}</span></div>
                   <span class="pricing-time">${escapeHtml(record.timeline ?? "")}</span>

@@ -3,7 +3,7 @@ import { SITE_NAME, absoluteUrl, siteUrl } from "./seo";
 export type PricingPackage = {
   label: string;
   title: string;
-  /** Display string, e.g. "$1,000". */
+  /** Display string, e.g. "USD 1,000". */
   price: string;
   /** Numeric starting amount used for schema.org pricing. */
   priceValue: number;
@@ -25,7 +25,7 @@ export const PRICING_PACKAGES: PricingPackage[] = [
   {
     label: "Business Website",
     title: "5-Page Website",
-    price: "$150",
+    price: "USD 150",
     priceValue: 150,
     timeline: "1-3 weeks",
     description:
@@ -37,7 +37,7 @@ export const PRICING_PACKAGES: PricingPackage[] = [
   {
     label: "Custom Web Application",
     title: "Full-Stack Web App",
-    price: "$500",
+    price: "USD 500",
     priceValue: 500,
     timeline: "3-8 weeks",
     description:
@@ -49,7 +49,7 @@ export const PRICING_PACKAGES: PricingPackage[] = [
   {
     label: "SaaS Product",
     title: "SaaS MVP Foundation",
-    price: "$1,000",
+    price: "USD 1,000",
     priceValue: 1000,
     timeline: "6-12 weeks",
     description:
@@ -62,7 +62,7 @@ export const PRICING_PACKAGES: PricingPackage[] = [
   {
     label: "Mobile Product",
     title: "Mobile App with Admin Dashboard",
-    price: "$1,500",
+    price: "USD 1,500",
     priceValue: 1500,
     timeline: "5-10 weeks",
     description:
@@ -74,7 +74,7 @@ export const PRICING_PACKAGES: PricingPackage[] = [
   {
     label: "Connected Product Suite",
     title: "Mobile App + Web Platform",
-    price: "$2,000",
+    price: "USD 2,000",
     priceValue: 2000,
     timeline: "8-16 weeks",
     description:
