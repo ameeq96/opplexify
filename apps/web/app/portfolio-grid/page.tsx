@@ -1,5 +1,5 @@
-import { permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export default function PortfolioGridRedirect() {
-  permanentRedirect("/portfolio");
+  notFound();
 }

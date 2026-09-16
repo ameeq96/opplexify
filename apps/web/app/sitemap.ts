@@ -23,7 +23,6 @@ function pickDate(...candidates: Array<string | Date | null | undefined>): Date 
 const staticRoutes: Array<Pick<SitemapEntry, "url" | "changeFrequency" | "priority">> = [
   { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
   { url: absoluteUrl("/about"), changeFrequency: "monthly", priority: 0.8 },
-  { url: absoluteUrl("/portfolio"), changeFrequency: "weekly", priority: 0.95 },
   { url: absoluteUrl("/services"), changeFrequency: "weekly", priority: 0.9 },
   { url: absoluteUrl("/contact"), changeFrequency: "monthly", priority: 0.8 },
   { url: absoluteUrl("/blog"), changeFrequency: "weekly", priority: 0.7 },

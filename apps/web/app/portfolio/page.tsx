@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { PortfolioGridScroller } from "../../components/site/PortfolioGridScroller";
 import { PublicShell } from "../../components/site/PublicShell";
 import { assetUrl, fetchApi, getSection, pageMetadata, type Page, type PortfolioItem } from "../../lib/api";
@@ -85,6 +86,8 @@ function isLegacyPortfolioImage(src: string) {
 }
 
 export default async function PortfolioGridPage() {
+  notFound();
+
   const [page, cmsItems] = await Promise.all([
     fetchApi<Page | null>("/public/pages/portfolio", null),
     fetchApi<PortfolioItem[]>("/public/portfolio-items", [])

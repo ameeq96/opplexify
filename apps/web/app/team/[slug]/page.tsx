@@ -8,9 +8,52 @@ export const revalidate = 300;
 
 type Props = { params: Promise<{ slug: string }> };
 
+const fallbackTeamMembers: Record<string, TeamMember> = {
+  "muhammad-emmad-khan": {
+    id: "fallback-muhammad-emmad-khan",
+    name: "Muhammad Emmad Khan",
+    slug: "muhammad-emmad-khan",
+    role: "Founder and Owner",
+    bio: "Muhammad Emmad Khan is the Founder and Owner of Opplexify.",
+    image: "/team/emmad-khan.webp",
+    skills: [],
+    socialLinks: {},
+    seoTitle: "Muhammad Emmad Khan | Founder of Opplexify",
+    seoDescription: "Muhammad Emmad Khan is the Founder and Owner of Opplexify."
+  },
+  "ameeq-khan": {
+    id: "fallback-ameeq-khan",
+    name: "Ameeq Khan",
+    slug: "ameeq-khan",
+    role: "Full-Stack Developer",
+    bio: "Ameeq Khan is a Full-Stack Developer at Opplexify.",
+    image: "/team/ameeq-khan.webp",
+    skills: [],
+    socialLinks: {},
+    seoTitle: "Ameeq Khan - Full-Stack Developer at Opplexify",
+    seoDescription: "Ameeq Khan is a Full-Stack Developer at Opplexify."
+  },
+  "atiq-khan": {
+    id: "fallback-atiq-khan",
+    name: "Atiq Khan",
+    slug: "atiq-khan",
+    role: "Project Coordinator",
+    bio: "Atiq Khan is a Project Coordinator at Opplexify.",
+    image: "/team/atiq-khan.webp",
+    skills: [],
+    socialLinks: {},
+    seoTitle: "Atiq Khan - Project Coordinator at Opplexify",
+    seoDescription: "Atiq Khan is a Project Coordinator at Opplexify."
+  }
+};
+
+function getTeamMember(slug: string) {
+  return fetchApi<TeamMember | null>(`/public/team/${slug}`, fallbackTeamMembers[slug] ?? null);
+}
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const member = await fetchApi<TeamMember | null>(`/public/team/${slug}`, null);
+  const member = await getTeamMember(slug);
   return pageMetadata(
     member
       ? {
@@ -28,7 +71,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function TeamDetailPage({ params }: Props) {
   const { slug } = await params;
-  const member = await fetchApi<TeamMember | null>(`/public/team/${slug}`, null);
+  const member = await getTeamMember(slug);
   if (!member) notFound();
   const personJsonLd = {
     "@context": "https://schema.org",

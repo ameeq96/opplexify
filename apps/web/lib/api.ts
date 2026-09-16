@@ -250,7 +250,7 @@ export function pageMetadata(page?: Partial<Page> | null, fallbackTitle = SITE_N
 }
 
 export function getMenu(site: SitePayload, location: string) {
-  return site.menus.find((menu) => menu.location === location)?.items ?? [];
+  return (site.menus.find((menu) => menu.location === location)?.items ?? []).filter((item) => item.url !== "/portfolio");
 }
 
 export function getSection(page: Page | null | undefined, key: string) {
@@ -280,7 +280,6 @@ export const emptySite: SitePayload = {
       items: [
         { id: "home", label: "Home", url: "/", sortOrder: 1 },
         { id: "about", label: "About", url: "/about", sortOrder: 2 },
-        { id: "portfolio", label: "Portfolio", url: "/portfolio", sortOrder: 3 },
         { id: "services", label: "Services", url: "/services", sortOrder: 4 },
         { id: "contact", label: "Contact Us", url: "/contact", sortOrder: 5 }
       ]
