@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { PortfolioGridScroller } from "../../components/site/PortfolioGridScroller";
 import { PublicShell } from "../../components/site/PublicShell";
 import { assetUrl, fetchApi, getSection, pageMetadata, type Page, type PortfolioItem } from "../../lib/api";
-import { absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
+import { absoluteUrl, breadcrumbList, SAFEPAY_MERCHANT_NAME, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const imageExtensions = new Set([".avif", ".jpg", ".jpeg", ".png", ".webp"]);
 const videoExtensions = new Set([".mp4", ".webm", ".mov"]);
-const tags = ["Website", "SaaS UI", "Dashboard", "Mobile App", "Backend/API", "Automation"];
+const conceptTag = "Concept Sample";
 const hiddenPortfolioImages = new Set(["33-0041.webp", "33-0042.webp"]);
 
 type PublicAsset = {
@@ -58,7 +58,7 @@ function readPublicAssets(folder: string, extensions: Set<string>): PublicAsset[
 function projectTitle(index: number) {
   const projectNumber = String(index + 1).padStart(2, "0");
 
-  return `Interface design sample ${projectNumber}`;
+  return `Concept interface sample ${projectNumber}`;
 }
 
 function fallbackImages() {
@@ -94,13 +94,17 @@ export default async function PortfolioGridPage() {
   const cmsVideos = visibleCmsItems.filter((item) => item.mediaType === "video");
   const localImages = fallbackImages();
   const images: PublicAsset[] = cmsImages.length
-    ? cmsImages.map((item, index) => ({
-        name: localImages[index]?.name ?? portfolioAssetName(item.mediaUrl),
-        src: isLegacyPortfolioImage(item.mediaUrl) && localImages[index] ? localImages[index].src : assetUrl(item.mediaUrl),
-        title: item.title,
-        tag: item.tag ?? undefined,
-        alt: item.alt
-      }))
+    ? cmsImages.map((item, index) => {
+        const isConceptSample = isLegacyPortfolioImage(item.mediaUrl);
+
+        return {
+          name: localImages[index]?.name ?? portfolioAssetName(item.mediaUrl),
+          src: isConceptSample && localImages[index] ? localImages[index].src : assetUrl(item.mediaUrl),
+          title: isConceptSample ? projectTitle(index) : item.title,
+          tag: isConceptSample ? conceptTag : item.tag ?? undefined,
+          alt: item.alt
+        };
+      })
     : localImages;
   const videos: PublicAsset[] = cmsVideos.length
     ? cmsVideos.map((item) => ({
@@ -114,7 +118,7 @@ export default async function PortfolioGridPage() {
   const portfolioItems = images.map((image, index) => ({
     ...image,
     title: image.title ?? projectTitle(index),
-    tag: image.tag ?? tags[index % tags.length],
+    tag: image.tag ?? conceptTag,
     alt: image.alt
   }));
   const filters = Array.from(new Set(portfolioItems.map((item) => item.tag).filter(Boolean))).sort((a, b) =>
@@ -127,7 +131,7 @@ export default async function PortfolioGridPage() {
     name: "Opplexify web development portfolio",
     url: absoluteUrl("/portfolio"),
     description:
-      "A curated Opplexify portfolio of website design, SaaS interfaces, mobile app screens, admin dashboards, and custom software experiences.",
+      "A collection of Opplexify concept interface samples for websites, SaaS products, mobile apps, admin dashboards, and custom software.",
     isPartOf: { "@type": "WebSite", name: "Opplexify", url: siteUrl() }
   };
   const intro = getSection(page, "intro");
@@ -147,6 +151,14 @@ export default async function PortfolioGridPage() {
                   {intro?.subtitle ??
                     page?.summary ??
                     "Explore interface work across business websites, SaaS products, web applications, mobile apps, and admin dashboards. These visuals show our approach without making claims about confidential client results."}
+                </p>
+                <p>
+                  This portfolio is presented for business verification by {SAFEPAY_MERCHANT_NAME}, the Pakistan-based
+                  independent freelancer identified in our <a href="/ownership-statement">Ownership Statement</a>.
+                  Gallery items labeled “Concept Sample” are concept work—not client projects or launched products. Any
+                  placeholder names, people, testimonials, contact details, or performance statements visible inside a
+                  sample are sample UI content—not customer endorsements, brand endorsements, or claims of client
+                  results.
                 </p>
 
                 <div className="opplexify-portfolio-hero__stats" aria-label="Portfolio overview">

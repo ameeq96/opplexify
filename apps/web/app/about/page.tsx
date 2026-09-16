@@ -99,6 +99,7 @@ const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
   .replace(/<!-- choose-us area start  -->[\s\S]*?<!-- choose-us area end  -->/g, "")
   .replace(/<span class="section-subtitle">Why choose us<\/span>/g, `<span class="section-subtitle">Why work with Opplexify</span>`)
   .replace(/src="\/template-assets\/dark\/assets\/imgs\/team\/team-s-1.webp"/g, `src="/team/emmad-khan.webp"`)
+  .replace(/<a href="#"><img src="\/team\/emmad-khan.webp"/, `<a href="/team/muhammad-emmad-khan"><img src="/team/emmad-khan.webp"`)
   .replace(
     /<h2 class="section-title rr_title_anim">Mee the <span>squad<\/span> <br>[\s\S]*?<\/h2>/,
     `<h2 class="section-title rr_title_anim">Meet the people behind <br>
@@ -107,6 +108,7 @@ const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
   )
   .replace(/CEO & Founder/g, "Founder and Owner")
   .replace(/Cristian Vargas/g, "Muhammad Emmad Khan")
+  .replace(`<a href="#">Muhammad Emmad Khan</a>`, `<a href="/team/muhammad-emmad-khan">Muhammad Emmad Khan</a>`)
   .replace(/Awards/g, "Capabilities")
   .replace(
     /<span class="category">[^<]+<\/span>/g,

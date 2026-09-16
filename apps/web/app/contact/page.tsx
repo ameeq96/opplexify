@@ -39,6 +39,7 @@ const contactPageHtml = contactHtml
   .replace(/The topic you want to talk/g, "What would you like to build or improve?")
   .replace(/Write your message\*/g, "Share your goals, priorities, timeline, and any useful context")
   .replace(/<h3 class="title"> Offices <br> world-wide\s*<\/h3>/, `<h3 class="title"> Let’s discuss <br> your project</h3>`)
+  .replace(`<a href="#">Let’s talk</a>`, `<a href="#contact__form">Let’s talk</a>`)
   .replace(/<h3 class="title">Montreal<\/h3>/g, `<h3 class="title">Business Mailing Address</h3>`)
   .replace(/<h3 class="title">Toronto<\/h3>/g, `<h3 class="title">Business Email</h3>`)
   .replace(/<h3 class="title">New York<\/h3>/g, `<h3 class="title">Business Phone</h3>`)
@@ -191,6 +192,10 @@ function renderContactInfoHtml(email: string, phone: string, address: string) {
   const tel = digits ? `+${digits}` : "+13074435144";
 
   return `<div class="contact-us__info opplexify-contact-cards">
+    <div class="contact-us__item opplexify-contact-card">
+      <h3 class="title">Pakistan Safepay Merchant</h3>
+      <p class="contact-value">${escapeHtml(SAFEPAY_MERCHANT_NAME)} — Independent Freelancer</p>
+    </div>
     <div class="contact-us__item opplexify-contact-card">
       <h3 class="title">Business Mailing Address</h3>
       <p class="contact-value">${escapeHtml(cleanAddress)}</p>
