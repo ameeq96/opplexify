@@ -13,12 +13,12 @@ export const BUSINESS_POSTAL_CODE = "82001";
 export const BUSINESS_ADDRESS_COUNTRY = "US";
 export const SAFEPAY_MERCHANT_NAME = "Muhammad Ameeq Khan";
 export const PAKISTAN_BUSINESS_OPERATING_ADDRESS =
-  "A-67, House No. A-67, Muhalla Malir Colony, Kalaboard, Karachi, Pakistan";
+  "A-Area House No. A-67, Muhalla Malir Colony, Kalaboard, Karachi, Pakistan";
 export const PAKISTAN_SUPPORT_PHONE = "+923008092395";
 export const PAKISTAN_SUPPORT_PHONE_TEL = "+923008092395";
 export const PAKISTAN_BUSINESS_POSTAL_ADDRESS = {
   "@type": "PostalAddress",
-  streetAddress: "A-67, House No. A-67, Muhalla Malir Colony, Kalaboard",
+  streetAddress: "A-Area House No. A-67, Muhalla Malir Colony, Kalaboard",
   addressLocality: "Karachi",
   addressCountry: "PK"
 } as const;
