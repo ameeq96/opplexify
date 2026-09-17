@@ -13,13 +13,14 @@ export const BUSINESS_POSTAL_CODE = "82001";
 export const BUSINESS_ADDRESS_COUNTRY = "US";
 export const SAFEPAY_MERCHANT_NAME = "Muhammad Ameeq Khan";
 export const PAKISTAN_BUSINESS_OPERATING_ADDRESS =
-  "A-Area House No. A-67, Muhalla Malir Colony, Kalaboard, Karachi, Pakistan";
+  "A Area, House no. A-67, Mohalla Malir Colony, Kala Board, Karachi East, Karachi East, Pakistan";
 export const PAKISTAN_SUPPORT_PHONE = "+923008092395";
 export const PAKISTAN_SUPPORT_PHONE_TEL = "+923008092395";
 export const PAKISTAN_BUSINESS_POSTAL_ADDRESS = {
   "@type": "PostalAddress",
-  streetAddress: "A-Area House No. A-67, Muhalla Malir Colony, Kalaboard",
-  addressLocality: "Karachi",
+  streetAddress: "A Area, House no. A-67, Mohalla Malir Colony, Kala Board",
+  addressLocality: "Karachi East",
+  addressRegion: "Karachi East",
   addressCountry: "PK"
 } as const;
 export const LINKEDIN_URL = "https://www.linkedin.com/company/opplexify-llc/";
