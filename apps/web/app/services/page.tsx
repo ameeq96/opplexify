@@ -287,7 +287,6 @@ const servicesJsonLd = {
     item: {
       "@type": "Service",
       name,
-      provider: { "@type": "Organization", name: "Opplexify", url: siteUrl() },
       url: absoluteUrl("/services")
     }
   }))
@@ -306,7 +305,6 @@ export default async function ServicesPage() {
       item: {
         "@type": "Service",
         name,
-        provider: { "@type": "Organization", name: "Opplexify", url: siteUrl() },
         url: absoluteUrl("/services")
       }
     }))

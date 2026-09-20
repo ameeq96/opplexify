@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { PageHero, Prose } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
 import { assetUrl, fetchApi, pageMetadata, type Service } from "../../../lib/api";
-import { absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
+import { absoluteUrl, breadcrumbList } from "../../../lib/seo";
 
 export const revalidate = 300;
 
@@ -115,11 +115,6 @@ export default async function ServiceDetailPage({ params }: Props) {
     name: service.title,
     description: service.shortDescription ?? service.description,
     url: absoluteUrl(`/services/${service.slug}`),
-    provider: {
-      "@type": "Organization",
-      name: "Opplexify",
-      url: siteUrl()
-    },
     serviceType: service.title,
     areaServed: "Worldwide"
   };

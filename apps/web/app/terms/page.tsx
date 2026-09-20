@@ -3,11 +3,19 @@ import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
 import {
+  APPLICABLE_PROVIDER_REFERENCE,
+  BUSINESS_EMAIL,
   BUSINESS_MAILING_ADDRESS,
+  FREELANCER_PAYMENT_DISCLOSURE,
   LEGAL_NAME,
-  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  LLC_PAYMENT_DISCLOSURE,
+  PAKISTAN_ADDRESS_LABEL,
+  PAKISTAN_CONTACT_ADDRESS,
   PAKISTAN_SUPPORT_PHONE,
+  PAYMENT_SEPARATION_DISCLOSURE,
+  PROVIDER_SELECTION_DISCLOSURE,
   SAFEPAY_MERCHANT_NAME,
+  SEPARATE_PERSONS_DISCLOSURE,
   seoMetadata
 } from "../../lib/seo";
 
@@ -24,12 +32,39 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: `These Terms and Conditions (the "Terms") govern your use of the Opplexify website and the web, mobile, SaaS, dashboard, backend API, and automation services offered under the Opplexify name (the "Services"). For Services paid for through Safepay, the merchant and contracting service provider is ${SAFEPAY_MERCHANT_NAME}, an independent freelancer operating from ${PAKISTAN_BUSINESS_OPERATING_ADDRESS} ("Opplexify", "we", "us", or "our"). ${LEGAL_NAME}, a Wyoming-formed limited liability company, is the contracting provider only where it is expressly named in the applicable written quote, proposal, or invoice. ${BUSINESS_MAILING_ADDRESS}. The applicable contracting provider will be identified before payment. By accessing our website, requesting a quote, or engaging us for a project, you agree to these Terms.`
+        text: `These Terms and Conditions (the "Terms") govern use of the Opplexify website and custom website, web application, SaaS, mobile application, dashboard, backend API, and automation services offered under the Opplexify brand (the "Services"). ${LEGAL_NAME} is the US-registered owner of the Opplexify brand. ${SAFEPAY_MERCHANT_NAME} is a Pakistan-based independent freelancer and Safepay merchant. ${SEPARATE_PERSONS_DISCLOSURE} ${APPLICABLE_PROVIDER_REFERENCE} ${PROVIDER_SELECTION_DISCLOSURE} By accessing the website, requesting a quote, or engaging either provider for a project, you agree to the provisions of these Terms that apply to that interaction or engagement. ${BUSINESS_MAILING_ADDRESS}.`
       }
     ]
   },
   {
-    heading: "2. Our services",
+    heading: "2. Provider responsibility table",
+    blocks: [
+      {
+        type: "table",
+        caption: "Contracting, invoicing, payment, and refund responsibility",
+        headers: ["Provider", "Who supplies the service", "Who issues the invoice", "Who receives payment", "Terms and refund obligations"],
+        rows: [
+          [
+            LEGAL_NAME,
+            `The custom services described in a quotation or invoice naming ${LEGAL_NAME}.`,
+            LEGAL_NAME,
+            `${LEGAL_NAME}, through the company payment channel stated securely on its invoice.`,
+            `${LEGAL_NAME} is responsible under these Terms, the written project agreement, and the Refund Policy, and handles its own eligible refunds.`
+          ],
+          [
+            SAFEPAY_MERCHANT_NAME,
+            `The independent freelance services described in a quotation or invoice naming ${SAFEPAY_MERCHANT_NAME}.`,
+            SAFEPAY_MERCHANT_NAME,
+            `${SAFEPAY_MERCHANT_NAME}; Safepay is available only when he is named as service provider and merchant.`,
+            `${SAFEPAY_MERCHANT_NAME} is responsible under these Terms, the written project agreement, and the Refund Policy, and handles his own eligible refunds.`
+          ]
+        ]
+      },
+      { type: "p", text: PAYMENT_SEPARATION_DISCLOSURE }
+    ]
+  },
+  {
+    heading: "3. Our services",
     blocks: [
       {
         type: "p",
@@ -38,16 +73,16 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "3. Quotes, proposals, and project scope",
+    heading: "4. Quotes, proposals, and project scope",
     blocks: [
       {
         type: "p",
-        text: "Each engagement is defined by a written quote or proposal that sets out the agreed scope, deliverables, milestones, timeline, and fees. Work outside that agreed scope (\"change requests\") may require an additional quote and may affect the timeline. We will not begin chargeable work until the scope and deposit are confirmed."
+        text: "Each engagement is defined by a written quote, proposal, contract, or invoice that identifies exactly one contracting provider and sets out the agreed scope, deliverables, milestones, timeline, fees, invoice issuer, payment recipient, and available payment method. Work outside that agreed scope (\"change requests\") may require an additional quote and may affect the timeline. Chargeable work does not begin until the scope, provider, and any required deposit are confirmed."
       }
     ]
   },
   {
-    heading: "4. Fees, payments, and deposits",
+    heading: "5. Fees, payments, and deposits",
     blocks: [
       {
         type: "p",
@@ -64,12 +99,12 @@ const sections: LegalSection[] = [
       },
       {
         type: "p",
-        text: "Where Safepay is offered as a payment method, Safepay and its processing partners securely process the transaction. We do not store complete payment-card credentials on our servers. Refund eligibility is governed by our Cancellation, Return and Refund Policy, available at /refund-policy."
+        text: `${LLC_PAYMENT_DISCLOSURE} ${FREELANCER_PAYMENT_DISCLOSURE} ${PAYMENT_SEPARATION_DISCLOSURE} Payment-card credentials are handled by the applicable payment provider and are not stored in complete form on this website. Refund eligibility is governed by the Cancellation, Return and Refund Policy.`
       }
     ]
   },
   {
-    heading: "5. Client responsibilities",
+    heading: "6. Client responsibilities",
     blocks: [
       {
         type: "p",
@@ -87,7 +122,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "6. Intellectual property and handover",
+    heading: "7. Intellectual property and handover",
     blocks: [
       {
         type: "p",
@@ -100,7 +135,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "7. Third-party services",
+    heading: "8. Third-party services",
     blocks: [
       {
         type: "p",
@@ -109,7 +144,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "8. Warranties and disclaimer",
+    heading: "9. Warranties and disclaimer",
     blocks: [
       {
         type: "p",
@@ -118,7 +153,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "9. Limitation of liability",
+    heading: "10. Limitation of liability",
     blocks: [
       {
         type: "p",
@@ -127,7 +162,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "10. Termination",
+    heading: "11. Termination",
     blocks: [
       {
         type: "p",
@@ -136,7 +171,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "11. Changes to these terms",
+    heading: "12. Changes to these terms",
     blocks: [
       {
         type: "p",
@@ -145,20 +180,20 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "12. Governing law and disputes",
+    heading: "13. Governing law and disputes",
     blocks: [
       {
         type: "p",
-        text: `Where ${SAFEPAY_MERCHANT_NAME} is the contracting provider for a Safepay transaction, these Terms are governed by the applicable laws of Pakistan and disputes are subject to the competent courts in Karachi, subject to any mandatory consumer rights. Where a written quote, proposal, or invoice expressly identifies ${LEGAL_NAME} as the contracting provider, the laws of the State of Wyoming, United States apply without regard to conflict-of-law principles, unless mandatory law requires otherwise. We aim to resolve disputes informally and in good faith before either party starts a formal proceeding.`
+        text: "The written quotation, proposal, or contract may identify the governing law and dispute forum for the engagement. Any mandatory law or non-waivable consumer right that applies to the customer or the contracting provider remains unaffected. The customer and contracting provider should first try to resolve a dispute informally and in good faith."
       }
     ]
   },
   {
-    heading: "13. Contact us",
+    heading: "14. Contact us",
     blocks: [
       {
         type: "p",
-        text: `If you have any questions about these Terms, contact us at admin@opplexify.com or ${PAKISTAN_SUPPORT_PHONE}. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}.`
+        text: `For general website questions, contact ${BUSINESS_EMAIL}. Questions about a specific engagement should be sent to the contracting provider identified on the quotation or invoice. ${SAFEPAY_MERCHANT_NAME} can also be contacted at ${PAKISTAN_SUPPORT_PHONE}; ${PAKISTAN_ADDRESS_LABEL}: ${PAKISTAN_CONTACT_ADDRESS}.`
       }
     ]
   }
@@ -172,7 +207,7 @@ export default async function TermsPage() {
         title="Terms and Conditions"
         subtitle="The agreement that applies when you use our website or engage our custom software development services."
       />
-      <LegalDoc lastUpdated="September 16, 2026" sections={sections} />
+      <LegalDoc lastUpdated="September 20, 2026" sections={sections} />
     </PublicShell>
   );
 }

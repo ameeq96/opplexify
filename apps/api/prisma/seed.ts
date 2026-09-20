@@ -2,6 +2,7 @@ import { existsSync, readdirSync, statSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { config } from "dotenv";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { BUSINESS_IDENTITY } from "../../../packages/shared/src";
 import * as bcrypt from "bcryptjs";
 import { Prisma, PrismaClient } from "../src/generated/prisma/client";
 import { databasePoolConfig } from "../src/database-url";
@@ -18,13 +19,12 @@ const json = (value: unknown) => value as Prisma.InputJsonValue;
 const imageExtensions = new Set([".avif", ".jpg", ".jpeg", ".png", ".webp"]);
 const videoExtensions = new Set([".mp4", ".webm", ".mov"]);
 const portfolioTags = ["Website", "SaaS UI", "Dashboard", "Mobile App", "Backend/API", "Automation"];
-const legalName = "Opplexify LLC";
-const businessEmail = "admin@opplexify.com";
-const businessPhone = "+1 (307) 443-5144";
-const businessMailingAddress = "Business mailing address: 525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States";
-const linkedinUrl = "https://www.linkedin.com/company/opplexify-llc/";
-const companyDescription =
-  "Opplexify is a custom software development company that designs and builds business websites, SaaS platforms, web and mobile apps, admin dashboards, backend APIs, and workflow automations.";
+const legalName = BUSINESS_IDENTITY.llc.legalName;
+const businessEmail = BUSINESS_IDENTITY.llc.contact.email;
+const businessPhone = BUSINESS_IDENTITY.llc.contact.phone;
+const businessMailingAddress = `${BUSINESS_IDENTITY.llc.contact.addressLabel}: ${BUSINESS_IDENTITY.llc.contact.address}`;
+const linkedinUrl = BUSINESS_IDENTITY.brand.linkedinUrl;
+const companyDescription = BUSINESS_IDENTITY.brand.description;
 
 type PublicSeedAsset = {
   name: string;
@@ -1193,32 +1193,32 @@ async function seedTeam() {
   const legacyTeamSlugs = ["maya-reeves", "leo-carter", "nora-singh", "ameeq-khan-backend", "ameeq-khan", "atiq-khan", "emmad-khan"];
   const team = [
     {
-      name: "Muhammad Emmad Khan",
+      name: BUSINESS_IDENTITY.llc.founderName,
       slug: "muhammad-emmad-khan",
       role: "Founder and Owner",
       bio:
-        "Muhammad Emmad Khan is the Founder and Owner of Opplexify.",
+        `${BUSINESS_IDENTITY.llc.founderName} is the Founder and Owner of ${BUSINESS_IDENTITY.llc.legalName}.`,
       image: "/team/emmad-khan.webp",
       socialLinks: json({}),
       skills: json([]),
       sortOrder: 1,
-      seoTitle: "Muhammad Emmad Khan | Founder of Opplexify",
+      seoTitle: `${BUSINESS_IDENTITY.llc.founderName} | Founder of Opplexify`,
       seoDescription:
-        "Muhammad Emmad Khan is the Founder and Owner of Opplexify."
+        `${BUSINESS_IDENTITY.llc.founderName} is the Founder and Owner of ${BUSINESS_IDENTITY.llc.legalName}.`
     },
     {
-      name: "Ameeq Khan",
+      name: BUSINESS_IDENTITY.freelancer.legalName,
       slug: "ameeq-khan",
-      role: "Full-Stack Developer",
+      role: "Independent Freelancer",
       bio:
-        "Ameeq Khan is a Full-Stack Developer at Opplexify.",
+        `${BUSINESS_IDENTITY.freelancer.legalName} is a Pakistan-based independent freelancer and Safepay merchant. He is a separate contracting provider from ${BUSINESS_IDENTITY.llc.legalName}.`,
       image: "/team/ameeq-khan.webp",
       socialLinks: json({}),
       skills: json([]),
       sortOrder: 2,
-      seoTitle: "Ameeq Khan - Full-Stack Developer at Opplexify",
+      seoTitle: `${BUSINESS_IDENTITY.freelancer.legalName} | Independent Freelancer`,
       seoDescription:
-        "Ameeq Khan is a Full-Stack Developer at Opplexify."
+        `${BUSINESS_IDENTITY.freelancer.legalName} is a Pakistan-based independent freelancer and Safepay merchant.`
     },
     {
       name: "Atiq Khan",
@@ -1253,16 +1253,20 @@ async function seedTeam() {
 async function seedFaqs() {
   await prisma.faq.updateMany({
     where: {
-      question: {
-        in: [
-          "Can every homepage section be edited from admin?",
-          "Do services, work, blog, and team pages use API data?",
-          "Can uploaded media be reused across content?",
-          "What services does Opplexify LLC provide?",
-          "Is Opplexify LLC a registered US company?",
-          "How can business verification or compliance teams contact Opplexify LLC?"
-        ]
-      }
+      OR: [
+        {
+          question: {
+            in: [
+              "Can every homepage section be edited from admin?",
+              "Do services, work, blog, and team pages use API data?",
+              "Can uploaded media be reused across content?",
+              `What services does ${legalName} provide?`,
+              `Is ${legalName} a registered US company?`
+            ]
+          }
+        },
+        { question: { contains: "compliance teams contact" } }
+      ]
     },
     data: { isActive: false }
   });
@@ -1306,7 +1310,7 @@ async function seedFaqs() {
     {
       question: "How do pricing and milestone payments work?",
       answer:
-        "Pricing is based on the agreed scope, not a one-size-fits-all hourly estimate. Smaller projects may use a deposit and final payment. Larger builds can be divided into milestones, each with defined deliverables and payment timing in the proposal.",
+        `Pricing is based on the agreed scope, not a one-size-fits-all hourly estimate. Smaller projects may use a deposit and final payment. Larger builds can be divided into milestones, each with defined deliverables and payment timing in the proposal. ${BUSINESS_IDENTITY.disclosures.providerSelection}`,
       category: "Pricing & Billing",
       sortOrder: 6
     },

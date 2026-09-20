@@ -3,46 +3,52 @@ import { PageHero } from "../../components/site/Blocks";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
 import { PublicShell } from "../../components/site/PublicShell";
 import {
+  BUSINESS_EMAIL,
   BUSINESS_MAILING_ADDRESS,
+  FOUNDER_NAME,
   LEGAL_NAME,
-  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  PAKISTAN_ADDRESS_LABEL,
+  PAKISTAN_CONTACT_ADDRESS,
   PAKISTAN_SUPPORT_PHONE,
+  PAYMENT_SEPARATION_DISCLOSURE,
+  PROVIDER_SELECTION_DISCLOSURE,
   SAFEPAY_MERCHANT_NAME,
+  SEPARATE_PERSONS_DISCLOSURE,
   seoMetadata
 } from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
   title: "Ownership Statement - Opplexify",
   description:
-    "Ownership, operation, merchant responsibility, and contact information for the Opplexify website and services.",
+    "Opplexify brand ownership, separate contracting-provider roles, merchant responsibility, and contact information.",
   path: "/ownership-statement"
 });
 
 const sections: LegalSection[] = [
   {
-    heading: "1. Website and brand ownership",
+    heading: "1. Brand ownership",
     blocks: [
       {
         type: "p",
-        text: `The Opplexify brand and website at https://opplexify.com are owned and operated by ${LEGAL_NAME}, a Wyoming-formed limited liability company. Muhammad Emmad Khan is the Founder and Owner of ${LEGAL_NAME}. ${BUSINESS_MAILING_ADDRESS}.`
+        text: `The Opplexify brand is owned by ${LEGAL_NAME}, a US-registered limited liability company. ${FOUNDER_NAME} is the Founder and Owner of ${LEGAL_NAME}. The website at https://opplexify.com publishes information about services offered under the Opplexify brand. ${BUSINESS_MAILING_ADDRESS}.`
       }
     ]
   },
   {
-    heading: "2. Safepay merchant responsibility",
+    heading: "2. Separate authorized Safepay merchant role",
     blocks: [
       {
         type: "p",
-        text: `${SAFEPAY_MERCHANT_NAME} is the authorized Pakistan-based operator, independent freelancer, merchant, and contracting service provider for payments processed through Safepay in Pakistan. ${LEGAL_NAME} authorizes ${SAFEPAY_MERCHANT_NAME} to use the Opplexify name and website for these Pakistan-based freelance services and to accept the corresponding payments through Safepay. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}. ${SAFEPAY_MERCHANT_NAME} is responsible for the services sold through those transactions, customer support, digital delivery, complaints, cancellations, and eligible refunds in accordance with the published website policies and the applicable written quote, proposal, or invoice.`
+        text: `${SAFEPAY_MERCHANT_NAME} is a Pakistan-based independent freelancer and Safepay merchant who is separately authorized to use the Opplexify brand for his own identified freelance engagements. He is the contracting service provider, invoice issuer, merchant, and payment recipient only when the applicable quotation or invoice names him in those roles. ${PAKISTAN_ADDRESS_LABEL}: ${PAKISTAN_CONTACT_ADDRESS}. He is responsible for service delivery, support, complaints, cancellations, and eligible refunds for those engagements.`
       }
     ]
   },
   {
-    heading: "3. Opplexify LLC",
+    heading: "3. Separate contracts and payments",
     blocks: [
       {
         type: "p",
-        text: `${LEGAL_NAME} is the contracting provider for an engagement only where it is expressly named in the applicable written quote, proposal, or invoice. Safepay transactions described on this website are contracted with ${SAFEPAY_MERCHANT_NAME}. The applicable provider is identified before the customer makes a payment.`
+        text: `${LEGAL_NAME} contracts, invoices, and receives payment for its own engagements when it is named as the provider. ${SAFEPAY_MERCHANT_NAME} contracts, invoices, and receives payment for his own independent freelance engagements when he is named as the provider and merchant. ${SEPARATE_PERSONS_DISCLOSURE} ${PROVIDER_SELECTION_DISCLOSURE} ${PAYMENT_SEPARATION_DISCLOSURE}`
       }
     ]
   },
@@ -51,22 +57,22 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: "Unless otherwise identified, the Opplexify name, website copy, original graphics, and original website materials are owned by or licensed to the applicable Opplexify business operator. Client deliverables and third-party materials remain subject to their respective written contracts, open-source licenses, and third-party license terms."
+        text: `The Opplexify name and brand assets are owned by ${LEGAL_NAME}. Website materials may also include content licensed to ${LEGAL_NAME} or material supplied for an identified independent engagement. Client deliverables and third-party materials remain subject to the applicable written contract, open-source licenses, and third-party license terms.`
       }
     ]
   },
   {
-    heading: "5. Contact and verification",
+    heading: "5. Contact information",
     blocks: [
       {
         type: "list",
         items: [
           `Website business entity: ${LEGAL_NAME}.`,
-          `Founder and Owner of ${LEGAL_NAME}: Muhammad Emmad Khan.`,
+          `Founder and Owner of ${LEGAL_NAME}: ${FOUNDER_NAME}.`,
           `Safepay merchant: ${SAFEPAY_MERCHANT_NAME}, independent freelancer.`,
-          `Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}.`,
-          `Customer-support phone: ${PAKISTAN_SUPPORT_PHONE}.`,
-          "Customer-support email: admin@opplexify.com."
+          `${PAKISTAN_ADDRESS_LABEL}: ${PAKISTAN_CONTACT_ADDRESS}.`,
+          `Freelancer and Safepay merchant support phone: ${PAKISTAN_SUPPORT_PHONE}.`,
+          `Website contact email: ${BUSINESS_EMAIL}.`
         ]
       }
     ]
@@ -79,9 +85,9 @@ export default async function OwnershipStatementPage() {
       <PageHero
         eyebrow="Legal"
         title="Ownership Statement"
-        subtitle="Who owns the Opplexify website and who is responsible for Safepay transactions in Pakistan."
+        subtitle="Who owns the Opplexify brand and how the separate contracting and Safepay merchant roles work."
       />
-      <LegalDoc lastUpdated="September 16, 2026" sections={sections} />
+      <LegalDoc lastUpdated="September 20, 2026" sections={sections} />
     </PublicShell>
   );
 }

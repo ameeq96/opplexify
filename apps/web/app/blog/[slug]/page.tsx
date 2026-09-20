@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { PageHero, Prose } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
 import { assetUrl, fetchApi, pageMetadata, type BlogPost } from "../../../lib/api";
-import { absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
+import { LEGAL_NAME, absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
 
 export const revalidate = 300;
 
@@ -32,7 +32,7 @@ export default async function BlogDetailPage({ params }: Props) {
   const post = await fetchApi<BlogPost | null>(`/public/blog/${slug}`, null);
   if (!post) notFound();
   const storedAuthorName = post.author?.name?.trim();
-  const hasNamedAuthor = Boolean(storedAuthorName && !["Opplexify", "Opplexify LLC", "Opplexify Admin"].includes(storedAuthorName));
+  const hasNamedAuthor = Boolean(storedAuthorName && !["Opplexify", LEGAL_NAME, "Opplexify Admin"].includes(storedAuthorName));
   const authorName = hasNamedAuthor ? storedAuthorName : "Opplexify Editorial Team";
   const blogJsonLd = {
     "@context": "https://schema.org",

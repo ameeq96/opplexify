@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import { PublicShell } from "../../components/site/PublicShell";
-import { breadcrumbList, seoMetadata } from "../../lib/seo";
+import {
+  FREELANCER_PAYMENT_DISCLOSURE,
+  LEGAL_NAME,
+  LLC_PAYMENT_DISCLOSURE,
+  PAYMENT_SEPARATION_DISCLOSURE,
+  PROVIDER_SELECTION_DISCLOSURE,
+  SAFEPAY_MERCHANT_NAME,
+  breadcrumbList,
+  seoMetadata
+} from "../../lib/seo";
 import { PRICING_PACKAGES as packages, pricingOfferCatalog } from "../../lib/pricing";
 
 export const metadata: Metadata = seoMetadata({
@@ -61,6 +70,23 @@ export default function PricingPage() {
                   </article>
                 ))}
               </div>
+              <section className="provider-disclosure provider-disclosure--embedded" aria-labelledby="pricing-provider-title">
+                <span className="section-subtitle">Contracting provider</span>
+                <h2 id="pricing-provider-title">Your quote identifies who you are hiring</h2>
+                <p>{PROVIDER_SELECTION_DISCLOSURE}</p>
+                <div className="provider-disclosure__grid">
+                  <article>
+                    <h3>{LEGAL_NAME}</h3>
+                    <p>{LLC_PAYMENT_DISCLOSURE}</p>
+                  </article>
+                  <article>
+                    <h3>{SAFEPAY_MERCHANT_NAME}</h3>
+                    <p>{FREELANCER_PAYMENT_DISCLOSURE}</p>
+                  </article>
+                </div>
+                <p className="provider-disclosure__separation">{PAYMENT_SEPARATION_DISCLOSURE}</p>
+                <a className="rr-btn-underline" href="/payment-information">Read payment information</a>
+              </section>
             </div>
           </div>
         </section>

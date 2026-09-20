@@ -1,14 +1,20 @@
 import { DigitalAgencyRuntime } from "./DigitalAgencyRuntime";
 import { assetUrl, emptySite, fetchApi, getMenu, type MenuItem, type SitePayload } from "../../lib/api";
 import {
+  BUSINESS_ADDRESS,
+  BUSINESS_ADDRESS_LABEL,
   BUSINESS_EMAIL,
-  BUSINESS_MAILING_ADDRESS,
   BUSINESS_PHONE,
   BUSINESS_PHONE_TEL,
+  FREELANCER_DESCRIPTOR,
+  LEGAL_NAME,
   LINKEDIN_URL,
-  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  LLC_DESCRIPTOR,
+  PAKISTAN_ADDRESS_LABEL,
+  PAKISTAN_CONTACT_ADDRESS,
   PAKISTAN_SUPPORT_PHONE,
   PAKISTAN_SUPPORT_PHONE_TEL,
+  PROVIDER_SELECTION_DISCLOSURE,
   SAFEPAY_MERCHANT_NAME
 } from "../../lib/seo";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
@@ -55,14 +61,19 @@ function SideInfo({ site }: { site: SitePayload }) {
   const settings = site.settings.site ?? {};
   const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-full.png`);
   const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
-  const email = settings.email ?? BUSINESS_EMAIL;
-  const phone = settings.phone ?? BUSINESS_PHONE;
-  const address = settings.address ?? BUSINESS_MAILING_ADDRESS;
 
   return (
     <>
       <aside className="fix" aria-label="Navigation and project contact">
-        <div className="side-info">
+        <div
+          className="side-info"
+          id="mobile-navigation"
+          role="dialog"
+          aria-label="Navigation and project contact"
+          aria-modal="true"
+          aria-hidden="true"
+          inert
+        >
           <div className="side-info-content">
             <div className="offset-widget offset-header">
               <div className="offset-logo">
@@ -75,12 +86,12 @@ function SideInfo({ site }: { site: SitePayload }) {
                 <i className="fas fa-times" />
               </button>
             </div>
-            <div className="mobile-menu d-xl-none fix" id="mobile-navigation" />
+            <div className="mobile-menu d-xl-none fix" />
             <div className="offset-button">
               <a href="/contact" className="rr-btn">
                 <span className="btn-wrap">
                   <span className="text-one">Let's Talk</span>
-                  <span className="text-two">Let's Talk</span>
+                  <span className="text-two" aria-hidden="true">Let's Talk</span>
                 </span>
               </a>
             </div>
@@ -89,16 +100,22 @@ function SideInfo({ site }: { site: SitePayload }) {
               <div className="contact-meta">
                 <div className="contact-item">
                   <span className="icon">
+                    <i className="fa-solid fa-building" />
+                  </span>
+                  <span className="text"><strong>{LEGAL_NAME}</strong><br /> {LLC_DESCRIPTOR}</span>
+                </div>
+                <div className="contact-item">
+                  <span className="icon">
                     <i className="fa-solid fa-location-dot" />
                   </span>
-                  <span className="text">{address}</span>
+                  <span className="text">{BUSINESS_ADDRESS_LABEL}: {BUSINESS_ADDRESS}</span>
                 </div>
                 <div className="contact-item">
                   <span className="icon">
                     <i className="fa-solid fa-envelope" />
                   </span>
                   <span className="text">
-                    <a href={`mailto:${email}`}>{email}</a>
+                    <a href={`mailto:${BUSINESS_EMAIL}`}>{BUSINESS_EMAIL}</a>
                   </span>
                 </div>
                 <div className="contact-item">
@@ -106,27 +123,36 @@ function SideInfo({ site }: { site: SitePayload }) {
                     <i className="fa-solid fa-phone" />
                   </span>
                   <span className="text">
-                    <a href={`tel:${phone.replace(/[^\d+]/g, "") || BUSINESS_PHONE_TEL}`}>{phone}</a>
+                    <a href={`tel:${BUSINESS_PHONE_TEL}`}>{BUSINESS_PHONE}</a>
                   </span>
                 </div>
                 <div className="contact-item">
                   <span className="icon">
                     <i className="fa-solid fa-user" />
                   </span>
-                  <span className="text">Pakistan merchant: {SAFEPAY_MERCHANT_NAME}, independent freelancer</span>
+                  <span className="text"><strong>{SAFEPAY_MERCHANT_NAME}</strong><br /> {FREELANCER_DESCRIPTOR}</span>
                 </div>
                 <div className="contact-item">
                   <span className="icon">
                     <i className="fa-solid fa-location-dot" />
                   </span>
-                  <span className="text">Pakistan operating address: {PAKISTAN_BUSINESS_OPERATING_ADDRESS}</span>
+                  <span className="text">{PAKISTAN_ADDRESS_LABEL}: {PAKISTAN_CONTACT_ADDRESS}</span>
                 </div>
                 <div className="contact-item">
                   <span className="icon">
                     <i className="fa-solid fa-phone" />
                   </span>
                   <span className="text">
-                    <a href={`tel:${PAKISTAN_SUPPORT_PHONE_TEL}`}>Pakistan support: {PAKISTAN_SUPPORT_PHONE}</a>
+                    <a href={`tel:${PAKISTAN_SUPPORT_PHONE_TEL}`}>{PAKISTAN_SUPPORT_PHONE}</a>
+                  </span>
+                </div>
+                <div className="contact-item">
+                  <span className="icon">
+                    <i className="fa-solid fa-file-invoice" />
+                  </span>
+                  <span className="text">
+                    {PROVIDER_SELECTION_DISCLOSURE}<br />
+                    <a href="/payment-information">Provider and payment information</a>
                   </span>
                 </div>
               </div>
@@ -253,6 +279,9 @@ function HomepageFooter({ site }: { site: SitePayload }) {
                   <a href="/pricing">Pricing</a>
                 </li>
                 <li>
+                  <a href="/payment-information">Payment Information</a>
+                </li>
+                <li>
                   <a href="/terms">Terms and Conditions</a>
                 </li>
                 <li>
@@ -270,22 +299,25 @@ function HomepageFooter({ site }: { site: SitePayload }) {
               <h2 className="title">Contact</h2>
               <ul className="footer-nav-list footer-contact-list">
                 <li>
+                  <strong>{LEGAL_NAME}</strong><br /> <span>{LLC_DESCRIPTOR}</span>
+                </li>
+                <li>
                   <a href={`mailto:${contact.email}`}>{contact.email}</a>
                 </li>
                 <li>
                   <a href={`tel:${contact.tel}`}>{contact.phone}</a>
                 </li>
                 <li>
-                  <a href={`tel:${PAKISTAN_SUPPORT_PHONE_TEL}`}>Pakistan support: {PAKISTAN_SUPPORT_PHONE}</a>
+                  <span>{BUSINESS_ADDRESS_LABEL}: {contact.address}</span>
                 </li>
                 <li>
-                  <span>Pakistan merchant: {SAFEPAY_MERCHANT_NAME}, independent freelancer</span>
+                  <strong>{SAFEPAY_MERCHANT_NAME}</strong><br /> <span>{FREELANCER_DESCRIPTOR}</span>
                 </li>
                 <li>
-                  <span>{contact.address}</span>
+                  <a href={`tel:${PAKISTAN_SUPPORT_PHONE_TEL}`}>{PAKISTAN_SUPPORT_PHONE}</a>
                 </li>
                 <li>
-                  <span>Pakistan operating address: {PAKISTAN_BUSINESS_OPERATING_ADDRESS}</span>
+                  <span>{PAKISTAN_ADDRESS_LABEL}: {PAKISTAN_CONTACT_ADDRESS}</span>
                 </li>
               </ul>
             </div>

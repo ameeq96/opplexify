@@ -1,5 +1,13 @@
 import { assetUrl, getSection, type Page, type PortfolioItem, type Section, type Service, type SitePayload, type TeamMember } from "../../lib/api";
-import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE, BUSINESS_PHONE_TEL, COMPANY_DESCRIPTION } from "../../lib/seo";
+import {
+  BUSINESS_EMAIL,
+  BUSINESS_MAILING_ADDRESS,
+  BUSINESS_PHONE,
+  BUSINESS_PHONE_TEL,
+  COMPANY_DESCRIPTION,
+  FOUNDER_NAME,
+  SAFEPAY_MERCHANT_NAME
+} from "../../lib/seo";
 import { normalizeTemplateHtml } from "./StaticTemplatePage";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
 import { escapeHtml } from "./templateRenderers";
@@ -8,12 +16,12 @@ type ContentRecord = Record<string, unknown>;
 
 function headlineHtml(value: string) {
   const parts = value.split(/\s*[\n|]\s*/).filter(Boolean);
-  if (parts.length > 1) return parts.map(escapeHtml).join("<br>");
+  if (parts.length > 1) return parts.map(escapeHtml).join("<br> ");
   return escapeHtml(value);
 }
 
 function lineBreakHtml(value: unknown) {
-  return escapeHtml(normalizeFoundingCopy(value)).replace(/\n/g, "<br>");
+  return escapeHtml(normalizeFoundingCopy(value)).replace(/\n/g, "<br> ");
 }
 
 function normalizeFoundingCopy(value: unknown) {
@@ -305,16 +313,16 @@ function renderHomeServices(item: Section | null | undefined, services: Service[
 const fallbackHomeTeamMembers: TeamMember[] = [
   {
     id: "home-team-emmad",
-    name: "Muhammad Emmad Khan",
+    name: FOUNDER_NAME,
     slug: "muhammad-emmad-khan",
     role: "Founder and Owner",
     image: "/team/emmad-khan.webp"
   },
   {
     id: "home-team-ameeq",
-    name: "Ameeq Khan",
+    name: SAFEPAY_MERCHANT_NAME,
     slug: "ameeq-khan",
-    role: "Full-Stack Developer",
+    role: "Independent Freelancer",
     image: "/team/ameeq-khan.webp"
   },
   {
@@ -356,14 +364,17 @@ function renderHomeTeam(item: Section | null | undefined, team: TeamMember[]) {
               <div class="team-wrapper-box">
                 <div class="team-wrapper fade-anim">
                   ${members
-                    .map(
-                      (member) =>
-                        `<div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/${escapeHtml(
+                    .map((member) => {
+                      const isFounder = member.slug === "muhammad-emmad-khan";
+                      const name = isFounder ? FOUNDER_NAME : member.slug === "ameeq-khan" ? SAFEPAY_MERCHANT_NAME : member.name;
+                      const role = isFounder ? "Founder and Owner" : member.slug === "ameeq-khan" ? "Independent Freelancer" : member.role;
+
+                      return `<div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/${escapeHtml(
                           member.slug
-                        )}"><img src="${escapeHtml(assetUrl(member.image))}" alt="${escapeHtml(member.name)}" loading="lazy" decoding="async" sizes="(max-width: 760px) 100vw, 33vw"></a></div><div class="content"><h3 class="name"><a href="/team/${escapeHtml(
+                        )}"><img src="${escapeHtml(assetUrl(member.image))}" alt="${escapeHtml(name)}" loading="lazy" decoding="async" sizes="(max-width: 760px) 100vw, 33vw"></a></div><div class="content"><h3 class="name"><a href="/team/${escapeHtml(
                           member.slug
-                        )}">${escapeHtml(member.name)}</a></h3><span class="post">${escapeHtml(member.role)}</span></div></div>`
-                    )
+                        )}">${escapeHtml(name)}</a></h3><span class="post">${escapeHtml(role)}</span></div></div>`;
+                    })
                     .join("")}
                 </div>
               </div>
@@ -476,18 +487,17 @@ export function applyHomeCms(
     hero?.subtitle ??
     COMPANY_DESCRIPTION;
   const primary = asRecord(content.primaryCta);
-  const siteSettings = site.settings.site ?? {};
 
   const metaItems = asArray(content.metaItems);
 
   let rendered = normalizeTemplateHtml(html, site)
     .replace(/<h1 class="section-title(?: rr_title_anim)?">[\s\S]*?<\/h1>/, `<h1 class="section-title">${headlineHtml(normalizeFoundingCopy(title))}</h1>`)
     .replace(/<p class="text">Opplexify(?: LLC)? (?:is|helps)[\s\S]*?<\/p>/, `<p class="text">${escapeHtml(normalizeFoundingCopy(subtitle))}</p>`)
-    .replace(/<span class="text">Remote web development team<\/span>/g, `<span class="text">${escapeHtml(siteSettings.address ?? BUSINESS_MAILING_ADDRESS)}</span>`)
-    .replace(/<a href="mailto:hello@opplexify\.com">hello@opplexify\.com<\/a>/g, `<a href="mailto:${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}">${escapeHtml(siteSettings.email ?? BUSINESS_EMAIL)}</a>`)
+    .replace(/<span class="text">Remote web development team<\/span>/g, `<span class="text">${escapeHtml(BUSINESS_MAILING_ADDRESS)}</span>`)
+    .replace(/<a href="mailto:hello@opplexify\.com">hello@opplexify\.com<\/a>/g, `<a href="mailto:${escapeHtml(BUSINESS_EMAIL)}">${escapeHtml(BUSINESS_EMAIL)}</a>`)
     .replace(
       /<a href="tel:\(505\)555-0125">\(505\) 555-0125<\/a>/g,
-      `<a href="tel:${BUSINESS_PHONE_TEL}">${escapeHtml(siteSettings.phone ?? BUSINESS_PHONE)}</a>`
+      `<a href="tel:${BUSINESS_PHONE_TEL}">${escapeHtml(BUSINESS_PHONE)}</a>`
     )
     .replace(/<a class="rr-btn-underline" href="\/portfolio">Browse all work<\/a>/g, `<a class="rr-btn-underline" href="${escapeHtml(stringValue(primary.href, "/portfolio"))}">${escapeHtml(stringValue(primary.label, "Browse all work"))}</a>`);
 

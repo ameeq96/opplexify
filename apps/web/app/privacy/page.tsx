@@ -3,10 +3,14 @@ import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
 import {
+  APPLICABLE_PROVIDER_REFERENCE,
+  BUSINESS_EMAIL,
   BUSINESS_MAILING_ADDRESS,
   LEGAL_NAME,
-  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  PAKISTAN_ADDRESS_LABEL,
+  PAKISTAN_CONTACT_ADDRESS,
   PAKISTAN_SUPPORT_PHONE,
+  PROVIDER_SELECTION_DISCLOSURE,
   SAFEPAY_MERCHANT_NAME,
   seoMetadata
 } from "../../lib/seo";
@@ -24,12 +28,43 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: `This Privacy Policy explains how information is collected, used, shared, and protected when you visit the Opplexify website, request a quote, contact us, or engage our services. For general website operation and initial enquiries, the responsible business is ${LEGAL_NAME}, a Wyoming-formed limited liability company. ${BUSINESS_MAILING_ADDRESS}. For Pakistan-based freelance services and Safepay transactions, the responsible merchant and service provider is ${SAFEPAY_MERCHANT_NAME}, an independent freelancer operating from ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}. References to "we", "us", or "our" mean the business responsible for the relevant website interaction or engagement.`
+        text: `This Privacy Policy explains how personal information is collected, used, shared, and protected when you visit the Opplexify website, request a quote, contact the website, or engage a service provider. ${LEGAL_NAME}, the US-registered owner of the Opplexify brand, is the data controller for general website operation and initial website enquiries. ${BUSINESS_MAILING_ADDRESS}. Once an engagement is assigned, the contracting provider named on the quotation or invoice is the controller for project, contract, invoice, support, and refund information relating to that engagement. ${APPLICABLE_PROVIDER_REFERENCE} ${PROVIDER_SELECTION_DISCLOSURE}`
       }
     ]
   },
   {
-    heading: "2. Information we collect",
+    heading: "2. Who controls your information",
+    blocks: [
+      {
+        type: "table",
+        caption: "Data controller by interaction or engagement",
+        headers: ["Interaction or engagement", "Data controller", "Typical responsibility"],
+        rows: [
+          [
+            "General website use or initial website enquiry",
+            LEGAL_NAME,
+            "Website operation, security, analytics, and responding to the initial enquiry."
+          ],
+          [
+            `Engagement naming ${LEGAL_NAME}`,
+            LEGAL_NAME,
+            "Quoting, contracting, invoicing, service delivery, support, records, and refunds for that engagement."
+          ],
+          [
+            `Engagement naming ${SAFEPAY_MERCHANT_NAME}`,
+            SAFEPAY_MERCHANT_NAME,
+            "Quoting, contracting, invoicing, independent freelance service delivery, Safepay transaction support, records, and refunds for that engagement."
+          ]
+        ]
+      },
+      {
+        type: "p",
+        text: `${SAFEPAY_MERCHANT_NAME} is a separate Pakistan-based independent freelancer and Safepay merchant. ${PAKISTAN_ADDRESS_LABEL}: ${PAKISTAN_CONTACT_ADDRESS}. The two controllers are not interchangeable.`
+      }
+    ]
+  },
+  {
+    heading: "3. Information we collect",
     blocks: [
       { type: "subheading", text: "Information you provide" },
       {
@@ -49,7 +84,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "3. How we use your information",
+    heading: "4. How we use your information",
     blocks: [
       {
         type: "list",
@@ -65,7 +100,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "4. Legal basis for processing",
+    heading: "5. Legal basis for processing",
     blocks: [
       {
         type: "p",
@@ -74,7 +109,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "5. Sharing your information",
+    heading: "6. Sharing your information",
     blocks: [
       {
         type: "p",
@@ -86,18 +121,18 @@ const sections: LegalSection[] = [
           "Hosting and infrastructure providers that store and serve our website and applications.",
           "Payment processors that handle billing and process transactions securely.",
           "Analytics providers that help us understand how our website is used.",
-          `Where an enquiry concerns Pakistan-based freelance services or a Safepay transaction, ${LEGAL_NAME} and ${SAFEPAY_MERCHANT_NAME} may share with each other the contact, project, quote, invoice, transaction-reference, and support information reasonably necessary to respond to the enquiry, provide the service, support the client, and meet payment or legal obligations.`,
+          "A prospective or contracting provider, but only where a project enquiry must be referred or assigned and the customer is informed of that handoff.",
           "Professional advisers and authorities where required by law."
         ]
       },
       {
         type: "p",
-        text: "When you choose to pay through Safepay, Safepay and its processing partners process the payment and related transaction information under their own privacy terms. We may receive transaction status and reference information needed for invoicing, reconciliation, customer support, refunds, fraud prevention, and legal compliance. We do not store complete payment-card credentials on our servers."
+        text: `When Safepay is offered for an engagement naming ${SAFEPAY_MERCHANT_NAME} as service provider and merchant, Safepay and its processing partners process the payment and related transaction information under their own privacy terms. ${SAFEPAY_MERCHANT_NAME} may receive the transaction status and reference information needed for invoicing, reconciliation, support, refunds, fraud prevention, and legal compliance. Complete payment-card credentials are not stored on this website.`
       }
     ]
   },
   {
-    heading: "6. Cookies and similar technologies",
+    heading: "7. Cookies and similar technologies",
     blocks: [
       {
         type: "p",
@@ -106,7 +141,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "7. Data retention",
+    heading: "8. Data retention",
     blocks: [
       {
         type: "p",
@@ -115,7 +150,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "8. Data security",
+    heading: "9. Data security",
     blocks: [
       {
         type: "p",
@@ -124,25 +159,25 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "9. International transfers",
+    heading: "10. International transfers",
     blocks: [
       {
         type: "p",
-        text: "Opplexify provides remote software development services and may work with clients in different locations. The third parties we rely on may process information in different countries. Where information is transferred across borders, we take steps to ensure it remains protected in line with this policy and applicable law."
+        text: "The providers offer remote software development services and may work with clients in different locations. A relevant controller's service providers may process information in different countries. Where information is transferred across borders, the responsible controller takes steps intended to protect it in line with this policy and applicable law."
       }
     ]
   },
   {
-    heading: "10. Your rights",
+    heading: "11. Your rights",
     blocks: [
       {
         type: "p",
-        text: "Depending on your location, you may have the right to access, correct, update, or delete the personal information we hold about you, to object to or restrict certain processing, and to withdraw consent where processing is based on consent. To exercise any of these rights, contact us at admin@opplexify.com and we will respond within a reasonable time."
+        text: `Depending on your location, you may have the right to access, correct, update, or delete personal information, to object to or restrict certain processing, and to withdraw consent where processing is based on consent. For engagement data, contact the provider named on your quotation or invoice. For general website data or if you are unsure which controller applies, email ${BUSINESS_EMAIL}.`
       }
     ]
   },
   {
-    heading: "11. Children's privacy",
+    heading: "12. Children's privacy",
     blocks: [
       {
         type: "p",
@@ -151,7 +186,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "12. Changes to this policy",
+    heading: "13. Changes to this policy",
     blocks: [
       {
         type: "p",
@@ -160,11 +195,11 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "13. Contact us",
+    heading: "14. Contact us",
     blocks: [
       {
         type: "p",
-        text: `If you have any questions or requests regarding this Privacy Policy or your personal information, contact us at admin@opplexify.com or ${PAKISTAN_SUPPORT_PHONE}. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}.`
+        text: `For general website privacy questions, contact ${LEGAL_NAME} at ${BUSINESS_EMAIL}. For an engagement, use the contact details supplied by the provider named on your quotation or invoice. ${SAFEPAY_MERCHANT_NAME} can also be contacted at ${PAKISTAN_SUPPORT_PHONE}; ${PAKISTAN_ADDRESS_LABEL}: ${PAKISTAN_CONTACT_ADDRESS}.`
       }
     ]
   }
@@ -178,7 +213,7 @@ export default async function PrivacyPage() {
         title="Privacy Policy"
         subtitle="How Opplexify collects, uses, shares, and protects information when you use our website and services."
       />
-      <LegalDoc lastUpdated="September 16, 2026" sections={sections} />
+      <LegalDoc lastUpdated="September 20, 2026" sections={sections} />
     </PublicShell>
   );
 }

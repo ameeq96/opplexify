@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { FaqList, PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { fetchApi, getSection, pageMetadata, type Faq, type Page } from "../../lib/api";
-import { absoluteUrl, breadcrumbList } from "../../lib/seo";
+import { PROVIDER_SELECTION_DISCLOSURE, absoluteUrl, breadcrumbList } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -46,7 +46,7 @@ const fallbackFaqs: Faq[] = [
     id: "pricing-payment",
     question: "How are pricing and payments handled?",
     answer:
-      "Pricing is based on the agreed scope rather than a generic hourly estimate. You receive a written proposal that explains the deliverables, assumptions, payment schedule, and any third-party costs. Larger builds are usually divided into milestones so payment follows clear stages of work."
+      `Pricing is based on the agreed scope rather than a generic hourly estimate. You receive a written proposal that explains the deliverables, assumptions, payment schedule, and any third-party costs. ${PROVIDER_SELECTION_DISCLOSURE}`
   },
   {
     id: "revisions",
@@ -73,7 +73,16 @@ export default async function FaqPage() {
     fetchApi<Page | null>("/public/pages/faq", null),
     fetchApi<Faq[]>("/public/faqs", [])
   ]);
-  const visibleFaqs = faqs.length ? faqs : fallbackFaqs;
+  const visibleFaqs = (faqs.length ? faqs : fallbackFaqs).map((faq) =>
+    /pricing|payment/i.test(faq.question)
+      ? {
+          ...faq,
+          answer: faq.answer.includes(PROVIDER_SELECTION_DISCLOSURE)
+            ? faq.answer
+            : `${faq.answer} ${PROVIDER_SELECTION_DISCLOSURE}`
+        }
+      : faq
+  );
   const intro = getSection(page, "faq-intro");
   const faqJsonLd = {
     "@context": "https://schema.org",

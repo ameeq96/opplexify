@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { StaticTemplatePage } from "../../components/site/StaticTemplatePage";
 import { aboutHtml } from "../../components/site/templateHtml";
+import { renderProviderDisclosureHtml } from "../../components/site/templateRenderers";
 import { assetUrl, fetchApi, getSection, pageMetadata, type Page, type Section, type TeamMember } from "../../lib/api";
-import { BUSINESS_POSTAL_ADDRESS, COMPANY_DESCRIPTION, LEGAL_NAME, LINKEDIN_URL, absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
+import { BUSINESS_POSTAL_ADDRESS, COMPANY_DESCRIPTION, FOUNDER_NAME, LEGAL_NAME, LINKEDIN_URL, absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -107,8 +108,8 @@ const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
                                     </h2>`
   )
   .replace(/CEO & Founder/g, "Founder and Owner")
-  .replace(/Cristian Vargas/g, "Muhammad Emmad Khan")
-  .replace(`<a href="#">Muhammad Emmad Khan</a>`, `<a href="/team/muhammad-emmad-khan">Muhammad Emmad Khan</a>`)
+  .replace(/Cristian Vargas/g, FOUNDER_NAME)
+  .replace(`<a href="#">${FOUNDER_NAME}</a>`, `<a href="/team/muhammad-emmad-khan">${FOUNDER_NAME}</a>`)
   .replace(/Awards/g, "Capabilities")
   .replace(
     /<span class="category">[^<]+<\/span>/g,
@@ -126,6 +127,11 @@ const aboutPageHtml = cleanAboutArtifacts(keepFounderAboutTeamMember(
   .replace(/Help to brands growing up and show their\s*success stories to the world/g, "Helping businesses move from a clear idea to reliable, maintainable software")
   .replace(/We <span>learn<\/span> and[\s\S]*?together\./, "We <span>listen</span>, <span>plan</span>, <br> and <span>build</span> with purpose")
 ));
+
+const aboutPageWithProviderHtml = aboutPageHtml.replace(
+  "</main>",
+  `${renderProviderDisclosureHtml()}</main>`
+);
 
 const aboutJsonLd = {
   "@context": "https://schema.org",
@@ -170,15 +176,13 @@ function replaceDivBlock(html: string, marker: string, replacement: string) {
 function renderTeam(_section: Section | undefined, team: TeamMember[]) {
   const founder =
     team.find((member) => /founder|owner/i.test(member.role)) ??
-    team.find((member) => /emmad|muhammad/i.test(`${member.name} ${member.slug}`)) ??
-    team[0];
+    team.find((member) => /emmad|muhammad/i.test(`${member.name} ${member.slug}`));
   if (!founder) return null;
-  const role = /founder|owner/i.test(founder.role) ? founder.role : "Founder and Owner";
 
   return `<div class="team-wrapper fade-anim">
     <div class="team-box-1 fade-anim">
-      <div class="thumb"><a href="/team/${escapeHtml(founder.slug)}"><img src="${escapeHtml(assetUrl(founder.image))}" alt="${escapeHtml(founder.name)}"></a></div>
-      <div class="content"><h3 class="name"><a href="/team/${escapeHtml(founder.slug)}">${escapeHtml(founder.name)}</a></h3><span class="post">${escapeHtml(role)}</span></div>
+      <div class="thumb"><a href="/team/muhammad-emmad-khan"><img src="${escapeHtml(assetUrl(founder.image))}" alt="${escapeHtml(FOUNDER_NAME)}"></a></div>
+      <div class="content"><h3 class="name"><a href="/team/muhammad-emmad-khan">${escapeHtml(FOUNDER_NAME)}</a></h3><span class="post">Founder and Owner</span></div>
     </div>
   </div>`;
 }
@@ -256,7 +260,7 @@ export default async function AboutPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])) }} />
-      <StaticTemplatePage html={applyAboutCms(aboutPageHtml, page, team)} bodyClassName="body-about-us" />
+      <StaticTemplatePage html={applyAboutCms(aboutPageWithProviderHtml, page, team)} bodyClassName="body-about-us" />
     </>
   );
 }

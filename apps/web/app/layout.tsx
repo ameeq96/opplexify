@@ -104,7 +104,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     logo: absoluteUrl("/template-assets/dark/assets/imgs/logo/opplexify-logo-full.png"),
     email: BUSINESS_EMAIL,
     telephone: BUSINESS_PHONE,
-    foundingDate: "2026-05-28",
     description: COMPANY_DESCRIPTION,
     sameAs: [LINKEDIN_URL],
     address: BUSINESS_POSTAL_ADDRESS,
@@ -141,7 +140,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     name: SAFEPAY_MERCHANT_NAME,
     jobTitle: "Independent Freelancer",
     url: absoluteUrl("/ownership-statement"),
-    email: BUSINESS_EMAIL,
     telephone: PAKISTAN_SUPPORT_PHONE,
     address: PAKISTAN_BUSINESS_POSTAL_ADDRESS,
     knowsAbout: [
@@ -158,10 +156,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     url: siteUrl(),
     description: DEFAULT_DESCRIPTION,
     inLanguage: "en",
-    publisher: [
-      { "@id": `${siteUrl()}#organization` },
-      { "@id": `${siteUrl()}#safepay-merchant` }
-    ]
+    publisher: { "@id": `${siteUrl()}#organization` }
   };
 
   return (

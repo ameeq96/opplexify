@@ -1,31 +1,41 @@
 import type { Metadata } from "next";
+import { BUSINESS_IDENTITY } from "../../../packages/shared/src";
 
-export const SITE_NAME = "Opplexify";
-export const LEGAL_NAME = "Opplexify LLC";
-export const BUSINESS_EMAIL = "admin@opplexify.com";
-export const BUSINESS_PHONE = "+1 (307) 443-5144";
-export const BUSINESS_PHONE_TEL = "+13074435144";
-export const BUSINESS_MAILING_ADDRESS = "Business mailing address: 525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States";
-export const BUSINESS_STREET_ADDRESS = "525 Randall Ave Ste 100 PMB 1203";
-export const BUSINESS_ADDRESS_LOCALITY = "Cheyenne";
-export const BUSINESS_ADDRESS_REGION = "WY";
-export const BUSINESS_POSTAL_CODE = "82001";
-export const BUSINESS_ADDRESS_COUNTRY = "US";
-export const SAFEPAY_MERCHANT_NAME = "Muhammad Ameeq Khan";
-export const PAKISTAN_BUSINESS_OPERATING_ADDRESS =
-  "A Area, House no. A-67, Mohalla Malir Colony, Kala Board, Karachi East, Karachi East, Pakistan";
-export const PAKISTAN_SUPPORT_PHONE = "+923008092395";
-export const PAKISTAN_SUPPORT_PHONE_TEL = "+923008092395";
+export { BUSINESS_IDENTITY };
+
+export const SITE_NAME = BUSINESS_IDENTITY.brand.name;
+export const LEGAL_NAME = BUSINESS_IDENTITY.llc.legalName;
+export const FOUNDER_NAME = BUSINESS_IDENTITY.llc.founderName;
+export const LLC_DESCRIPTOR = BUSINESS_IDENTITY.llc.descriptor;
+export const BUSINESS_EMAIL = BUSINESS_IDENTITY.llc.contact.email;
+export const BUSINESS_PHONE = BUSINESS_IDENTITY.llc.contact.phone;
+export const BUSINESS_PHONE_TEL = BUSINESS_IDENTITY.llc.contact.phoneTel;
+export const BUSINESS_ADDRESS_LABEL = BUSINESS_IDENTITY.llc.contact.addressLabel;
+export const BUSINESS_ADDRESS = BUSINESS_IDENTITY.llc.contact.address;
+export const BUSINESS_MAILING_ADDRESS = `${BUSINESS_ADDRESS_LABEL}: ${BUSINESS_ADDRESS}`;
+export const BUSINESS_STREET_ADDRESS = BUSINESS_IDENTITY.llc.contact.postalAddress.streetAddress;
+export const BUSINESS_ADDRESS_LOCALITY = BUSINESS_IDENTITY.llc.contact.postalAddress.addressLocality;
+export const BUSINESS_ADDRESS_REGION = BUSINESS_IDENTITY.llc.contact.postalAddress.addressRegion;
+export const BUSINESS_POSTAL_CODE = BUSINESS_IDENTITY.llc.contact.postalAddress.postalCode;
+export const BUSINESS_ADDRESS_COUNTRY = BUSINESS_IDENTITY.llc.contact.postalAddress.addressCountry;
+export const SAFEPAY_MERCHANT_NAME = BUSINESS_IDENTITY.freelancer.legalName;
+export const FREELANCER_DESCRIPTOR = BUSINESS_IDENTITY.freelancer.descriptor;
+export const PAKISTAN_ADDRESS_LABEL = BUSINESS_IDENTITY.freelancer.contact.addressLabel;
+export const PAKISTAN_CONTACT_ADDRESS = BUSINESS_IDENTITY.freelancer.contact.address;
+export const PAKISTAN_SUPPORT_PHONE = BUSINESS_IDENTITY.freelancer.contact.phone;
+export const PAKISTAN_SUPPORT_PHONE_TEL = BUSINESS_IDENTITY.freelancer.contact.phoneTel;
 export const PAKISTAN_BUSINESS_POSTAL_ADDRESS = {
   "@type": "PostalAddress",
-  streetAddress: "A Area, House no. A-67, Mohalla Malir Colony, Kala Board",
-  addressLocality: "Karachi East",
-  addressRegion: "Karachi East",
-  addressCountry: "PK"
+  ...BUSINESS_IDENTITY.freelancer.contact.postalAddress
 } as const;
-export const LINKEDIN_URL = "https://www.linkedin.com/company/opplexify-llc/";
-export const COMPANY_DESCRIPTION =
-  "Opplexify builds custom software for startups and growing businesses: websites, web apps, SaaS products, dashboards, mobile apps, backend APIs, and automation.";
+export const LINKEDIN_URL = BUSINESS_IDENTITY.brand.linkedinUrl;
+export const COMPANY_DESCRIPTION = BUSINESS_IDENTITY.brand.description;
+export const PROVIDER_SELECTION_DISCLOSURE = BUSINESS_IDENTITY.disclosures.providerSelection;
+export const LLC_PAYMENT_DISCLOSURE = BUSINESS_IDENTITY.disclosures.llcPayment;
+export const FREELANCER_PAYMENT_DISCLOSURE = BUSINESS_IDENTITY.disclosures.freelancerPayment;
+export const PAYMENT_SEPARATION_DISCLOSURE = BUSINESS_IDENTITY.disclosures.paymentSeparation;
+export const SEPARATE_PERSONS_DISCLOSURE = BUSINESS_IDENTITY.disclosures.separatePersons;
+export const APPLICABLE_PROVIDER_REFERENCE = BUSINESS_IDENTITY.disclosures.applicableProviderReference;
 export const DEFAULT_TITLE = "Custom Software Development for Startups | Opplexify";
 export const DEFAULT_DESCRIPTION =
   COMPANY_DESCRIPTION;
@@ -60,7 +70,7 @@ export const BUSINESS_POSTAL_ADDRESS = {
 } as const;
 
 export function siteUrl() {
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? "https://opplexify.com").replace(/\/+$/, "");
+  return (process.env.NEXT_PUBLIC_SITE_URL ?? BUSINESS_IDENTITY.brand.websiteUrl).replace(/\/+$/, "");
 }
 
 export function absoluteUrl(path = "/") {

@@ -235,7 +235,7 @@ export function assetUrl(src?: string | null) {
   return src;
 }
 
-export function pageMetadata(page?: Partial<Page> | null, fallbackTitle = SITE_NAME, path = "/"): Metadata {
+export function pageMetadata(page?: Partial<Page> | null, fallbackTitle: string = SITE_NAME, path = "/"): Metadata {
   const title = page?.seoTitle ?? page?.title ?? fallbackTitle;
   const description = page?.seoDescription ?? page?.summary ?? DEFAULT_DESCRIPTION;
   const image = assetUrl(page?.ogImage);

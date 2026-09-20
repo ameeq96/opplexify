@@ -3,8 +3,14 @@ import { PageHero } from "../../components/site/Blocks";
 import { PublicShell } from "../../components/site/PublicShell";
 import { LegalDoc, type LegalSection } from "../../components/site/LegalDoc";
 import {
-  PAKISTAN_BUSINESS_OPERATING_ADDRESS,
+  APPLICABLE_PROVIDER_REFERENCE,
+  BUSINESS_EMAIL,
+  LEGAL_NAME,
+  PAKISTAN_ADDRESS_LABEL,
+  PAKISTAN_CONTACT_ADDRESS,
   PAKISTAN_SUPPORT_PHONE,
+  PAYMENT_SEPARATION_DISCLOSURE,
+  PROVIDER_SELECTION_DISCLOSURE,
   SAFEPAY_MERCHANT_NAME,
   seoMetadata
 } from "../../lib/seo";
@@ -22,12 +28,35 @@ const sections: LegalSection[] = [
     blocks: [
       {
         type: "p",
-        text: `${SAFEPAY_MERCHANT_NAME}, an independent freelancer operating under the Opplexify name, provides custom, project-based software development services and is the merchant for payments processed through Safepay. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}. Because each project is scoped and performed for a specific client, this policy explains our digital delivery, cancellation, return, exchange, complaint, and refund terms. It should be read together with our Terms and Conditions.`
+        text: `This policy covers custom, project-based software development engagements contracted with either ${LEGAL_NAME} or ${SAFEPAY_MERCHANT_NAME}. ${APPLICABLE_PROVIDER_REFERENCE} ${PROVIDER_SELECTION_DISCLOSURE} Because each project is scoped for a specific client, this policy explains digital delivery, cancellations, returns, exchanges, complaints, and refunds. It should be read together with the Terms and Conditions and the applicable written quotation, proposal, contract, or invoice.`
       }
     ]
   },
   {
-    heading: "2. Digital delivery and shipping",
+    heading: "2. Which provider handles a refund",
+    blocks: [
+      {
+        type: "table",
+        caption: "Refund responsibility by contracting provider",
+        headers: ["Contracting provider", "Payment recipient", "Refund responsibility"],
+        rows: [
+          [
+            LEGAL_NAME,
+            `${LEGAL_NAME}, through the company payment channel stated on its invoice.`,
+            `${LEGAL_NAME} reviews and issues any eligible refund for its own engagement, through the original payment method where possible.`
+          ],
+          [
+            SAFEPAY_MERCHANT_NAME,
+            `${SAFEPAY_MERCHANT_NAME}, using Safepay only when he is named as service provider and merchant.`,
+            `${SAFEPAY_MERCHANT_NAME} reviews and issues any eligible refund for his own engagement, through the original payment method where possible.`
+          ]
+        ]
+      },
+      { type: "p", text: PAYMENT_SEPARATION_DISCLOSURE }
+    ]
+  },
+  {
+    heading: "3. Digital delivery and shipping",
     blocks: [
       {
         type: "p",
@@ -45,11 +74,11 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "3. Cancellations and deposits",
+    heading: "4. Cancellations and deposits",
     blocks: [
       {
         type: "p",
-        text: `You may request cancellation at any time by emailing admin@opplexify.com or contacting ${PAKISTAN_SUPPORT_PHONE}. To avoid charges for the next project milestone, the request must be received before that milestone begins. Most projects begin with an upfront deposit that reserves the start date and covers discovery, planning, setup, scheduling, and administration.`
+        text: "You may request cancellation at any time using the contact details on your quotation or invoice. To avoid charges for the next project milestone, the request must be received before that milestone begins. Most projects begin with an upfront deposit that reserves the start date and covers discovery, planning, setup, scheduling, and administration."
       },
       {
         type: "list",
@@ -58,13 +87,13 @@ const sections: LegalSection[] = [
           "After work starts, completed and in-progress work and non-recoverable third-party costs remain payable.",
           "Unstarted milestones that have not been invoiced are not charged if cancellation is received before they begin.",
           "If a milestone is partly complete at cancellation, we may retain or invoice the reasonable value of work performed up to the cancellation date.",
-          "Any remaining eligible amount will be handled under the refund-processing timeframe below."
+          "Any remaining eligible amount will be handled under the refund process described below."
         ]
       }
     ]
   },
   {
-    heading: "4. Milestone-based payments",
+    heading: "5. Milestone-based payments",
     blocks: [
       {
         type: "p",
@@ -82,11 +111,11 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "5. Returns, exchanges, and service dissatisfaction",
+    heading: "6. Returns, exchanges, and service dissatisfaction",
     blocks: [
       {
         type: "p",
-        text: "Because our deliverables are digital and custom-made, physical returns and exchanges do not apply. A client who believes a delivered milestone materially differs from the approved written scope must notify us within 7 calendar days of delivery."
+        text: "Because the deliverables are digital and custom-made, physical returns and exchanges do not apply. A client who believes a delivered milestone materially differs from the approved written scope should notify the contracting provider promptly, within any notice period stated in the project agreement or required by applicable law."
       },
       {
         type: "list",
@@ -100,7 +129,7 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "6. What is not refundable",
+    heading: "7. What is not refundable",
     blocks: [
       {
         type: "list",
@@ -116,34 +145,34 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "7. Complaints, cancellations, and refund requests",
+    heading: "8. Complaints, cancellations, and refund requests",
     blocks: [
       {
         type: "p",
-        text: `Email admin@opplexify.com or contact ${PAKISTAN_SUPPORT_PHONE} with your full name, project or invoice reference, a clear description of the issue, relevant supporting material, and the resolution you are requesting. We will acknowledge the complaint or request within 2 business days and provide a resolution or proposed solution within 10 business days. If additional information or a third-party investigation is required, we will explain the reason for any delay and provide an updated timeframe.`
+        text: "Contact the provider named on your quotation or invoice with your full name, project or invoice reference, a clear description of the issue, relevant supporting material, and the resolution you are requesting. That provider will acknowledge and assess the request within a reasonable period. If additional information or a payment-provider investigation is required, the responsible provider will explain the delay and provide an updated timeframe."
       }
     ]
   },
   {
-    heading: "8. Refund processing",
+    heading: "9. Refund processing",
     blocks: [
       {
         type: "p",
-        text: "Where a refund is approved, we will submit it to the original payment method within 10 business days after approval. Safepay, the card network, and the receiving bank may require additional processing time before the amount appears in the customer's account. We will provide confirmation when the refund has been submitted."
+        text: `Where a refund is approved, the original contracting provider will submit it through the original payment method where possible and provide confirmation. For an engagement with ${SAFEPAY_MERCHANT_NAME}, Safepay and its processing partners may require additional processing time before the amount appears in the customer's account. For an engagement with ${LEGAL_NAME}, the company payment channel and receiving financial institution may also require processing time. Any mandatory refund deadline under applicable law remains unaffected.`
       }
     ]
   },
   {
-    heading: "9. Disputes, chargebacks, and consumer rights",
+    heading: "10. Disputes, chargebacks, and consumer rights",
     blocks: [
       {
         type: "p",
-        text: "If you are unhappy with any part of your project, please contact us first so we can assess and try to resolve the concern. Filing a payment dispute or chargeback before contacting us can delay resolution. Nothing in this policy limits any non-waivable statutory consumer rights or any rights available under applicable payment-network rules."
+        text: "If you are unhappy with any part of your project, contact the contracting provider first so that provider can assess and try to resolve the concern. Filing a payment dispute or chargeback before contacting the responsible provider can delay resolution. Nothing in this policy limits any non-waivable statutory consumer rights or rights available under applicable payment-network rules."
       }
     ]
   },
   {
-    heading: "10. Changes to this policy",
+    heading: "11. Changes to this policy",
     blocks: [
       {
         type: "p",
@@ -152,11 +181,11 @@ const sections: LegalSection[] = [
     ]
   },
   {
-    heading: "11. Contact us",
+    heading: "12. Contact us",
     blocks: [
       {
         type: "p",
-        text: `For questions, complaints, cancellations, or refund requests, contact admin@opplexify.com or ${PAKISTAN_SUPPORT_PHONE}. Pakistan business operating address: ${PAKISTAN_BUSINESS_OPERATING_ADDRESS}.`
+        text: `For a project-specific request, use the contact details supplied by the provider named on the quotation or invoice. General website enquiries may be sent to ${BUSINESS_EMAIL}. ${SAFEPAY_MERCHANT_NAME} can also be contacted at ${PAKISTAN_SUPPORT_PHONE}; ${PAKISTAN_ADDRESS_LABEL}: ${PAKISTAN_CONTACT_ADDRESS}.`
       }
     ]
   }
@@ -170,7 +199,7 @@ export default async function RefundPolicyPage() {
         title="Cancellation, Return and Refund Policy"
         subtitle="How digital delivery, complaints, cancellations, returns, exchanges, and refunds work for our custom services."
       />
-      <LegalDoc lastUpdated="September 16, 2026" sections={sections} />
+      <LegalDoc lastUpdated="September 20, 2026" sections={sections} />
     </PublicShell>
   );
 }

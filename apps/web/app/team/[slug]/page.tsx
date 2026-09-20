@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { PageHero, Prose } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
 import { assetUrl, fetchApi, pageMetadata, type TeamMember } from "../../../lib/api";
-import { LEGAL_NAME, absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
+import { FOUNDER_NAME, LEGAL_NAME, SAFEPAY_MERCHANT_NAME, absoluteUrl, breadcrumbList, siteUrl } from "../../../lib/seo";
 
 export const revalidate = 300;
 
@@ -11,27 +11,27 @@ type Props = { params: Promise<{ slug: string }> };
 const fallbackTeamMembers: Record<string, TeamMember> = {
   "muhammad-emmad-khan": {
     id: "fallback-muhammad-emmad-khan",
-    name: "Muhammad Emmad Khan",
+    name: FOUNDER_NAME,
     slug: "muhammad-emmad-khan",
     role: "Founder and Owner",
-    bio: "Muhammad Emmad Khan is the Founder and Owner of Opplexify.",
+    bio: `${FOUNDER_NAME} is the Founder and Owner of ${LEGAL_NAME}.`,
     image: "/team/emmad-khan.webp",
     skills: [],
     socialLinks: {},
-    seoTitle: "Muhammad Emmad Khan | Founder of Opplexify",
-    seoDescription: "Muhammad Emmad Khan is the Founder and Owner of Opplexify."
+    seoTitle: `${FOUNDER_NAME} | Founder of Opplexify`,
+    seoDescription: `${FOUNDER_NAME} is the Founder and Owner of ${LEGAL_NAME}.`
   },
   "ameeq-khan": {
     id: "fallback-ameeq-khan",
-    name: "Ameeq Khan",
+    name: SAFEPAY_MERCHANT_NAME,
     slug: "ameeq-khan",
-    role: "Full-Stack Developer",
-    bio: "Ameeq Khan is a Full-Stack Developer at Opplexify.",
+    role: "Independent Freelancer",
+    bio: `${SAFEPAY_MERCHANT_NAME} is a Pakistan-based independent freelancer and Safepay merchant. He is a separate contracting provider from ${LEGAL_NAME}.`,
     image: "/team/ameeq-khan.webp",
     skills: [],
     socialLinks: {},
-    seoTitle: "Ameeq Khan - Full-Stack Developer at Opplexify",
-    seoDescription: "Ameeq Khan is a Full-Stack Developer at Opplexify."
+    seoTitle: `${SAFEPAY_MERCHANT_NAME} | Independent Freelancer`,
+    seoDescription: `${SAFEPAY_MERCHANT_NAME} is a Pakistan-based independent freelancer and Safepay merchant.`
   },
   "atiq-khan": {
     id: "fallback-atiq-khan",
@@ -47,8 +47,31 @@ const fallbackTeamMembers: Record<string, TeamMember> = {
   }
 };
 
-function getTeamMember(slug: string) {
-  return fetchApi<TeamMember | null>(`/public/team/${slug}`, fallbackTeamMembers[slug] ?? null);
+async function getTeamMember(slug: string) {
+  const member = await fetchApi<TeamMember | null>(`/public/team/${slug}`, fallbackTeamMembers[slug] ?? null);
+  if (!member) return member;
+
+  if (slug === "muhammad-emmad-khan") {
+    return {
+      ...member,
+      name: FOUNDER_NAME,
+      role: "Founder and Owner",
+      bio: `${FOUNDER_NAME} is the Founder and Owner of ${LEGAL_NAME}.`,
+      seoTitle: `${FOUNDER_NAME} | Founder of Opplexify`,
+      seoDescription: `${FOUNDER_NAME} is the Founder and Owner of ${LEGAL_NAME}.`
+    };
+  }
+
+  if (slug !== "ameeq-khan") return member;
+
+  return {
+    ...member,
+    name: SAFEPAY_MERCHANT_NAME,
+    role: "Independent Freelancer",
+    bio: `${SAFEPAY_MERCHANT_NAME} is a Pakistan-based independent freelancer and Safepay merchant. He is a separate contracting provider from ${LEGAL_NAME}.`,
+    seoTitle: `${SAFEPAY_MERCHANT_NAME} | Independent Freelancer`,
+    seoDescription: `${SAFEPAY_MERCHANT_NAME} is a Pakistan-based independent freelancer and Safepay merchant.`
+  };
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -73,6 +96,7 @@ export default async function TeamDetailPage({ params }: Props) {
   const { slug } = await params;
   const member = await getTeamMember(slug);
   if (!member) notFound();
+  const isIndependentFreelancer = member.slug === "ameeq-khan";
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -80,12 +104,16 @@ export default async function TeamDetailPage({ params }: Props) {
     jobTitle: member.role,
     description: member.bio,
     image: absoluteUrl(assetUrl(member.image)),
-    worksFor: {
-      "@type": "Organization",
-      name: "Opplexify",
-      legalName: LEGAL_NAME,
-      url: siteUrl()
-    },
+    ...(isIndependentFreelancer
+      ? {}
+      : {
+          worksFor: {
+            "@type": "Organization",
+            name: "Opplexify",
+            legalName: LEGAL_NAME,
+            url: siteUrl()
+          }
+        }),
     url: absoluteUrl(`/team/${member.slug}`)
   };
   const breadcrumbJsonLd = breadcrumbList([

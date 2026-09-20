@@ -1,9 +1,16 @@
 import { DigitalAgencyRuntime } from "./DigitalAgencyRuntime";
 import { emptySite, fetchApi, getMenu, type SitePayload } from "../../lib/api";
-import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE } from "../../lib/seo";
+import { BUSINESS_EMAIL, BUSINESS_MAILING_ADDRESS, BUSINESS_PHONE, BUSINESS_PHONE_TEL } from "../../lib/seo";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
 import { TemplateAssetLinks } from "./TemplateAssetLinks";
-import { escapeHtml, renderFooterMenuHtml, renderMenuHtml, renderTemplateFooterHtml, renderTemplateHeaderHtml } from "./templateRenderers";
+import {
+  escapeHtml,
+  renderFooterMenuHtml,
+  renderMenuHtml,
+  renderTemplateFooterHtml,
+  renderTemplateHeaderHtml,
+  renderTemplateSideInfoHtml
+} from "./templateRenderers";
 
 type StaticTemplatePageProps = {
   html: string;
@@ -13,15 +20,16 @@ type StaticTemplatePageProps = {
 export function normalizeTemplateHtml(html: string, site: SitePayload = emptySite) {
   const headerHtml = renderTemplateHeaderHtml(site);
   const footerHtml = renderTemplateFooterHtml(site);
+  const sideInfoHtml = renderTemplateSideInfoHtml(site);
   const dynamicMenuHtml = renderMenuHtml(getMenu(site, "header"));
   const dynamicFooterMenuHtml = renderFooterMenuHtml(getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header"));
-  const settings = site.settings.site ?? {};
-  const email = escapeHtml(settings.email ?? BUSINESS_EMAIL);
-  const phone = escapeHtml(settings.phone ?? BUSINESS_PHONE);
-  const tel = `+${phone.replace(/[^\d]/g, "")}`;
-  const address = escapeHtml(settings.address ?? BUSINESS_MAILING_ADDRESS);
+  const email = escapeHtml(BUSINESS_EMAIL);
+  const phone = escapeHtml(BUSINESS_PHONE);
+  const tel = escapeHtml(BUSINESS_PHONE_TEL);
+  const address = escapeHtml(BUSINESS_MAILING_ADDRESS);
 
   return html
+    .replace(/<aside class="fix"[\s\S]*?<\/aside>/g, sideInfoHtml)
     .replace(/<!-- Header area start -->[\s\S]*?<!-- Header area end -->\s*(?:<!-- Header area end -->)?/g, headerHtml)
     .replace(/<!-- footer area start\s+-->[\s\S]*?<!-- footer area end\s+-->/gi, footerHtml)
     .replace(/<header class="header-area">[\s\S]*?<\/header>/g, headerHtml)

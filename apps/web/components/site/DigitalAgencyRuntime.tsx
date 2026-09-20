@@ -121,10 +121,92 @@ function bindContactForm() {
 
   form.dataset.opplexifyBound = "true";
   form.addEventListener("submit", submitForm);
-  button?.addEventListener("click", (event) => {
+}
+
+function bindAccessibleSideInfo() {
+  const toggle = document.querySelector<HTMLButtonElement>(".side-toggle");
+  const panel = document.querySelector<HTMLElement>(".side-info");
+  const closeButton = panel?.querySelector<HTMLButtonElement>(".side-info-close");
+  const overlay = document.querySelector<HTMLElement>(".offcanvas-overlay");
+  if (!toggle || !panel || !closeButton || !overlay) return () => {};
+
+  let lastFocused: HTMLElement | null = null;
+  let isOpen = panel.classList.contains("info-open");
+
+  const syncState = () => {
+    isOpen = panel.classList.contains("info-open");
+    toggle.setAttribute("aria-expanded", String(isOpen));
+    toggle.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+    panel.setAttribute("aria-hidden", String(!isOpen));
+    panel.inert = !isOpen;
+  };
+
+  const openPanel = () => {
+    lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
+    panel.classList.add("info-open");
+    overlay.classList.add("overlay-open");
+    syncState();
+    window.requestAnimationFrame(() => closeButton.focus());
+  };
+
+  const closePanel = (restoreFocus = true) => {
+    panel.classList.remove("info-open");
+    overlay.classList.remove("overlay-open");
+    syncState();
+    if (restoreFocus) (lastFocused ?? toggle).focus();
+  };
+
+  const handleToggle = (event: Event) => {
     event.preventDefault();
-    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-  });
+    openPanel();
+  };
+  const handleClose = (event: Event) => {
+    event.preventDefault();
+    closePanel();
+  };
+  const handleKeydown = (event: KeyboardEvent) => {
+    if (!isOpen) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closePanel();
+      return;
+    }
+    if (event.key !== "Tab") return;
+
+    const focusable = Array.from(
+      panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+    ).filter((element) => element.getClientRects().length > 0);
+    if (!focusable.length) {
+      event.preventDefault();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  toggle.addEventListener("click", handleToggle);
+  closeButton.addEventListener("click", handleClose);
+  overlay.addEventListener("click", handleClose);
+  document.addEventListener("keydown", handleKeydown);
+  const observer = new MutationObserver(() => syncState());
+  observer.observe(panel, { attributes: true, attributeFilter: ["class"] });
+  syncState();
+
+  return () => {
+    observer.disconnect();
+    toggle.removeEventListener("click", handleToggle);
+    closeButton.removeEventListener("click", handleClose);
+    overlay.removeEventListener("click", handleClose);
+    document.removeEventListener("keydown", handleKeydown);
+  };
 }
 
 function dismissLoader(delay = 0) {
@@ -171,6 +253,7 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
     let refreshTimeout: number | undefined;
     let loaderFallbackTimeout: number | undefined;
     let cancelHeroActivate: (() => void) | undefined;
+    let unbindAccessibleSideInfo: (() => void) | undefined;
     const bodyClasses = ["body-wrapper", "dark", ...bodyClassName.split(" ").filter(Boolean)];
 
     window.__opplexifyDigitalAgencyScripts ??= new Set<string>();
@@ -238,6 +321,7 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
     });
 
     bindContactForm();
+    unbindAccessibleSideInfo = bindAccessibleSideInfo();
     // Content is server-rendered, so the loader only needs to cover the brief
     // hydration gap — dismiss it quickly rather than waiting on the script chain.
     loaderFallbackTimeout = dismissLoader(200);
@@ -266,6 +350,7 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
       if (loaderFallbackTimeout) window.clearTimeout(loaderFallbackTimeout);
       cancelHeroActivate?.();
       cursorObserver?.disconnect();
+      unbindAccessibleSideInfo?.();
       document.body.classList.remove(...bodyClasses);
     };
   }, [bodyClassName, smooth]);

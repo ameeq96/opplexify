@@ -3,6 +3,7 @@ import { DigitalAgencyRuntime } from "../components/site/DigitalAgencyRuntime";
 import { applyHomeCms } from "../components/site/homeRenderer";
 import { TEMPLATE_ASSET_BASE as A } from "../components/site/templateAssets";
 import { TemplateAssetLinks } from "../components/site/TemplateAssetLinks";
+import { renderProviderDisclosureHtml } from "../components/site/templateRenderers";
 import {
   emptySite,
   fetchApi,
@@ -15,10 +16,13 @@ import {
 } from "../lib/api";
 import {
   BUSINESS_EMAIL,
+  BUSINESS_MAILING_ADDRESS,
   BUSINESS_PHONE,
+  BUSINESS_PHONE_TEL,
   BUSINESS_POSTAL_ADDRESS,
   COMPANY_DESCRIPTION,
   DEFAULT_OG_IMAGE,
+  FOUNDER_NAME,
   LEGAL_NAME,
   LINKEDIN_URL,
   PAKISTAN_BUSINESS_POSTAL_ADDRESS,
@@ -94,15 +98,15 @@ const homeHtml = String.raw`
           <div class="contact-meta">
             <div class="contact-item">
               <span class="icon"><i class="fa-solid fa-location-dot"></i></span>
-              <span class="text">Business mailing address: 525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States</span>
+              <span class="text">${BUSINESS_MAILING_ADDRESS}</span>
             </div>
             <div class="contact-item">
               <span class="icon"><i class="fa-solid fa-envelope"></i></span>
-              <span class="text"><a href="mailto:admin@opplexify.com">admin@opplexify.com</a></span>
+              <span class="text"><a href="mailto:${BUSINESS_EMAIL}">${BUSINESS_EMAIL}</a></span>
             </div>
             <div class="contact-item">
               <span class="icon"><i class="fa-solid fa-phone"></i></span>
-              <span class="text"><a href="tel:+13074435144">+1 (307) 443-5144</a></span>
+              <span class="text"><a href="tel:${BUSINESS_PHONE_TEL}">${BUSINESS_PHONE}</a></span>
             </div>
           </div>
         </div>
@@ -225,6 +229,8 @@ const homeHtml = String.raw`
             </div>
           </div>
         </section>
+
+        ${renderProviderDisclosureHtml()}
 
         <section class="work-area">
           <div class="container rr-container-1650">
@@ -421,8 +427,8 @@ const homeHtml = String.raw`
               </div>
               <div class="team-wrapper-box">
                 <div class="team-wrapper fade-anim">
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/muhammad-emmad-khan"><img src="/team/emmad-khan.webp" alt="Muhammad Emmad Khan, founder of Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/muhammad-emmad-khan">Muhammad Emmad Khan</a></h3><span class="post">Founder and Owner</span></div></div>
-                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/ameeq-khan"><img src="/team/ameeq-khan.webp" alt="Ameeq Khan, full-stack developer at Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/ameeq-khan">Ameeq Khan</a></h3><span class="post">Full-Stack Developer</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/muhammad-emmad-khan"><img src="/team/emmad-khan.webp" alt="${FOUNDER_NAME}, founder of Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/muhammad-emmad-khan">${FOUNDER_NAME}</a></h3><span class="post">Founder and Owner</span></div></div>
+                  <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/ameeq-khan"><img src="/team/ameeq-khan.webp" alt="${SAFEPAY_MERCHANT_NAME}, independent freelancer"></a></div><div class="content"><h3 class="name"><a href="/team/ameeq-khan">${SAFEPAY_MERCHANT_NAME}</a></h3><span class="post">Independent Freelancer</span></div></div>
                   <div class="team-box-1 fade-anim"><div class="thumb"><a href="/team/atiq-khan"><img src="/team/atiq-khan.webp" alt="Atiq Khan, project coordinator at Opplexify"></a></div><div class="content"><h3 class="name"><a href="/team/atiq-khan">Atiq Khan</a></h3><span class="post">Project Coordinator</span></div></div>
                 </div>
               </div>
@@ -536,8 +542,8 @@ const homeHtml = String.raw`
                 <h2 class="title">Contact</h2>
                 <ul class="footer-nav-list footer-contact-list">
                   <li><a href="mailto:${BUSINESS_EMAIL}">${BUSINESS_EMAIL}</a></li>
-                  <li><a href="tel:+13074435144">${BUSINESS_PHONE}</a></li>
-                  <li><span>525 Randall Ave Ste 100 PMB 1203, Cheyenne, WY 82001, United States</span></li>
+                  <li><a href="tel:${BUSINESS_PHONE_TEL}">${BUSINESS_PHONE}</a></li>
+                  <li><span>${BUSINESS_MAILING_ADDRESS}</span></li>
                 </ul>
               </div>
             </div>
@@ -594,7 +600,6 @@ export default async function HomePage() {
         name: SAFEPAY_MERCHANT_NAME,
         jobTitle: "Independent Freelancer",
         url: absoluteUrl("/ownership-statement"),
-        email: BUSINESS_EMAIL,
         telephone: PAKISTAN_SUPPORT_PHONE,
         address: PAKISTAN_BUSINESS_POSTAL_ADDRESS
       }

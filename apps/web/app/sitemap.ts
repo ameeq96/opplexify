@@ -31,6 +31,7 @@ const staticRoutes: Array<Pick<SitemapEntry, "url" | "changeFrequency" | "priori
   { url: absoluteUrl("/team"), changeFrequency: "monthly", priority: 0.6 },
   { url: absoluteUrl("/faq"), changeFrequency: "monthly", priority: 0.6 },
   { url: absoluteUrl("/pricing"), changeFrequency: "monthly", priority: 0.85 },
+  { url: absoluteUrl("/payment-information"), changeFrequency: "yearly", priority: 0.4 },
   { url: absoluteUrl("/terms"), changeFrequency: "yearly", priority: 0.3 },
   { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.3 },
   { url: absoluteUrl("/refund-policy"), changeFrequency: "yearly", priority: 0.3 },

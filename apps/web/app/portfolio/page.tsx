@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { PortfolioGridScroller } from "../../components/site/PortfolioGridScroller";
 import { PublicShell } from "../../components/site/PublicShell";
 import { assetUrl, fetchApi, getSection, pageMetadata, type Page, type PortfolioItem } from "../../lib/api";
-import { absoluteUrl, breadcrumbList, SAFEPAY_MERCHANT_NAME, siteUrl } from "../../lib/seo";
+import { absoluteUrl, breadcrumbList, siteUrl } from "../../lib/seo";
 
 export const revalidate = 300;
 
@@ -153,8 +153,6 @@ export default async function PortfolioGridPage() {
                     "Explore interface work across business websites, SaaS products, web applications, mobile apps, and admin dashboards. These visuals show our approach without making claims about confidential client results."}
                 </p>
                 <p>
-                  This portfolio is presented for business verification by {SAFEPAY_MERCHANT_NAME}, the Pakistan-based
-                  independent freelancer identified in our <a href="/ownership-statement">Ownership Statement</a>.
                   Gallery items labeled “Concept Sample” are concept work—not client projects or launched products. Any
                   placeholder names, people, testimonials, contact details, or performance statements visible inside a
                   sample are sample UI content—not customer endorsements, brand endorsements, or claims of client
@@ -231,7 +229,7 @@ export default async function PortfolioGridPage() {
                       <source src={video.src} type="video/mp4" />
                     </video>
                     <div className="portfolio-video-caption">
-                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <span>{String(index + 1).padStart(2, "0")} / {conceptTag}</span>
                       <strong>{video.title ?? `Interface motion sample ${String(index + 1).padStart(2, "0")}`}</strong>
                     </div>
                   </div>

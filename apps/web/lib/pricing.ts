@@ -1,4 +1,4 @@
-import { SITE_NAME, absoluteUrl, siteUrl } from "./seo";
+import { absoluteUrl } from "./seo";
 
 export type PricingPackage = {
   label: string;
@@ -110,8 +110,7 @@ export function pricingOfferCatalog(name = "Opplexify custom software developmen
       itemOffered: {
         "@type": "Service",
         name: pkg.title,
-        serviceType: "Software development",
-        provider: { "@type": "Organization", name: SITE_NAME, url: siteUrl() }
+        serviceType: "Software development"
       }
     }))
   };
