@@ -8,6 +8,7 @@ import { createPublicRouter } from "./cms/public.routes";
 import { docsAssets, docsHandler, openApiDocument } from "./docs";
 import { assertProductionEnv, webOrigin } from "./env";
 import { errorHandler } from "./http";
+import { createSafepayRouter } from "./payments/safepay.routes";
 import { prisma } from "./prisma/prisma.service";
 
 export function createApiApp() {
@@ -55,6 +56,7 @@ export function createApiApp() {
   app.get("/docs", docsHandler);
   app.use("/docs", docsAssets, docsHandler);
   app.use("/auth", createAuthRouter());
+  app.use("/public/safepay", createSafepayRouter());
   app.use("/public", createPublicRouter());
   app.use("/admin", createAdminRouter());
   app.use(errorHandler);

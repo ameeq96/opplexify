@@ -3,7 +3,6 @@ import { DigitalAgencyRuntime } from "../components/site/DigitalAgencyRuntime";
 import { applyHomeCms } from "../components/site/homeRenderer";
 import { TEMPLATE_ASSET_BASE as A } from "../components/site/templateAssets";
 import { TemplateAssetLinks } from "../components/site/TemplateAssetLinks";
-import { renderProviderDisclosureHtml } from "../components/site/templateRenderers";
 import {
   emptySite,
   fetchApi,
@@ -229,8 +228,6 @@ const homeHtml = String.raw`
             </div>
           </div>
         </section>
-
-        ${renderProviderDisclosureHtml()}
 
         <section class="work-area">
           <div class="container rr-container-1650">

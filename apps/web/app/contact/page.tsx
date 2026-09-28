@@ -214,6 +214,13 @@ function renderContactInfoHtml() {
       <a class="contact-value" href="tel:${escapeHtml(PAKISTAN_SUPPORT_PHONE_TEL)}">${escapeHtml(PAKISTAN_SUPPORT_PHONE)}</a>
     </div>
     <div class="contact-us__item opplexify-contact-card opplexify-contact-card--wide">
+      <h3 class="title">Before the integration call, please ensure:</h3>
+      <p class="contact-value">&#8226; Safepay Sandbox &amp; Production login credentials</p>
+      <p class="contact-value">&#8226; Website admin access</p>
+      <a class="contact-value" href="/safepay-demo">&#8226; A test product (~PKR 100) set up</a>
+      <p class="contact-value">&#8226; A debit/credit card available for testing</p>
+    </div>
+    <div class="contact-us__item opplexify-contact-card opplexify-contact-card--wide">
       <h3 class="title">Before payment</h3>
       <p class="contact-value">${escapeHtml(PROVIDER_SELECTION_DISCLOSURE)}</p>
       <a class="contact-value" href="/payment-information">Read provider and payment information</a>
