@@ -107,8 +107,8 @@ export function renderProviderDisclosureHtml() {
 }
 
 export function renderTemplateSideInfoHtml(site: SitePayload) {
-  const logoDark = assetUrl(site.settings.site?.logoDark ?? `${A}/imgs/logo/opplexify-logo-full.png`);
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
+  const logoDark = assetUrl(site.settings.site?.logoDark ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
 
   return `<aside class="fix" aria-label="Navigation and project contact">
   <div class="side-info" id="mobile-navigation" role="dialog" aria-label="Navigation and project contact" aria-modal="true" aria-hidden="true" inert>
@@ -177,7 +177,7 @@ export function renderFooterMenuHtml(items: MenuItem[]) {
 }
 
 export function renderTemplateHeaderHtml(site: SitePayload) {
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
   return `<header class="header-area">
   <div class="header-main">
     <div class="container rr-container-1650">
@@ -210,7 +210,7 @@ export function renderTemplateFooterHtml(site: SitePayload) {
   const footer = site.settings.footer ?? {};
   const companyItems = getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header");
   const contact = footerContactInfo(site);
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
   const serviceLinksHtml = footerServiceLinks(footer)
     .map((item) => `<li><a href="${escapeHtml(item.href)}">${escapeHtml(item.label)}</a></li>`)
     .join("");

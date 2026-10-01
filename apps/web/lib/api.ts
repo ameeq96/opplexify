@@ -262,8 +262,8 @@ export const emptySite: SitePayload = {
     site: {
       title: SITE_NAME,
       description: DEFAULT_DESCRIPTION,
-      logoLight: "/template-assets/dark/assets/imgs/logo/opplexify-logo-full.png",
-      logoDark: "/template-assets/dark/assets/imgs/logo/opplexify-logo-full.png",
+      logoLight: "/template-assets/dark/assets/imgs/logo/opplexify-logo-full-v2.png",
+      logoDark: "/template-assets/dark/assets/imgs/logo/opplexify-logo-full-v2.png",
       email: BUSINESS_EMAIL,
       phone: BUSINESS_PHONE,
       address: BUSINESS_MAILING_ADDRESS

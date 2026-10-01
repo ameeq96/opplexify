@@ -59,8 +59,8 @@ function CursorAndLoader({ site, showLoader }: { site: SitePayload; showLoader: 
 
 function SideInfo({ site }: { site: SitePayload }) {
   const settings = site.settings.site ?? {};
-  const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-full.png`);
-  const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
+  const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
+  const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
 
   return (
     <>
@@ -184,7 +184,7 @@ function MainMenu({ items }: { items: MenuItem[] }) {
 }
 
 function HomepageHeader({ site }: { site: SitePayload }) {
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
   const headerItems = getMenu(site, "header");
 
   return (
@@ -230,7 +230,7 @@ function HomepageFooter({ site }: { site: SitePayload }) {
   const footer = site.settings.footer ?? {};
   const serviceLinks = footerServiceLinks(footer);
   const contact = footerContactInfo(site);
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full.png`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
 
   return (
     <footer className="footer-area">

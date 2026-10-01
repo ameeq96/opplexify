@@ -75,8 +75,8 @@ const homeHtml = String.raw`
         <div class="offset-widget offset-header">
           <div class="offset-logo">
             <a href="/">
-              <img class="show-light" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo">
-              <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo">
+              <img class="show-light" src="${A}/imgs/logo/opplexify-logo-full-v2.png" alt="Opplexify logo">
+              <img class="show-dark" src="${A}/imgs/logo/opplexify-logo-full-v2.png" alt="Opplexify logo">
             </a>
           </div>
           <button id="side-info-close" class="side-info-close">
@@ -123,7 +123,7 @@ const homeHtml = String.raw`
             <div class="header-area__inner">
               <div class="header__logo">
                 <a href="/">
-                  <img src="${A}/imgs/logo/opplexify-logo-full.png" class="normal-logo" alt="Opplexify logo">
+                  <img src="${A}/imgs/logo/opplexify-logo-full-v2.png" class="normal-logo" alt="Opplexify logo">
                 </a>
               </div>
               <div class="header__shape">
@@ -498,7 +498,7 @@ const homeHtml = String.raw`
             <div class="footer-widget-wrapper">
               <div class="footer-widget-box content">
                 <a href="/" class="footer-logo">
-                  <img src="${A}/imgs/logo/opplexify-logo-full.png" alt="Opplexify logo" decoding="async">
+                  <img src="${A}/imgs/logo/opplexify-logo-full-v2.png" alt="Opplexify logo" decoding="async">
                 </a>
                 <div class="title-wrapper">
                   <h2 class="title rr_title_anim">Custom software <br> for startups and
