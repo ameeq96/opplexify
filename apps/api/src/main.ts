@@ -34,7 +34,7 @@ export function createApiApp() {
       directives: {
         defaultSrc: helmet.contentSecurityPolicy.dangerouslyDisableDefaultSrc,
         baseUri: ["'self'"],
-        formAction: ["'self'", "https://sandbox.api.getsafepay.com", "https://api.getsafepay.com"],
+        formAction: ["'self'", "https://sandbox.api.getsafepay.com", "https://api.getsafepay.com", "https://getsafepay.com"],
         frameAncestors: ["'none'"],
         objectSrc: ["'none'"]
       }

@@ -392,7 +392,7 @@ function safepayConfig(): SafepayConfig | null {
   return {
     environment,
     apiBase: apiHost,
-    checkoutBase: `${apiHost}/embedded/`,
+    checkoutBase: environment === "production" ? "https://getsafepay.com/embedded/" : `${apiHost}/embedded/`,
     publicKey,
     secretKey,
     webhookSecret: process.env.SAFEPAY_WEBHOOK_SECRET?.trim() || null,
