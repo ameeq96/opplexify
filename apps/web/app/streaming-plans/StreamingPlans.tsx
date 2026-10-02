@@ -142,6 +142,9 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
   const statusMessage = initialStatus ? statusMessages[initialStatus] : undefined;
   const needsDevice = plan?.type === "plan";
+  const displayPackageName = plan
+    ? needsDevice ? `${plan.durationLabel} Package` : digitalTvText(plan.name)
+    : "";
   const canCheckout = Boolean(plan && checkoutKey && (!needsDevice || selectedDeviceId));
 
   return (
@@ -190,12 +193,12 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
                 <div className={styles.selectedPackage}>
                   <div>
-                    <span>Provider</span>
-                    <strong>{digitalTvText(plan.providerName)}</strong>
+                    <span>{needsDevice ? "Service" : "Provider"}</span>
+                    <strong>{needsDevice ? "Digital TV Subscription" : digitalTvText(plan.providerName)}</strong>
                   </div>
                   <div>
                     <span>Package</span>
-                    <strong>{digitalTvText(plan.name)}</strong>
+                    <strong>{displayPackageName}</strong>
                   </div>
                   <div>
                     <span>{plan.type === "reseller" ? "Credits" : "Subscription"}</span>
@@ -245,12 +248,12 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
             <aside className={styles.orderSummary} aria-labelledby="order-summary-title">
               <span className={styles.summaryEyebrow}>Order summary</span>
-              <h2 id="order-summary-title">{digitalTvText(plan.name)}</h2>
+              <h2 id="order-summary-title">{displayPackageName}</h2>
 
               <dl className={styles.summaryDetails}>
                 <div>
-                  <dt>Provider</dt>
-                  <dd>{digitalTvText(plan.providerName)}</dd>
+                  <dt>{needsDevice ? "Service" : "Provider"}</dt>
+                  <dd>{needsDevice ? "Digital TV Subscription" : digitalTvText(plan.providerName)}</dd>
                 </div>
                 <div>
                   <dt>{plan.type === "reseller" ? "Package" : "Duration"}</dt>
