@@ -128,7 +128,7 @@ export default async function OrderStatusPage({ params }: OrderStatusPageProps) 
                 <a className={styles.primaryLink} href="https://opplexiptv.com/packages">
                   Choose package
                 </a>
-                <a className={styles.secondaryLink} href="/contact">
+                <a className={styles.secondaryLink} href="https://opplexiptv.com/contact">
                   Contact support
                 </a>
               </div>
