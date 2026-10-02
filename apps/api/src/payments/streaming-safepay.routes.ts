@@ -85,7 +85,11 @@ export function createStreamingSafepayRouter() {
           return;
         }
 
-        const amountMinor = toMinorUnits(plan.price);
+        const amountMinor = checkoutAmountMinor(plan);
+        if (plan.currency.toUpperCase() === "USD" && Number(req.body?.quoted_total_minor) !== amountMinor) {
+          checkoutError(req, res, 409);
+          return;
+        }
         const order = await prisma.streamingOrder.upsert({
           where: { checkoutKey },
           update: {},
@@ -96,7 +100,7 @@ export function createStreamingSafepayRouter() {
             providerName: plan.providerName,
             packageName: plan.name,
             durationLabel: plan.durationLabel,
-            amount: plan.price,
+            amount: amountMinor / 100,
             amountMinor,
             currency: plan.currency
           }
@@ -454,6 +458,17 @@ function toMinorUnits(amount: number) {
   const value = Math.round(amount * 100);
   if (!Number.isSafeInteger(value) || value <= 0) throw new Error("Invalid package amount");
   return value;
+}
+
+function checkoutAmountMinor(plan: StreamingPlan) {
+  const baseMinor = toMinorUnits(plan.price);
+  // Match the disclosed estimate in StreamingPlans; not SafePay's confirmed fee schedule.
+  const surchargeMinor = plan.currency.toUpperCase() === "USD"
+    ? [71, 5, 12, 24].reduce((total, sampleMinor) => total + Math.round(baseMinor * sampleMinor / 1199), 0)
+    : 0;
+  const totalMinor = baseMinor + surchargeMinor;
+  if (!Number.isSafeInteger(totalMinor)) throw new Error("Invalid checkout amount");
+  return totalMinor;
 }
 
 function absoluteWebUrl(path: string) {

@@ -134,7 +134,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
         setDevices(catalog.devices);
         setSelectedDeviceId("");
 
-        const storageKey = `${checkoutStorageKey}.${selectedPlan.id}`;
+        const storageKey = `${checkoutStorageKey}.estimated-fees-v1.${selectedPlan.id}`;
         let key = createCheckoutKey();
         try {
           key = window.sessionStorage.getItem(storageKey) || key;
@@ -166,6 +166,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   const estimatedDeductions = plan?.currency.toUpperCase() === "USD"
     ? estimateSafepayDeductions(plan.price)
     : null;
+  const totalMinor = plan ? Math.round(plan.price * 100) + (estimatedDeductions?.totalMinor ?? 0) : 0;
 
   return (
     <section className={styles.page} aria-labelledby="streaming-checkout-title">
@@ -272,6 +273,10 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
               <dl className={styles.summaryDetails}>
                 <div>
+                  <dt>Package price</dt>
+                  <dd>{formatPrice(plan.price, plan.currency)}</dd>
+                </div>
+                <div>
                   <dt>Service</dt>
                   <dd>Digital Subscription</dd>
                 </div>
@@ -296,7 +301,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
               {estimatedDeductions ? (
                 <section aria-labelledby="estimated-fees-title">
-                  <p id="estimated-fees-title" className={styles.summaryEyebrow}>Estimated fees / taxes</p>
+                  <p id="estimated-fees-title" className={styles.summaryEyebrow}>Estimated fee / tax surcharge</p>
                   <dl className={styles.summaryDetails}>
                     {estimatedDeductions.items.map((item) => (
                       <div key={item.label}>
@@ -305,21 +310,21 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                       </div>
                     ))}
                     <div>
-                      <dt>Total estimated deductions</dt>
+                      <dt>Added surcharge</dt>
                       <dd>{formatPrice(estimatedDeductions.totalMinor / 100, plan.currency)}</dd>
                     </div>
                   </dl>
                   <p className={styles.paymentNote}>
-                    Illustrative estimate scaled from a previous USD 11.99 sandbox payment, not a SafePay quote.
-                    Actual fees and taxes may differ. These are estimated deductions from the payment,
-                    not additional charges to you.
+                    This merchant surcharge is added to your package price to cover estimated processing fees
+                    and taxes, based on a previous USD 11.99 sandbox payment. It is not a confirmed SafePay fee
+                    or tax assessment; actual deductions may differ. You will pay the total shown below.
                   </p>
                 </section>
               ) : null}
 
               <div className={styles.total}>
                 <span>Total to pay</span>
-                <strong>{formatPrice(plan.price, plan.currency)}</strong>
+                <strong>{formatPrice(totalMinor / 100, plan.currency)}</strong>
               </div>
 
               <form action="/public/safepay/checkout" method="post" className={styles.checkoutForm}>
@@ -327,6 +332,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 <input type="hidden" name="selection" value={selection} />
                 <input type="hidden" name="signature" value={signature} />
                 <input type="hidden" name="checkout_key" value={checkoutKey} />
+                <input type="hidden" name="quoted_total_minor" value={totalMinor} />
                 {needsDevice ? <input type="hidden" name="device_id" value={selectedDeviceId} /> : null}
                 <button type="submit" disabled={!canCheckout}>
                   Continue to SafePay
