@@ -64,8 +64,8 @@ export default async function WorkDetailPage({ params }: Props) {
             <img src={assetUrl(project.mainImage)} alt={project.title} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
             <Prose text={project.description} />
             {project.videoUrl ? (
-              <video className="detail-video" controls preload="metadata">
-                <source src={assetUrl(project.videoUrl)} type="video/mp4" />
+              <video className="detail-video" controls preload="none" data-deferred-video>
+                <source data-src={assetUrl(project.videoUrl)} type="video/mp4" />
               </video>
             ) : null}
           </div>

@@ -161,11 +161,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Warm the TLS connection to Google Fonts — style.css @imports DM Sans from gstatic. */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      </head>
       <body suppressHydrationWarning>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(safepayMerchantJsonLd) }} />
@@ -174,9 +169,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GOOGLE_ANALYTICS_ID)}`}
-              strategy="afterInteractive"
+              strategy="lazyOnload"
             />
-            <Script id="opplexify-google-analytics" strategy="afterInteractive">
+            <Script id="opplexify-google-analytics" strategy="lazyOnload">
               {`window.dataLayer = window.dataLayer || [];
 function gtag(){window.dataLayer.push(arguments);}
 window.gtag = gtag;

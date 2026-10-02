@@ -52,7 +52,6 @@
 /* portfolio full page css */
 /* full screen clam slider page css */
 /* variable css */
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 :root {
   --primary: #111111;
   --secondary: #555555;
@@ -78,54 +77,64 @@
   font-family: "BDOGrotesk";
   src: url("../fonts/BDOGrotesk-DemiBold.ttf");
   font-weight: 600;
+  font-display: swap;
 }
 @font-face {
   font-family: "BDOGrotesk";
   src: url("../fonts/BDOGrotesk-Medium.ttf");
   font-weight: 500;
+  font-display: swap;
 }
 @font-face {
   font-family: "BDOGrotesk";
   src: url("../fonts/BDOGrotesk-Regular.ttf");
   font-weight: 400;
+  font-display: swap;
 }
 @font-face {
   font-family: "PPEditorialNew-Italic";
   src: url("../fonts/PPEditorialNew-Ultralight.otf");
   font-weight: 200;
+  font-display: swap;
 }
 @font-face {
   font-family: "PPEditorialNew-Regular";
   src: url("../fonts/PPEditorialNew-Regular.otf");
   font-weight: 400;
+  font-display: swap;
 }
 @font-face {
   font-family: "PPEditorialNew-Italic";
   src: url("../fonts/PPEditorialNew-Italic.otf");
   font-weight: 400;
+  font-display: swap;
 }
 @font-face {
   font-family: "Tartuffo_Trial-Regular";
   src: url("../fonts/Tartuffo_Trial-Regular.otf");
   font-weight: 400;
+  font-display: swap;
 }
 @font-face {
   font-family: "Tartuffo_Trial-Regular";
   src: url("../fonts/Tartuffo_Trial-Thin.otf");
   font-weight: 200;
+  font-display: swap;
 }
 @font-face {
   font-family: "Tartuffo_Trial-Regular";
   src: url("../fonts/Tartuffo_Trial-Light.otf");
   font-weight: 300;
+  font-display: swap;
 }
 @font-face {
   font-family: "Astro-Nebula";
   src: url("../fonts/Astro-Nebula-Light.otf");
   font-weight: 300;
+  font-display: swap;
 }
 :root {
-  --font_dmsans: "DM Sans", sans-serif;
+  --font_dmsans: system-ui, -apple-system, BlinkMacSystemFont,  Segoe UI, sans-serif;
   --font_bdogrotesk: "BDOGrotesk";
   --font_ppeditor: "PPEditorialNew-Italic";
   --font_ppeditorialnewregular: "PPEditorialNew-Regular";

@@ -59,8 +59,8 @@ function CursorAndLoader({ site, showLoader }: { site: SitePayload; showLoader: 
 
 function SideInfo({ site }: { site: SitePayload }) {
   const settings = site.settings.site ?? {};
-  const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
-  const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
+  const logoDark = assetUrl(settings.logoDark ?? `${A}/imgs/logo/opplexify-logo-light.svg`).replace(/opplexify-logo-full(?:-v2)?\.png$/, "opplexify-logo-light.svg");
+  const logoLight = assetUrl(settings.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`).replace(/opplexify-logo-full(?:-v2)?\.png$/, "opplexify-logo-light.svg");
 
   return (
     <>
@@ -78,8 +78,8 @@ function SideInfo({ site }: { site: SitePayload }) {
             <div className="offset-widget offset-header">
               <div className="offset-logo">
                 <a href="/">
-                  <img className="show-light" src={logoDark} alt="Opplexify logo" decoding="async" />
-                  <img className="show-dark" src={logoLight} alt="Opplexify logo" decoding="async" />
+                  <img className="show-light" src={logoDark} alt="Opplexify logo" width={560} height={160} decoding="async" />
+                  <img className="show-dark" src={logoLight} alt="Opplexify logo" width={560} height={160} decoding="async" />
                 </a>
               </div>
               <button id="side-info-close" className="side-info-close" type="button" aria-label="Close navigation menu">
@@ -184,7 +184,7 @@ function MainMenu({ items }: { items: MenuItem[] }) {
 }
 
 function HomepageHeader({ site }: { site: SitePayload }) {
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`).replace(/opplexify-logo-full(?:-v2)?\.png$/, "opplexify-logo-light.svg");
   const headerItems = getMenu(site, "header");
 
   return (
@@ -194,7 +194,7 @@ function HomepageHeader({ site }: { site: SitePayload }) {
           <div className="header-area__inner">
             <div className="header__logo">
               <a href="/">
-                <img src={logoLight} className="normal-logo" alt="Opplexify logo" decoding="async" />
+                <img src={logoLight} className="normal-logo" alt="Opplexify logo" width={560} height={160} decoding="async" />
               </a>
             </div>
             <div className="header__shape">
@@ -230,7 +230,7 @@ function HomepageFooter({ site }: { site: SitePayload }) {
   const footer = site.settings.footer ?? {};
   const serviceLinks = footerServiceLinks(footer);
   const contact = footerContactInfo(site);
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`);
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`).replace(/opplexify-logo-full(?:-v2)?\.png$/, "opplexify-logo-light.svg");
 
   return (
     <footer className="footer-area">
@@ -239,7 +239,7 @@ function HomepageFooter({ site }: { site: SitePayload }) {
           <div className="footer-widget-wrapper">
             <div className="footer-widget-box content">
               <a href="/" className="footer-logo">
-                <img src={logoLight} alt="Opplexify logo" decoding="async" />
+                <img src={logoLight} alt="Opplexify logo" width={560} height={160} decoding="async" />
               </a>
               <div className="title-wrapper">
                 <h2 className="title rr_title_anim">
@@ -343,7 +343,7 @@ function HomepageFooter({ site }: { site: SitePayload }) {
 export async function PublicShell({
   children,
   smooth = true,
-  showLoader = true
+  showLoader = false
 }: {
   children: React.ReactNode;
   smooth?: boolean;

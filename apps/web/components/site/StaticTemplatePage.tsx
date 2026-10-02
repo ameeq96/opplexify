@@ -17,6 +17,34 @@ type StaticTemplatePageProps = {
   bodyClassName?: string;
 };
 
+const optimizedLogo = `${A}/imgs/logo/opplexify-logo-light.svg`;
+
+export function optimizeTemplateMediaHtml(html: string) {
+  let contentImageIndex = 0;
+  return html
+    .replace(
+      /\s*<div class="loader-wrap">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>(?=\s*(?:<!--\s*Sroll to top\s*-->)?\s*<div class="progress-wrap")/gi,
+      ""
+    )
+    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/opplexify-logo-full(?:-v2)?\.png/g, optimizedLogo)
+    .replace(/<img\b([^>]*)>/gi, (tag, attributes: string) => {
+      let next = attributes;
+      const isLogo = /\/imgs\/logo\//i.test(next);
+      const isCursor = /\/imgs\/cursor\//i.test(next);
+
+      const isContentImage = !isLogo && !isCursor;
+      if (isContentImage) contentImageIndex += 1;
+      if (!/\bdecoding=/i.test(next)) next += ' decoding="async"';
+      if (isContentImage && contentImageIndex > 2 && !/\bloading=/i.test(next)) next += ' loading="lazy"';
+      if (/opplexify-logo-light\.svg/i.test(next)) {
+        if (!/\bwidth=/i.test(next)) next += ' width="560"';
+        if (!/\bheight=/i.test(next)) next += ' height="160"';
+      }
+
+      return `<img${next}>`;
+    });
+}
+
 export function normalizeTemplateHtml(html: string, site: SitePayload = emptySite) {
   const headerHtml = renderTemplateHeaderHtml(site);
   const footerHtml = renderTemplateFooterHtml(site);
@@ -28,15 +56,15 @@ export function normalizeTemplateHtml(html: string, site: SitePayload = emptySit
   const tel = escapeHtml(BUSINESS_PHONE_TEL);
   const address = escapeHtml(BUSINESS_MAILING_ADDRESS);
 
-  return html
+  const normalizedHtml = html
     .replace(/<aside class="fix"[\s\S]*?<\/aside>/g, sideInfoHtml)
     .replace(/<!-- Header area start -->[\s\S]*?<!-- Header area end -->\s*(?:<!-- Header area end -->)?/g, headerHtml)
     .replace(/<!-- footer area start\s+-->[\s\S]*?<!-- footer area end\s+-->/gi, footerHtml)
     .replace(/<header class="header-area">[\s\S]*?<\/header>/g, headerHtml)
     .replace(/<footer class="footer-area">[\s\S]*?<\/footer>/g, footerHtml)
     .replace(/<nav class="main-menu">[\s\S]*?<\/nav>/g, dynamicMenuHtml)
-    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/dark-logo\.webp/g, `${A}/imgs/logo/opplexify-logo-full-v2.png`)
-    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/light-logo\.webp/g, `${A}/imgs/logo/opplexify-logo-full-v2.png`)
+    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/dark-logo\.webp/g, optimizedLogo)
+    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/light-logo\.webp/g, optimizedLogo)
     .replace(/(<h2 class="title">Company<\/h2>\s*)<ul class="footer-nav-list">[\s\S]*?<\/ul>/g, (_match, heading) => `${heading}${dynamicFooterMenuHtml}`)
     .replace(/action="http:\/\/localhost:4000\/public\/contact"/g, 'action="/contact"')
     .replace(/infoO@opplexifycreative\.com|hello@opplexify\.com/g, email)
@@ -47,6 +75,8 @@ export function normalizeTemplateHtml(html: string, site: SitePayload = emptySit
     .replace(/<h2 class="title">Contact US<\/h2>/g, '<h2 class="title">Project Contact</h2>')
     .replace(/3891 Ranchview Dr\. Richardson|Remote web development team/g, address)
     .replace(/\/template-assets\/dark\/assets\/imgs\/gallery\/contact-us-r-1\.webp/g, `${A}/imgs/gallery/gallery-s-1.webp`);
+
+  return optimizeTemplateMediaHtml(normalizedHtml);
 }
 
 export async function StaticTemplatePage({ html, bodyClassName = "" }: StaticTemplatePageProps) {

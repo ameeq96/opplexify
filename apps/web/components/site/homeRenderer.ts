@@ -8,7 +8,7 @@ import {
   FOUNDER_NAME,
   SAFEPAY_MERCHANT_NAME
 } from "../../lib/seo";
-import { normalizeTemplateHtml } from "./StaticTemplatePage";
+import { normalizeTemplateHtml, optimizeTemplateMediaHtml } from "./StaticTemplatePage";
 import { TEMPLATE_ASSET_BASE as A } from "./templateAssets";
 import { escapeHtml } from "./templateRenderers";
 
@@ -175,7 +175,7 @@ function renderHomeWork(item: Section | null | undefined, portfolioItems: Portfo
                       return `<div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="${escapeHtml(
                       href
-                    )}"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="${escapeHtml(
+                    )}"><video class="home-work-video" muted loop playsinline preload="none" data-deferred-video data-autoplay><source data-src="${escapeHtml(
                       assetUrl(stringValue(record.mediaUrl))
                     )}" type="video/mp4"></video></a></div></div>
                     <div class="content"><h3 class="title"><a href="${escapeHtml(href)}">${escapeHtml(
@@ -521,5 +521,5 @@ export function applyHomeCms(
   rendered = replaceWhen(rendered, /<div class="client-area rr-bg-primary">[\s\S]*?(?=\s*<section class="award-area rr-bg-primary">)/, renderHomeLogoStrip(section(page, "logo-strip")));
   rendered = replaceWhen(rendered, /<section class="award-area rr-bg-primary">[\s\S]*?<\/section>/, renderHomeCapabilities(section(page, "capability-list")));
 
-  return normalizeFoundingHtml(rendered);
+  return optimizeTemplateMediaHtml(normalizeFoundingHtml(rendered));
 }

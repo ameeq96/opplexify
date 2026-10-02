@@ -225,8 +225,8 @@ export default async function PortfolioGridPage() {
               <div className="portfolio-video-grid fade-anim">
                 {videos.map((video, index) => (
                   <div className="portfolio-video-item" key={video.src}>
-                    <video controls preload="metadata">
-                      <source src={video.src} type="video/mp4" />
+                    <video controls preload="none" data-deferred-video>
+                      <source data-src={video.src} type="video/mp4" />
                     </video>
                     <div className="portfolio-video-caption">
                       <span>{String(index + 1).padStart(2, "0")} / {conceptTag}</span>

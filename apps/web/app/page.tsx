@@ -155,7 +155,7 @@ const homeHtml = String.raw`
       <main>
         <section class="hero-area">
           <div class="area-bg">
-            <video class="hero-video" loop muted playsinline preload="none" style="background-color:#050505">
+            <video class="hero-video" loop muted playsinline preload="none" data-deferred-video data-autoplay style="background-color:#050505">
               <source data-src="${A}/video/wavy-layer.mp4" type="video/mp4">
             </video>
           </div>
@@ -247,19 +247,19 @@ const homeHtml = String.raw`
               <div class="works-wrapper-box section-spacing-top">
                 <div class="works-wrapper">
                   <div class="work-box fade-anim">
-                    <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-1.mp4" type="video/mp4"></video></a></div></div>
+                    <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" muted loop playsinline preload="none" data-deferred-video data-autoplay><source data-src="/portfolio/videos/portfolio-video-1.mp4" type="video/mp4"></video></a></div></div>
                     <div class="content"><h3 class="title"><a href="/portfolio">Business Website Experience</a></h3><div class="meta"><span class="tag">Web Design, Development</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
-                    <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-2.mp4" type="video/mp4"></video></a></div></div>
+                    <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" muted loop playsinline preload="none" data-deferred-video data-autoplay><source data-src="/portfolio/videos/portfolio-video-2.mp4" type="video/mp4"></video></a></div></div>
                     <div class="content"><h3 class="title"><a href="/portfolio">SaaS Product Experience</a></h3><div class="meta"><span class="tag">SaaS, Product Design</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
-                    <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-3.mp4" type="video/mp4"></video></a></div></div>
+                    <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" muted loop playsinline preload="none" data-deferred-video data-autoplay><source data-src="/portfolio/videos/portfolio-video-3.mp4" type="video/mp4"></video></a></div></div>
                     <div class="content"><h3 class="title"><a href="/portfolio">Operations Dashboard</a></h3><div class="meta"><span class="tag">Dashboard, Internal Tools</span><span class="date">(2026)</span></div></div>
                   </div>
                   <div class="work-box fade-anim">
-                    <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" autoplay muted loop playsinline preload="metadata"><source src="/portfolio/videos/portfolio-video-4.mp4" type="video/mp4"></video></a></div></div>
+                    <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="/portfolio"><video class="home-work-video" muted loop playsinline preload="none" data-deferred-video data-autoplay><source data-src="/portfolio/videos/portfolio-video-4.mp4" type="video/mp4"></video></a></div></div>
                     <div class="content"><h3 class="title"><a href="/portfolio">Mobile App Experience</a></h3><div class="meta"><span class="tag">Mobile App, Product UI</span><span class="date">(2026)</span></div></div>
                   </div>
                 </div>

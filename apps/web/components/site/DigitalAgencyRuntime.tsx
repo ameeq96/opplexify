@@ -208,7 +208,6 @@ function bindAccessibleSideInfo() {
     document.removeEventListener("keydown", handleKeydown);
   };
 }
-
 function dismissLoader(delay = 0) {
   return window.setTimeout(() => {
     const loader = document.querySelector<HTMLElement>(".loader-wrap");
@@ -225,7 +224,7 @@ function dismissLoader(delay = 0) {
   }, delay);
 }
 
-// Swap non-critical stylesheets (shipped with media="print" so they don't block
+// Swap non-critical stylesheets (shipped with media="print" so they do not block
 // the first paint) back to media="all" once the page is interactive.
 function enableDeferredStyles() {
   document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"][data-defer]').forEach((link) => {
@@ -233,17 +232,38 @@ function enableDeferredStyles() {
   });
 }
 
-// The hero background video ships with no src (preload="none", data-src) so its
-// ~2.6MB payload never competes with LCP. Attach + play it once the browser is idle.
-function activateHeroVideo() {
-  document.querySelectorAll<HTMLVideoElement>("video.hero-video").forEach((video) => {
-    const source = video.querySelector<HTMLSourceElement>("source[data-src]");
-    if (source && !source.getAttribute("src")) {
-      source.setAttribute("src", source.dataset.src ?? "");
-      video.load();
-    }
-    void video.play().catch(() => {});
-  });
+function activateDeferredVideo(video: HTMLVideoElement) {
+  const source = video.querySelector<HTMLSourceElement>("source[data-src]");
+  if (source && !source.getAttribute("src")) {
+    source.setAttribute("src", source.dataset.src ?? "");
+    video.load();
+  }
+  if (video.dataset.autoplay !== undefined) void video.play().catch(() => {});
+}
+
+function observeDeferredVideos() {
+  const videos = Array.from(document.querySelectorAll<HTMLVideoElement>("video[data-deferred-video]"));
+  if (!videos.length) return () => {};
+
+  if (!("IntersectionObserver" in window)) {
+    videos.forEach(activateDeferredVideo);
+    return () => {};
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const video = entry.target as HTMLVideoElement;
+        activateDeferredVideo(video);
+        observer.unobserve(video);
+      });
+    },
+    { rootMargin: "360px 0px" }
+  );
+
+  videos.forEach((video) => observer.observe(video));
+  return () => observer.disconnect();
 }
 
 export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", smooth = true }: DigitalAgencyRuntimeProps) {
@@ -252,27 +272,24 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
     let cursorObserver: MutationObserver | undefined;
     let refreshTimeout: number | undefined;
     let loaderFallbackTimeout: number | undefined;
-    let cancelHeroActivate: (() => void) | undefined;
+    let legacyDelayTimeout: number | undefined;
+    let videoDelayTimeout: number | undefined;
+    let legacyIdleId: number | undefined;
+    let removeLoadListener: (() => void) | undefined;
+    let disconnectDeferredVideos: (() => void) | undefined;
     let unbindAccessibleSideInfo: (() => void) | undefined;
+    let legacyStarted = false;
+    let videosStarted = false;
     const bodyClasses = ["body-wrapper", "dark", ...bodyClassName.split(" ").filter(Boolean)];
+    const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "keydown", "touchstart", "wheel"];
 
     window.__opplexifyDigitalAgencyScripts ??= new Set<string>();
     window.__opplexifyDigitalAgencyScriptLoads ??= {};
     document.body.classList.add(...bodyClasses);
 
-    // Non-blocking work that should not wait on the heavy template script chain.
+    // These preserve native navigation, contact forms and visual styling without
+    // waiting for the optional animation/plugin bundle.
     enableDeferredStyles();
-    const idleWindow = window as Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
-    };
-    if (typeof idleWindow.requestIdleCallback === "function") {
-      const id = idleWindow.requestIdleCallback(activateHeroVideo, { timeout: 2500 });
-      cancelHeroActivate = () => idleWindow.cancelIdleCallback?.(id);
-    } else {
-      const id = window.setTimeout(activateHeroVideo, 1200);
-      cancelHeroActivate = () => window.clearTimeout(id);
-    }
 
     const syncSmoother = () => {
       const smoother = window.ScrollSmoother?.get?.();
@@ -314,6 +331,58 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
       }
     };
 
+    const startDeferredVideos = () => {
+      if (videosStarted || !mounted) return;
+      videosStarted = true;
+      if (videoDelayTimeout) window.clearTimeout(videoDelayTimeout);
+      disconnectDeferredVideos = observeDeferredVideos();
+    };
+
+    const removeInteractionListeners = () => {
+      interactionEvents.forEach((eventName) => window.removeEventListener(eventName, startLegacyScripts));
+    };
+
+    function startLegacyScripts() {
+      startDeferredVideos();
+      if (legacyStarted) return;
+      legacyStarted = true;
+      removeInteractionListeners();
+      if (legacyDelayTimeout) window.clearTimeout(legacyDelayTimeout);
+      if (legacyIdleId !== undefined) {
+        (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(legacyIdleId);
+      }
+
+      templateScriptFiles
+        .reduce((promise, file) => promise.then(() => loadTemplateScript(file)), Promise.resolve())
+        .then(() => {
+          if (!mounted) return;
+
+          enableDeferredStyles();
+          fixCursorPath();
+          bindContactForm();
+          refreshRuntime();
+          refreshTimeout = window.setTimeout(refreshRuntime, 250);
+        })
+        .catch((error) => {
+          if (mounted) console.error(error);
+        });
+    }
+
+    const scheduleNonCriticalWork = () => {
+      videoDelayTimeout = window.setTimeout(startDeferredVideos, 8000);
+
+      legacyDelayTimeout = window.setTimeout(() => {
+        const idleWindow = window as Window & {
+          requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
+        };
+        if (typeof idleWindow.requestIdleCallback === "function") {
+          legacyIdleId = idleWindow.requestIdleCallback(startLegacyScripts, { timeout: 2500 });
+        } else {
+          startLegacyScripts();
+        }
+      }, 12000);
+    };
+
     cursorObserver = new MutationObserver(fixCursorPath);
     cursorObserver.observe(document.documentElement, {
       attributes: true,
@@ -322,33 +391,32 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
 
     bindContactForm();
     unbindAccessibleSideInfo = bindAccessibleSideInfo();
-    // Content is server-rendered, so the loader only needs to cover the brief
-    // hydration gap — dismiss it quickly rather than waiting on the script chain.
-    loaderFallbackTimeout = dismissLoader(200);
+    loaderFallbackTimeout = dismissLoader();
 
-    templateScriptFiles
-      .reduce((promise, file) => promise.then(() => loadTemplateScript(file)), Promise.resolve())
-      .then(() => {
-        if (!mounted) return;
+    interactionEvents.forEach((eventName) =>
+      window.addEventListener(eventName, startLegacyScripts, { once: true, passive: true })
+    );
 
-        if (loaderFallbackTimeout) window.clearTimeout(loaderFallbackTimeout);
-        loaderFallbackTimeout = dismissLoader();
-        enableDeferredStyles();
-        activateHeroVideo();
-        fixCursorPath();
-        bindContactForm();
-        refreshRuntime();
-        refreshTimeout = window.setTimeout(refreshRuntime, 250);
-      })
-      .catch((error) => {
-        if (mounted) console.error(error);
-      });
+    if (document.readyState === "complete") {
+      scheduleNonCriticalWork();
+    } else {
+      const handleLoad = () => scheduleNonCriticalWork();
+      window.addEventListener("load", handleLoad, { once: true });
+      removeLoadListener = () => window.removeEventListener("load", handleLoad);
+    }
 
     return () => {
       mounted = false;
+      removeInteractionListeners();
+      removeLoadListener?.();
       if (refreshTimeout) window.clearTimeout(refreshTimeout);
       if (loaderFallbackTimeout) window.clearTimeout(loaderFallbackTimeout);
-      cancelHeroActivate?.();
+      if (legacyDelayTimeout) window.clearTimeout(legacyDelayTimeout);
+      if (videoDelayTimeout) window.clearTimeout(videoDelayTimeout);
+      if (legacyIdleId !== undefined) {
+        (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(legacyIdleId);
+      }
+      disconnectDeferredVideos?.();
       cursorObserver?.disconnect();
       unbindAccessibleSideInfo?.();
       document.body.classList.remove(...bodyClasses);
