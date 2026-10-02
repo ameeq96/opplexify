@@ -217,7 +217,6 @@ function renderContactInfoHtml() {
       <h3 class="title">Before the integration call, please ensure:</h3>
       <p class="contact-value">&#8226; Safepay Sandbox &amp; Production login credentials</p>
       <p class="contact-value">&#8226; Website admin access</p>
-      <a class="contact-value" href="/safepay-demo">&#8226; A test product (~PKR 100) set up</a>
       <p class="contact-value">&#8226; A debit/credit card available for testing</p>
     </div>
     <div class="contact-us__item opplexify-contact-card opplexify-contact-card--wide">

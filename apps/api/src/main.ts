@@ -9,7 +9,6 @@ import { docsAssets, docsHandler, openApiDocument } from "./docs";
 import { assertProductionEnv, isProduction, trustProxyHops, webOrigin } from "./env";
 import { requireTrustedOrigin } from "./auth/auth.middleware";
 import { errorHandler } from "./http";
-import { createSafepayRouter } from "./payments/safepay.routes";
 import { createStreamingSafepayRouter, safepayWebhookHandler } from "./payments/streaming-safepay.routes";
 import { prisma } from "./prisma/prisma.service";
 import { createStreamingRouter } from "./streaming/streaming.routes";
@@ -83,7 +82,6 @@ export function createApiApp() {
     next();
   });
   app.use("/auth", createAuthRouter());
-  app.use("/public/safepay-demo", createSafepayRouter("/public/safepay-demo/return"));
   app.use("/public/safepay", createStreamingSafepayRouter());
   app.use("/public/streaming", createStreamingRouter());
   app.use("/public", createPublicRouter());
