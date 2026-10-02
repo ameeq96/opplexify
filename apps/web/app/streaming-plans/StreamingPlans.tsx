@@ -66,6 +66,23 @@ function createCheckoutKey() {
   return `checkout-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
+function estimateSafepayDeductions(price: number) {
+  const amountMinor = Math.round(price * 100);
+  // Observed USD 11.99 sandbox payment; illustrative proportions, not a fee schedule.
+  // Its USD 0.76 fees already included USD 0.05 tax on processing.
+  const items = [
+    { label: "Processing fee", sampleMinor: 71 },
+    { label: "Tax on processing fee", sampleMinor: 5 },
+    { label: "Income tax withholding", sampleMinor: 12 },
+    { label: "Sales tax withholding", sampleMinor: 24 }
+  ].map(({ label, sampleMinor }) => ({
+    label,
+    amountMinor: Math.round(amountMinor * sampleMinor / 1199)
+  }));
+
+  return { items, totalMinor: items.reduce((total, item) => total + item.amountMinor, 0) };
+}
+
 export function StreamingPlans({ selection, signature, initialStatus }: StreamingPlansProps) {
   const [plan, setPlan] = useState<StreamingPlan | null>(null);
   const [devices, setDevices] = useState<StreamingDevice[]>([]);
@@ -146,6 +163,9 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
     ? `${plan.type === "reseller" && plan.credits ? `${plan.credits} Credits` : plan.durationLabel} Package`
     : "";
   const canCheckout = Boolean(plan && checkoutKey && (!needsDevice || selectedDeviceId));
+  const estimatedDeductions = plan?.currency.toUpperCase() === "USD"
+    ? estimateSafepayDeductions(plan.price)
+    : null;
 
   return (
     <section className={styles.page} aria-labelledby="streaming-checkout-title">
@@ -274,8 +294,31 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 ) : null}
               </dl>
 
+              {estimatedDeductions ? (
+                <section aria-labelledby="estimated-fees-title">
+                  <p id="estimated-fees-title" className={styles.summaryEyebrow}>Estimated fees / taxes</p>
+                  <dl className={styles.summaryDetails}>
+                    {estimatedDeductions.items.map((item) => (
+                      <div key={item.label}>
+                        <dt>{item.label}</dt>
+                        <dd>{formatPrice(item.amountMinor / 100, plan.currency)}</dd>
+                      </div>
+                    ))}
+                    <div>
+                      <dt>Total estimated deductions</dt>
+                      <dd>{formatPrice(estimatedDeductions.totalMinor / 100, plan.currency)}</dd>
+                    </div>
+                  </dl>
+                  <p className={styles.paymentNote}>
+                    Illustrative estimate scaled from a previous USD 11.99 sandbox payment, not a SafePay quote.
+                    Actual fees and taxes may differ. These are estimated deductions from the payment,
+                    not additional charges to you.
+                  </p>
+                </section>
+              ) : null}
+
               <div className={styles.total}>
-                <span>Total</span>
+                <span>Total to pay</span>
                 <strong>{formatPrice(plan.price, plan.currency)}</strong>
               </div>
 
