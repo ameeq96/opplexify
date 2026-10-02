@@ -3,6 +3,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import { Prisma } from "../generated/prisma/client";
 import { webOrigin } from "../env";
 import { createPaymentInvoice } from "./payment-invoice";
+import { invoiceEmailRecipient } from "./invoice-email";
 import { asyncHandler } from "../http";
 import { prisma } from "../prisma/prisma.service";
 import { fetchStreamingCatalog, selectedPackageId, StreamingPlan } from "../streaming/catalog";
@@ -670,9 +671,42 @@ async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse,
   }
 
   // A gateway attempt is complete only after the authoritative IPTV order is persisted.
-  await prisma.streamingOrder.updateMany({
-    where: { id: order.id, status: { not: "PAID" } },
-    data: { status: "PAID", paidAt: new Date() }
+  const verification = verifyReport(report, order.amountMinor, order.currency);
+  const invoiceVerified = environment === "production" && report.data?.environment === "production" &&
+    Boolean(order.safepayTracker) && report.data?.token === order.safepayTracker &&
+    report.data?.metadata?.order_id?.value === order.publicToken &&
+    verification.state === "TRACKER_ENDED" && verification.amountMatches &&
+    Number.isSafeInteger(order.amountMinor) && order.amountMinor > 0 && /^[A-Z]{3}$/.test(order.currency);
+  const recipient = invoiceEmailRecipient(report.data?.customer?.email);
+  await prisma.$transaction(async (tx) => {
+    const paidAt = new Date();
+    const changed = await tx.streamingOrder.updateMany({
+      where: { id: order.id, status: { not: "PAID" } },
+      data: { status: "PAID", paidAt }
+    });
+    if (changed.count !== 1 || !invoiceVerified) return;
+
+    const paidOrder = await tx.streamingOrder.findUnique({ where: { id: order.id } });
+    if (!paidOrder?.paidAt) throw new Error("Invoice payment snapshot is not available");
+    await tx.invoiceEmailDelivery.create({
+      data: {
+        orderId: paidOrder.id,
+        recipient,
+        messageId: `<opplexify-invoice-${paidOrder.id}@opplexify.com>`,
+        status: recipient ? "PENDING" : "FAILED",
+        lastErrorCode: recipient ? null : "INVALID_RECIPIENT",
+        invoiceData: {
+          id: paidOrder.id,
+          packageType: paidOrder.packageType,
+          packageName: paidOrder.packageName,
+          providerName: paidOrder.providerName,
+          durationLabel: paidOrder.durationLabel,
+          amountMinor: paidOrder.amountMinor,
+          currency: paidOrder.currency,
+          paidAt: paidOrder.paidAt.toISOString()
+        }
+      }
+    });
   });
 }
 

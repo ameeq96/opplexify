@@ -344,6 +344,8 @@ model StreamingOrder {
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
 
+  invoiceEmail     InvoiceEmailDelivery?
+
   @@index([status, createdAt], map: "StreamingOrder_status_created_idx")
 }
 
@@ -356,4 +358,24 @@ model SafepayWebhookEvent {
   createdAt   DateTime  @default(now())
 
   @@index([processedAt, createdAt], map: "SafepayWebhookEvent_processed_created_idx")
+}
+
+model InvoiceEmailDelivery {
+  id             String         @id @default(cuid())
+  orderId        String         @unique
+  recipient      String?        @db.VarChar(191)
+  invoiceData    Json
+  messageId      String         @unique @db.VarChar(191)
+  status         String         @default("PENDING") @db.VarChar(24)
+  attempts       Int            @default(0)
+  nextAttemptAt  DateTime        @default(now())
+  claimToken     String?        @db.VarChar(36)
+  leaseExpiresAt DateTime?
+  sentAt         DateTime?
+  lastErrorCode  String?        @db.VarChar(64)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  order          StreamingOrder @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@index([status, nextAttemptAt], map: "InvoiceEmailDelivery_status_next_idx")
 }

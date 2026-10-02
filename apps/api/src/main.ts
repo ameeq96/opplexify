@@ -11,6 +11,7 @@ import { requireTrustedOrigin } from "./auth/auth.middleware";
 import { errorHandler } from "./http";
 import { createStreamingSafepayRouter, safepayWebhookHandler } from "./payments/streaming-safepay.routes";
 import { prisma } from "./prisma/prisma.service";
+import { startInvoiceEmailWorker } from "./payments/invoice-email";
 import { createStreamingRouter } from "./streaming/streaming.routes";
 
 export function createApiApp() {
@@ -90,6 +91,8 @@ export function createApiApp() {
   app.use("/public", createPublicRouter());
   app.use("/admin", requireTrustedOrigin, createAdminRouter());
   app.use(errorHandler);
+
+  startInvoiceEmailWorker();
 
   return app;
 }
