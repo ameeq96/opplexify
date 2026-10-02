@@ -82,6 +82,9 @@ export function createApiApp() {
     next();
   });
   app.use("/auth", createAuthRouter());
+  app.use("/public/safepay-demo", (_req, res) => {
+    res.status(404).json({ message: "Not found" });
+  });
   app.use("/public/safepay", createStreamingSafepayRouter());
   app.use("/public/streaming", createStreamingRouter());
   app.use("/public", createPublicRouter());
