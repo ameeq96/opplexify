@@ -17,7 +17,7 @@ type StaticTemplatePageProps = {
   bodyClassName?: string;
 };
 
-const optimizedLogo = `${A}/imgs/logo/opplexify-logo-light.svg`;
+const optimizedLogo = `${A}/imgs/logo/opplexify-logo-full-v2.png`;
 
 export function optimizeTemplateMediaHtml(html: string) {
   let contentImageIndex = 0;
@@ -26,7 +26,7 @@ export function optimizeTemplateMediaHtml(html: string) {
       /\s*<div class="loader-wrap">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>(?=\s*(?:<!--\s*Sroll to top\s*-->)?\s*<div class="progress-wrap")/gi,
       ""
     )
-    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/opplexify-logo-full(?:-v2)?\.png/g, optimizedLogo)
+    .replace(/\/template-assets\/dark\/assets\/imgs\/logo\/opplexify-logo-(?:full(?:-v2)?\.png|(?:light|dark)\.svg)/g, optimizedLogo)
     .replace(/<img\b([^>]*)>/gi, (tag, attributes: string) => {
       let next = attributes;
       const isLogo = /\/imgs\/logo\//i.test(next);
@@ -40,9 +40,9 @@ export function optimizeTemplateMediaHtml(html: string) {
         if (!/\bwidth=/i.test(next)) next += ' width="300"';
         if (!/\bheight=/i.test(next)) next += ' height="300"';
       }
-      if (/opplexify-logo-light\.svg/i.test(next)) {
-        if (!/\bwidth=/i.test(next)) next += ' width="560"';
-        if (!/\bheight=/i.test(next)) next += ' height="160"';
+      if (/opplexify-logo-full(?:-v2)?\.png/i.test(next)) {
+        if (!/\bwidth=/i.test(next)) next += ' width="1620"';
+        if (!/\bheight=/i.test(next)) next += ' height="624"';
       }
 
       return `<img${next}>`;

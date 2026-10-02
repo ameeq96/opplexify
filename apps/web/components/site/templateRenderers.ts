@@ -107,8 +107,8 @@ export function renderProviderDisclosureHtml() {
 }
 
 export function renderTemplateSideInfoHtml(site: SitePayload) {
-  const logoDark = assetUrl(site.settings.site?.logoDark ?? `${A}/imgs/logo/opplexify-logo-light.svg`).replace(/opplexify-logo-full(?:-v2)?\.png$/, "opplexify-logo-light.svg");
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`).replace(/opplexify-logo-full(?:-v2)?\.png$/, "opplexify-logo-light.svg");
+  const logoDark = assetUrl(site.settings.site?.logoDark ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`).replace(/opplexify-logo-(?:light|dark)\.svg$/, "opplexify-logo-full-v2.png");
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`).replace(/opplexify-logo-(?:light|dark)\.svg$/, "opplexify-logo-full-v2.png");
 
   return `<aside class="fix" aria-label="Navigation and project contact">
   <div class="side-info" id="mobile-navigation" role="dialog" aria-label="Navigation and project contact" aria-modal="true" aria-hidden="true" inert>
@@ -116,8 +116,8 @@ export function renderTemplateSideInfoHtml(site: SitePayload) {
       <div class="offset-widget offset-header">
         <div class="offset-logo">
           <a href="/">
-            <img class="show-light" src="${escapeHtml(logoDark)}" alt="Opplexify logo" width="560" height="160" decoding="async">
-            <img class="show-dark" src="${escapeHtml(logoLight)}" alt="Opplexify logo" width="560" height="160" decoding="async">
+            <img class="show-light" src="${escapeHtml(logoDark)}" alt="Opplexify logo" width="1620" height="624" decoding="async">
+            <img class="show-dark" src="${escapeHtml(logoLight)}" alt="Opplexify logo" width="1620" height="624" decoding="async">
           </a>
         </div>
         <button id="side-info-close" class="side-info-close" type="button" aria-label="Close navigation menu">
@@ -177,14 +177,14 @@ export function renderFooterMenuHtml(items: MenuItem[]) {
 }
 
 export function renderTemplateHeaderHtml(site: SitePayload) {
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`).replace(/opplexify-logo-full(?:-v2)?\.png$/, "opplexify-logo-light.svg");
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`).replace(/opplexify-logo-(?:light|dark)\.svg$/, "opplexify-logo-full-v2.png");
   return `<header class="header-area">
   <div class="header-main">
     <div class="container rr-container-1650">
       <div class="header-area__inner">
         <div class="header__logo">
           <a href="/">
-            <img src="${escapeHtml(logoLight)}" class="normal-logo" alt="Opplexify logo" width="560" height="160" decoding="async">
+            <img src="${escapeHtml(logoLight)}" class="normal-logo" alt="Opplexify logo" width="1620" height="624" decoding="async">
           </a>
         </div>
         <div class="header__shape">
@@ -210,7 +210,7 @@ export function renderTemplateFooterHtml(site: SitePayload) {
   const footer = site.settings.footer ?? {};
   const companyItems = getMenu(site, "footer").length ? getMenu(site, "footer") : getMenu(site, "header");
   const contact = footerContactInfo(site);
-  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-light.svg`).replace(/opplexify-logo-full(?:-v2)?\.png$/, "opplexify-logo-light.svg");
+  const logoLight = assetUrl(site.settings.site?.logoLight ?? `${A}/imgs/logo/opplexify-logo-full-v2.png`).replace(/opplexify-logo-(?:light|dark)\.svg$/, "opplexify-logo-full-v2.png");
   const serviceLinksHtml = footerServiceLinks(footer)
     .map((item) => `<li><a href="${escapeHtml(item.href)}">${escapeHtml(item.label)}</a></li>`)
     .join("");
@@ -221,7 +221,7 @@ export function renderTemplateFooterHtml(site: SitePayload) {
       <div class="footer-widget-wrapper">
         <div class="footer-widget-box content">
           <a href="/" class="footer-logo">
-            <img src="${escapeHtml(logoLight)}" alt="Opplexify logo" width="560" height="160" decoding="async">
+            <img src="${escapeHtml(logoLight)}" alt="Opplexify logo" width="1620" height="624" decoding="async">
           </a>
           <div class="title-wrapper">
             <h2 class="title rr_title_anim">${escapeHtml(footer.headline ?? "Custom software")} <br> ${escapeHtml(footer.headlineLine2 ?? "for startups and")} <br> ${escapeHtml(footer.headlineLine3 ?? "growing businesses")}</h2>
