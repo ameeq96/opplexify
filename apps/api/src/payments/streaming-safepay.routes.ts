@@ -1,4 +1,4 @@
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { NextFunction, Request, Response, Router } from "express";
 import { Prisma } from "../generated/prisma/client";
 import { webOrigin } from "../env";
@@ -29,7 +29,16 @@ type PassportResponse = { data?: string };
 
 type PaymentReportResponse = {
   data?: {
+    token?: string;
+    environment?: string;
     state?: string;
+    customer?: {
+      first_name?: string;
+      last_name?: string;
+      email?: string;
+      phone?: string;
+    };
+    metadata?: { order_id?: { value?: string } };
     purchase_totals?: {
       quote_amount?: {
         amount?: number | string;
@@ -96,6 +105,7 @@ export function createStreamingSafepayRouter() {
           update: {},
           create: {
             checkoutKey,
+            publicToken: `sp2_${randomUUID().replace(/-/g, "")}`,
             sourcePackageId: plan.id,
             packageType: plan.type,
             providerName: plan.providerName,
@@ -113,7 +123,18 @@ export function createStreamingSafepayRouter() {
           return;
         }
 
+        if (requiresIptvStorage(order.publicToken)) {
+          await prepareIptvCheckout(order, deviceId, config.environment);
+        }
+
         if (order.status === "PAID") {
+          if (requiresIptvStorage(order.publicToken)) {
+            const report = await safepayGet<PaymentReportResponse>(
+              config,
+              `/reporter/api/v1/payments/${encodeURIComponent(order.safepayTracker ?? "")}`
+            );
+            await markOrderPaid(order, report, config.environment);
+          }
           checkoutStatus(req, res, order.publicToken, "success");
           return;
         }
@@ -225,7 +246,7 @@ export function createStreamingSafepayRouter() {
         const verification = verifyReport(report, order.amountMinor, order.currency);
 
         if (verification.amountMatches && verification.state === "TRACKER_ENDED") {
-          await markOrderPaid(order.id);
+          await markOrderPaid(order, report, config.environment);
           res.redirect(303, orderStatusUrl(order.publicToken, "success"));
           return;
         }
@@ -351,7 +372,7 @@ export const safepayWebhookHandler = asyncHandler(async (req, res) => {
     return;
   }
 
-  await markOrderPaid(order.id);
+  await markOrderPaid(order, report, config.environment);
   await prisma.safepayWebhookEvent.update({
     where: { id: event.id },
     data: { processedAt: new Date() }
@@ -467,11 +488,97 @@ function findString(value: unknown, keys: string[]): string | null {
   return null;
 }
 
-async function markOrderPaid(orderId: string) {
+type IptvCheckout = {
+  id: string;
+  publicToken: string;
+  sourcePackageId: number;
+  amountMinor: number;
+  currency: string;
+  safepayTracker: string | null;
+};
+
+function requiresIptvStorage(token: string) {
+  // Existing gateway references keep their original callback behavior; only new checkouts use the bridge.
+  return /^sp2_[a-f0-9]{32}$/.test(token);
+}
+
+async function prepareIptvCheckout(order: IptvCheckout, deviceId: number | null, environment: SafepayEnvironment) {
+  const result = await iptvOrderRequest("prepare", {
+    reference: order.publicToken,
+    package_id: order.sourcePackageId,
+    device_id: deviceId,
+    amount_minor: order.amountMinor,
+    currency: order.currency,
+    environment
+  });
+  if (result.prepared !== true) throw new Error("IPTV checkout preparation was not acknowledged");
+}
+
+async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse, environment: SafepayEnvironment) {
+  if (requiresIptvStorage(order.publicToken)) {
+    const verification = verifyReport(report, order.amountMinor, order.currency);
+    if (!order.safepayTracker || report.data?.token !== order.safepayTracker ||
+        report.data.environment !== environment || report.data.metadata?.order_id?.value !== order.publicToken ||
+        verification.state !== "TRACKER_ENDED" || !verification.amountMatches) {
+      throw new Error("SafePay payment does not match the IPTV checkout");
+    }
+
+    // Only the authenticated reporter supplies payer details, never browser input or unsigned webhook fields.
+    const payer = report.data.customer;
+    const firstName = typeof payer?.first_name === "string" ? payer.first_name.trim() : "";
+    const lastName = typeof payer?.last_name === "string" ? payer.last_name.trim() : "";
+    const email = typeof payer?.email === "string" ? payer.email.trim() : "";
+    const phone = typeof payer?.phone === "string" ? payer.phone.trim() : null;
+    if (!(firstName || lastName) || !email) {
+      throw new Error("SafePay customer details are not available for IPTV order storage yet");
+    }
+
+    const saved = await iptvOrderRequest("complete", {
+      reference: order.publicToken,
+      package_id: order.sourcePackageId,
+      amount_minor: order.amountMinor,
+      currency: order.currency,
+      tracker: order.safepayTracker,
+      environment,
+      customer: { first_name: firstName, last_name: lastName, email, phone }
+    });
+    if (!Number.isSafeInteger(saved.order_id) || Number(saved.order_id) <= 0) {
+      throw new Error("IPTV order storage was not acknowledged");
+    }
+  }
+
+  // A gateway attempt is complete only after the authoritative IPTV order is persisted.
   await prisma.streamingOrder.updateMany({
-    where: { id: orderId, status: { not: "PAID" } },
+    where: { id: order.id, status: { not: "PAID" } },
     data: { status: "PAID", paidAt: new Date() }
   });
+}
+
+async function iptvOrderRequest(operation: "prepare" | "complete", payload: Record<string, unknown>): Promise<Record<string, unknown>> {
+  const catalogUrl = process.env.OPPLEX_CATALOG_URL?.trim();
+  const secret = process.env.OPPLEX_HANDOFF_SECRET?.trim();
+  if (!catalogUrl || !secret) throw new Error("IPTV order storage is not configured");
+
+  const path = `/integrations/opplexify/orders/${operation}`;
+  const url = new URL(path, catalogUrl);
+  const body = JSON.stringify(payload);
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const digest = createHash("sha256").update(body).digest("hex");
+  const signature = createHmac("sha256", secret).update(`POST\n${path}\n${timestamp}\n${digest}`).digest("hex");
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-Opplexify-Timestamp": timestamp,
+      "X-Opplexify-Signature": signature
+    },
+    body,
+    redirect: "error",
+    signal: AbortSignal.timeout(10_000)
+  });
+  if (!response.ok) throw new Error(`IPTV order ${operation} failed with HTTP ${response.status}`);
+  return (await response.json()) as Record<string, unknown>;
 }
 
 function matchesPlan(order: { sourcePackageId: number; amountMinor: number; currency: string; packageType: string }, plan: StreamingPlan, amountMinor: number) {
