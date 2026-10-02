@@ -11,6 +11,11 @@ const dev = process.env.NODE_ENV !== "production";
 const webDir = path.join(__dirname, "apps/web");
 const preferredHost = "opplexify.com";
 const localHosts = new Set(["localhost", "127.0.0.1", "::1"]);
+const allowedProductionHosts = new Set([
+  preferredHost,
+  `www.${preferredHost}`,
+  ...(process.env.ALLOWED_HOSTS || "").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean)
+]);
 
 process.env.INTERNAL_API_URL = process.env.INTERNAL_API_URL || `http://127.0.0.1:${port}`;
 
@@ -46,9 +51,17 @@ async function start() {
 
   const server = express();
   server.disable("x-powered-by");
-  server.set("trust proxy", true);
+  const configuredProxyHops = Number(process.env.TRUST_PROXY_HOPS || (dev ? 0 : 1));
+  const trustProxyHops = Number.isSafeInteger(configuredProxyHops) && configuredProxyHops >= 0 && configuredProxyHops <= 5
+    ? configuredProxyHops
+    : (dev ? 0 : 1);
+  server.set("trust proxy", trustProxyHops);
   server.use((req, res, nextMiddleware) => {
     const host = String(req.headers.host || "").split(":")[0].toLowerCase();
+    if (!dev && !allowedProductionHosts.has(host)) {
+      res.setHeader("Cache-Control", "no-store");
+      return res.status(400).send("Bad Request");
+    }
     if (!host || localHosts.has(host)) return nextMiddleware();
 
     const forwardedProto = String(req.headers["x-forwarded-proto"] || req.protocol || "")
@@ -87,8 +100,6 @@ async function start() {
 
   server.use(createApiApp());
   server.use((req, res) => {
-    res.removeHeader("Content-Security-Policy");
-    res.removeHeader("Content-Security-Policy-Report-Only");
     handle(req, res);
   });
 

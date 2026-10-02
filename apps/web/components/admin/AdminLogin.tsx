@@ -24,6 +24,7 @@ export function AdminLogin() {
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
@@ -35,7 +36,6 @@ export function AdminLogin() {
             : "Login failed";
         throw new Error(payload.message ?? fallback);
       }
-      localStorage.setItem("opplexify_token", payload.accessToken);
       window.location.href = "/admin";
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Login failed");

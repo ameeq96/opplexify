@@ -35,7 +35,7 @@ type PaymentReportResponse = {
   };
 };
 
-export function createSafepayRouter() {
+export function createSafepayRouter(returnPath = "/public/safepay/return") {
   const router = Router();
   const checkoutRateLimit = createCheckoutRateLimit();
   const pendingTrackers = new Map<string, { expiresAt: number }>();
@@ -84,7 +84,7 @@ export function createSafepayRouter() {
         checkoutUrl.searchParams.set("tracker", tracker);
         checkoutUrl.searchParams.set("source", "hosted");
         checkoutUrl.searchParams.set("order_id", orderId);
-        checkoutUrl.searchParams.set("redirect_url", absoluteWebUrl("/public/safepay/return"));
+        checkoutUrl.searchParams.set("redirect_url", absoluteWebUrl(returnPath));
         checkoutUrl.searchParams.set("cancel_url", absoluteWebUrl("/safepay-demo?status=cancelled"));
 
         res.redirect(303, checkoutUrl.toString());

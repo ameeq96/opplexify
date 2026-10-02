@@ -240,7 +240,13 @@ export class CmsService {
       model.count({ where })
     ]);
 
-    return { items, total, page, limit, pages: Math.ceil(total / limit) };
+    return {
+      items: items.map((item: Record<string, unknown>) => this.serialize(resourceName, item)),
+      total,
+      page,
+      limit,
+      pages: Math.ceil(total / limit)
+    };
   }
 
   async find(resourceName: string, id: string) {
@@ -250,27 +256,31 @@ export class CmsService {
       include: this.includeForResource(resourceName)
     });
     if (!item) throw new HttpError(404, "Item not found");
-    return item;
+    return this.serialize(resourceName, item);
   }
 
   async create(resourceName: string, body: Record<string, unknown>, userId?: string) {
     const config = this.resource(resourceName);
     const data = await this.normalize(resourceName, body, userId);
-    return this.delegate(config).create({ data, include: this.includeForResource(resourceName) });
+    const item = await this.delegate(config).create({ data, include: this.includeForResource(resourceName) });
+    return this.serialize(resourceName, item);
   }
 
   async update(resourceName: string, id: string, body: Record<string, unknown>, userId?: string) {
     const config = this.resource(resourceName);
     const data = await this.normalize(resourceName, body, userId, true);
-    return this.delegate(config).update({ where: { id }, data, include: this.includeForResource(resourceName) });
+    const item = await this.delegate(config).update({ where: { id }, data, include: this.includeForResource(resourceName) });
+    return this.serialize(resourceName, item);
   }
 
   async remove(resourceName: string, id: string) {
     const config = this.resource(resourceName);
     if (config.softDelete) {
-      return this.delegate(config).update({ where: { id }, data: { deletedAt: new Date() } });
+      const item = await this.delegate(config).update({ where: { id }, data: { deletedAt: new Date() } });
+      return this.serialize(resourceName, item);
     }
-    return this.delegate(config).delete({ where: { id } });
+    const item = await this.delegate(config).delete({ where: { id } });
+    return this.serialize(resourceName, item);
   }
 
   async createMedia(file: UploadedMediaFile, body: Record<string, string>, userId?: string) {
@@ -315,8 +325,18 @@ export class CmsService {
     isUpdate = false
   ) {
     const data = { ...body };
-    for (const key of ["id", "createdAt", "updatedAt", "deletedAt", "category", "author", "tags", "sections", "items"]) {
+    for (const key of ["id", "createdAt", "updatedAt", "deletedAt", "category", "author", "tags", "sections", "items", "resetToken", "resetTokenExpiresAt"]) {
       delete data[key];
+    }
+
+    for (const [key, value] of Object.entries(data)) {
+      if (
+        typeof value === "string" &&
+        /(url|image|avatar)$/i.test(key) &&
+        /^(?:javascript|vbscript|data):/i.test(value.trim())
+      ) {
+        throw new HttpError(422, `${key} contains an unsafe URL scheme`);
+      }
     }
 
     if (sluggedResources.has(resourceName)) {
@@ -358,6 +378,12 @@ export class CmsService {
     if (resourceName === "media" && userId && !isUpdate) data.createdById = userId;
 
     return data;
+  }
+
+  private serialize(resourceName: string, item: Record<string, unknown>) {
+    if (resourceName !== "users") return item;
+    const { password: _password, resetToken: _resetToken, resetTokenExpiresAt: _resetTokenExpiresAt, ...safe } = item;
+    return safe;
   }
 }
 

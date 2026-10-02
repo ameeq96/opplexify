@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { asyncHandler } from "../http";
+import { adminSessionCookie, adminSessionMaxAgeMs, isProduction } from "../env";
 import { AuthService } from "./auth.service";
-import { authenticateJwt } from "./auth.middleware";
+import { authenticateJwt, requireTrustedOrigin } from "./auth.middleware";
 import {
   validateForgotPasswordDto,
   validateLoginDto,
@@ -17,14 +18,26 @@ export function createAuthRouter(auth = new AuthService()) {
 
   router.post(
     "/login",
+    requireTrustedOrigin,
     loginRateLimit,
     asyncHandler(async (req, res) => {
-      res.json(await auth.login(validateLoginDto(req.body)));
+      const { accessToken, ...payload } = await auth.login(validateLoginDto(req.body));
+      res.cookie(adminSessionCookie, accessToken, {
+        ...adminCookieOptions(),
+        maxAge: adminSessionMaxAgeMs
+      });
+      res.json(payload);
     })
   );
 
+  router.post("/logout", requireTrustedOrigin, (_req, res) => {
+    res.clearCookie(adminSessionCookie, adminCookieOptions());
+    res.status(204).end();
+  });
+
   router.post(
     "/forgot-password",
+    requireTrustedOrigin,
     forgotPasswordRateLimit,
     asyncHandler(async (req, res) => {
       res.json(await auth.forgotPassword(validateForgotPasswordDto(req.body)));
@@ -33,6 +46,7 @@ export function createAuthRouter(auth = new AuthService()) {
 
   router.post(
     "/reset-password",
+    requireTrustedOrigin,
     resetPasswordRateLimit,
     asyncHandler(async (req, res) => {
       res.json(await auth.resetPassword(validateResetPasswordDto(req.body)));
@@ -50,12 +64,22 @@ export function createAuthRouter(auth = new AuthService()) {
   router.patch(
     "/profile",
     authenticateJwt,
+    requireTrustedOrigin,
     asyncHandler(async (req, res) => {
       res.json(await auth.updateProfile(req.user!.id, validateUpdateProfileDto(req.body)));
     })
   );
 
   return router;
+}
+
+function adminCookieOptions() {
+  return {
+    httpOnly: true,
+    path: "/",
+    sameSite: "strict" as const,
+    secure: isProduction
+  };
 }
 
 function createIpRateLimit(windowMs: number, maxRequests: number) {

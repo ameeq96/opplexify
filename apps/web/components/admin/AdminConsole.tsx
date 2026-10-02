@@ -345,7 +345,8 @@ export function AdminConsole() {
   const statusField = resource.fields.find((field) => field.name === "status" && field.options?.length);
 
   useEffect(() => {
-    setToken(localStorage.getItem("opplexify_token"));
+    localStorage.removeItem("opplexify_token");
+    setToken("secure-cookie");
   }, []);
 
   useEffect(() => {
@@ -374,9 +375,9 @@ export function AdminConsole() {
   async function authed(path: string, init?: RequestInit) {
     const response = await fetch(`${API_URL}${path}`, {
       ...init,
+      credentials: "include",
       headers: {
         ...(init?.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
-        Authorization: `Bearer ${token}`,
         ...(init?.headers ?? {})
       }
     });
@@ -566,8 +567,8 @@ export function AdminConsole() {
     }
   }
 
-  function logout() {
-    localStorage.removeItem("opplexify_token");
+  async function logout() {
+    await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "include" }).catch(() => undefined);
     window.location.href = "/admin/login";
   }
 

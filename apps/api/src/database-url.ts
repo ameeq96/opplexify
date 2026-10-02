@@ -56,7 +56,7 @@ export function databasePoolConfig(fallback = DEFAULT_DATABASE_URL) {
       user: decodeURIComponent(url.username),
       password: decodeURIComponent(url.password),
       database: decodeURIComponent(url.pathname.replace(/^\/+/, "")),
-      allowPublicKeyRetrieval: url.searchParams.get("allowPublicKeyRetrieval") !== "false",
+      allowPublicKeyRetrieval: url.searchParams.get("allowPublicKeyRetrieval") === "true",
       prepareCacheLength: 0
     };
 
@@ -86,9 +86,9 @@ function splitHostPort(value: string) {
 function normalizeMysqlUrl(connectionString: string) {
   try {
     const url = new URL(connectionString);
-    const allowPublicKeyRetrieval = process.env.DB_ALLOW_PUBLIC_KEY_RETRIEVAL ?? "true";
+    const allowPublicKeyRetrieval = process.env.DB_ALLOW_PUBLIC_KEY_RETRIEVAL ?? "false";
 
-    if (url.protocol.startsWith("mysql") && !url.searchParams.has("allowPublicKeyRetrieval") && allowPublicKeyRetrieval !== "false") {
+    if (url.protocol.startsWith("mysql") && !url.searchParams.has("allowPublicKeyRetrieval")) {
       url.searchParams.set("allowPublicKeyRetrieval", allowPublicKeyRetrieval);
     }
 

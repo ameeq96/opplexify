@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@adon/shared": "1.0.0",
-    "@prisma/adapter-mariadb": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-mariadb": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "@types/swagger-ui-express": "^4.1.8",
     "bcryptjs": "^3.0.2",
     "compression": "^1.8.1",
@@ -19,7 +19,7 @@
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^2.0.2",
+    "multer": "^2.4.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {

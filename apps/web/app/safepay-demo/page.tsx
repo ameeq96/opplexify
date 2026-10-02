@@ -76,7 +76,7 @@ export default async function SafepayDemoPage({ searchParams }: SafepayDemoPageP
                     Use any future expiry date and CVV 123. Never enter a real card in Sandbox.
                   </p>
                 </div>
-                <form action="/public/safepay/checkout" method="post" style={{ marginTop: "24px" }}>
+                <form action="/public/safepay-demo/checkout" method="post" style={{ marginTop: "24px" }}>
                   <button className="pricing-btn" type="submit" style={{ width: "100%" }}>
                     Pay PKR 100 in Sandbox
                   </button>

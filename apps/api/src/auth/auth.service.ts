@@ -1,9 +1,9 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import * as bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { HttpError } from "../http";
 import { prisma as defaultPrisma, PrismaService } from "../prisma/prisma.service";
-import { jwtExpiresIn, jwtSecret } from "../env";
+import { jwtAudience, jwtExpiresIn, jwtIssuer, jwtSecret } from "../env";
 import { ForgotPasswordDto, LoginDto, ResetPasswordDto, UpdateProfileDto } from "./dto/login.dto";
 
 export class AuthService {
@@ -36,7 +36,12 @@ export class AuthService {
     };
 
     return {
-      accessToken: jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn as jwt.SignOptions["expiresIn"] }),
+      accessToken: jwt.sign(payload, jwtSecret, {
+        algorithm: "HS256",
+        audience: jwtAudience,
+        expiresIn: jwtExpiresIn as jwt.SignOptions["expiresIn"],
+        issuer: jwtIssuer
+      }),
       user: {
         id: user.id,
         email: user.email,
@@ -64,11 +69,12 @@ export class AuthService {
 
   async forgotPassword(dto: ForgotPasswordDto) {
     const token = randomBytes(24).toString("hex");
+    const tokenHash = createHash("sha256").update(token).digest("hex");
     const resetTokenExpiresAt = new Date(Date.now() + 1000 * 60 * 30);
 
     await this.prisma.user.updateMany({
       where: { email: dto.email, deletedAt: null },
-      data: { resetToken: token, resetTokenExpiresAt }
+      data: { resetToken: tokenHash, resetTokenExpiresAt }
     });
 
     return {
@@ -78,9 +84,10 @@ export class AuthService {
   }
 
   async resetPassword(dto: ResetPasswordDto) {
+    const tokenHash = createHash("sha256").update(dto.token).digest("hex");
     const user = await this.prisma.user.findFirst({
       where: {
-        resetToken: dto.token,
+        resetToken: tokenHash,
         resetTokenExpiresAt: { gt: new Date() },
         deletedAt: null
       }
