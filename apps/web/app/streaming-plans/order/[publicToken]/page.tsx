@@ -124,7 +124,18 @@ export default async function OrderStatusPage({ params }: OrderStatusPageProps) 
                 </dl>
               ) : null}
 
+              {order?.status === "PAID" ? (
+                <p className={styles.orderMessage}>
+                  Download your invoice below, then attach the PDF in WhatsApp or another app to share it.
+                </p>
+              ) : null}
+
               <div className={styles.orderActions}>
+                {order?.status === "PAID" ? (
+                  <a className={styles.primaryLink} href={`/public/safepay/invoice/${encodeURIComponent(order.token)}`}>
+                    Download invoice (PDF)
+                  </a>
+                ) : null}
                 <a className={styles.primaryLink} href="https://opplexiptv.com/packages">
                   Choose package
                 </a>

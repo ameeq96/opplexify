@@ -2,6 +2,7 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from "node:crypto
 import { NextFunction, Request, Response, Router } from "express";
 import { Prisma } from "../generated/prisma/client";
 import { webOrigin } from "../env";
+import { createPaymentInvoice } from "./payment-invoice";
 import { asyncHandler } from "../http";
 import { prisma } from "../prisma/prisma.service";
 import { fetchStreamingCatalog, selectedPackageId, StreamingPlan } from "../streaming/catalog";
@@ -26,6 +27,17 @@ type PaymentSessionResponse = {
 };
 
 type PassportResponse = { data?: string };
+
+const liveTestPlan = {
+  id: 0,
+  type: "test_payment",
+  providerName: "Opplexify",
+  name: "PKR 50 Test Payment",
+  durationLabel: "One-time live test",
+  price: 50,
+  currency: "PKR",
+  available: true
+};
 
 type PaymentReportResponse = {
   data?: {
@@ -52,23 +64,121 @@ export function createStreamingSafepayRouter() {
   const router = Router();
   const checkoutRateLimit = createCheckoutRateLimit();
 
+  router.get("/invoice/:publicToken", asyncHandler(async (req, res) => {
+    res.set("Cache-Control", "private, no-store");
+    res.set("X-Robots-Tag", "noindex, nofollow");
+    const token = typeof req.params.publicToken === "string" ? req.params.publicToken : "";
+    if (!/^(?:sp2_[a-f0-9]{32}|spt_[a-f0-9]{32}|c[a-z0-9]{24,31})$/.test(token)) {
+      res.status(404).send("Invoice not found");
+      return;
+    }
+
+    const order = await prisma.streamingOrder.findUnique({ where: { publicToken: token } });
+    if (!order) {
+      res.status(404).send("Invoice not found");
+      return;
+    }
+    if (order.status !== "PAID" || !order.paidAt || !order.safepayTracker ||
+        !Number.isSafeInteger(order.amountMinor) || order.amountMinor <= 0 ||
+        !/^[A-Z]{3}$/.test(order.currency)) {
+      res.status(409).send("An invoice is available only after payment has been verified.");
+      return;
+    }
+
+    const config = safepayConfig();
+    if (!config || config.environment !== "production") {
+      res.status(503).send("Paid invoices are available only for verified live payments.");
+      return;
+    }
+
+    try {
+      const report = await safepayGet<PaymentReportResponse>(
+        config,
+        `/reporter/api/v1/payments/${encodeURIComponent(order.safepayTracker)}`,
+        5_000
+      );
+      const verification = verifyReport(report, order.amountMinor, order.currency);
+      if (report.data?.environment !== "production" || report.data?.token !== order.safepayTracker ||
+          report.data?.metadata?.order_id?.value !== order.publicToken ||
+          verification.state !== "TRACKER_ENDED" || !verification.amountMatches) {
+        res.status(409).send("This payment could not be verified for a paid invoice. Please contact support.");
+        return;
+      }
+
+      const pdf = await createPaymentInvoice({ ...order, paidAt: order.paidAt });
+      res.set("Content-Disposition", `attachment; filename="Opplexify-invoice-${order.id.replace(/[^A-Za-z0-9_-]/g, "")}.pdf"`);
+      res.type("application/pdf").send(pdf);
+    } catch {
+      res.status(503).send("The invoice is temporarily unavailable. Please try again shortly.");
+    }
+  }));
+
+  router.all("/test-payment", (_req, res) => {
+    res.set("Cache-Control", "no-store");
+    res.set("X-Robots-Tag", "noindex, nofollow");
+    res.status(410).send("This test payment is no longer available.");
+  });
+
+  router.get("/test-payment/orders/:publicToken", asyncHandler(async (req, res) => {
+    const token = typeof req.params.publicToken === "string" ? req.params.publicToken : "";
+    if (!/^spt_[a-f0-9]{32}$/.test(token)) {
+      res.status(404).send("Not found");
+      return;
+    }
+
+    const order = await prisma.streamingOrder.findUnique({ where: { publicToken: token } });
+    if (!order || order.packageType !== liveTestPlan.type || order.sourcePackageId !== 0 ||
+        order.currency !== "PKR" || order.amountMinor !== 5000) {
+      res.status(404).send("Not found");
+      return;
+    }
+
+    const paid = order.status === "PAID";
+    const failed = order.status === "FAILED" || order.status === "CANCELLED";
+    const title = paid ? "Test payment confirmed" : failed ? "Test payment not confirmed" : "Payment confirmation pending";
+    liveTestPage(res, title, `
+      <p class="badge">LIVE PAYMENT TEST</p>
+      <h1>${title}</h1>
+      <p>${paid
+        ? "SafePay has verified your real PKR 50.00 test payment. No subscription or other service will be activated."
+        : "This payment has not been verified as paid. If your bank shows a debit, do not pay again; refresh this page or contact support."}</p>
+      <dl><dt>Product</dt><dd>PKR 50 Test Payment</dd><dt>Total</dt><dd>PKR 50.00</dd><dt>Order reference</dt><dd>${token}</dd></dl>
+      ${paid ? `<p><a href="/public/safepay/invoice/${token}">Download invoice (PDF)</a></p>
+      <p class="note">Download the PDF and attach it in WhatsApp or another app to share it.</p>` : ""}
+      <a href="/public/safepay/test-payment/orders/${token}">Refresh payment status</a>
+    `);
+  }));
+
   router.post(
     "/checkout",
     checkoutRateLimit,
     asyncHandler(async (req, res) => {
-      const packageId = Number(req.body?.package_id);
-      const deviceId = req.body?.device_id === undefined || req.body?.device_id === ""
+      const isLiveTest = req.path === "/test-payment";
+      const testAccess = isLiveTest ? liveTestAccess(req.body) : null;
+      const packageId = isLiveTest ? 0 : Number(req.body?.package_id);
+      const deviceId = isLiveTest || req.body?.device_id === undefined || req.body?.device_id === ""
         ? null
         : Number(req.body.device_id);
-      const checkoutKey = typeof req.body?.checkout_key === "string" ? req.body.checkout_key.trim() : "";
+      const checkoutKey = testAccess
+        ? `live_test_${testAccess.token}`
+        : typeof req.body?.checkout_key === "string" ? req.body.checkout_key.trim() : "";
       const selection = typeof req.body?.selection === "string" ? req.body.selection.trim() : "";
       const signature = typeof req.body?.signature === "string" ? req.body.signature.trim() : "";
       const config = safepayConfig();
 
+      if (isLiveTest && (!testAccess || config?.environment !== "production")) {
+        res.status(404).send("Not found");
+        return;
+      }
+      if (isLiveTest && (req.get("Origin") !== webOrigin || req.body?.confirm_live !== "yes")) {
+        res.status(403).send("Open the private test link and confirm the live payment before continuing.");
+        return;
+      }
+
       if (
         !config ||
         !Number.isSafeInteger(packageId) ||
-        packageId <= 0 ||
+        (!isLiveTest && packageId <= 0) ||
         !/^[A-Za-z0-9_-]{16,128}$/.test(checkoutKey)
       ) {
         checkoutError(req, res, 422);
@@ -79,24 +189,26 @@ export function createStreamingSafepayRouter() {
       let checkoutClaimAt: Date | null = null;
 
       try {
-        const catalog = await fetchStreamingCatalog();
-        const signedPackageId = selectedPackageId(selection, signature, catalog.plans);
-        const plan = catalog.plans.find((entry) => entry.id === packageId && entry.available);
-        if (!plan || signedPackageId !== packageId) {
+        const catalog = isLiveTest ? null : await fetchStreamingCatalog();
+        const signedPackageId = catalog ? selectedPackageId(selection, signature, catalog.plans) : null;
+        const plan = isLiveTest
+          ? liveTestPlan
+          : catalog?.plans.find((entry) => entry.id === packageId && entry.available);
+        if (!plan || (!isLiveTest && signedPackageId !== packageId)) {
           checkoutError(req, res, 404);
           return;
         }
 
         const device = deviceId === null
           ? null
-          : catalog.devices.find((entry) => entry.id === deviceId) ?? null;
+          : catalog?.devices.find((entry) => entry.id === deviceId) ?? null;
         if ((plan.type === "plan" && !device) || (plan.type === "reseller" && deviceId !== null)) {
           checkoutError(req, res, 422);
           return;
         }
 
         const amountMinor = checkoutAmountMinor(plan);
-        if (plan.currency.toUpperCase() === "USD" && Number(req.body?.quoted_total_minor) !== amountMinor) {
+        if ((isLiveTest || plan.currency.toUpperCase() === "USD") && Number(req.body?.quoted_total_minor) !== amountMinor) {
           checkoutError(req, res, 409);
           return;
         }
@@ -105,7 +217,7 @@ export function createStreamingSafepayRouter() {
           update: {},
           create: {
             checkoutKey,
-            publicToken: `sp2_${randomUUID().replace(/-/g, "")}`,
+            publicToken: `${isLiveTest ? "spt" : "sp2"}_${randomUUID().replace(/-/g, "")}`,
             sourcePackageId: plan.id,
             packageType: plan.type,
             providerName: plan.providerName,
@@ -515,6 +627,16 @@ async function prepareIptvCheckout(order: IptvCheckout, deviceId: number | null,
 }
 
 async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse, environment: SafepayEnvironment) {
+  if (/^spt_[a-f0-9]{32}$/.test(order.publicToken)) {
+    const verification = verifyReport(report, 5000, "PKR");
+    if (environment !== "production" || order.sourcePackageId !== 0 || order.amountMinor !== 5000 ||
+        order.currency !== "PKR" || !order.safepayTracker || report.data?.token !== order.safepayTracker ||
+        report.data.environment !== environment || report.data.metadata?.order_id?.value !== order.publicToken ||
+        verification.state !== "TRACKER_ENDED" || !verification.amountMatches) {
+      throw new Error("SafePay payment does not match the live test checkout");
+    }
+  }
+
   if (requiresIptvStorage(order.publicToken)) {
     const verification = verifyReport(report, order.amountMinor, order.currency);
     if (!order.safepayTracker || report.data?.token !== order.safepayTracker ||
@@ -581,7 +703,7 @@ async function iptvOrderRequest(operation: "prepare" | "complete", payload: Reco
   return (await response.json()) as Record<string, unknown>;
 }
 
-function matchesPlan(order: { sourcePackageId: number; amountMinor: number; currency: string; packageType: string }, plan: StreamingPlan, amountMinor: number) {
+function matchesPlan(order: { sourcePackageId: number; amountMinor: number; currency: string; packageType: string }, plan: Pick<StreamingPlan, "id" | "currency"> & { type: string }, amountMinor: number) {
   return order.sourcePackageId === plan.id && order.packageType === plan.type && order.amountMinor === amountMinor && order.currency === plan.currency;
 }
 
@@ -591,7 +713,7 @@ function toMinorUnits(amount: number) {
   return value;
 }
 
-function checkoutAmountMinor(plan: StreamingPlan) {
+function checkoutAmountMinor(plan: Pick<StreamingPlan, "price" | "currency">) {
   const baseMinor = toMinorUnits(plan.price);
   // Match the disclosed estimate in StreamingPlans; not SafePay's confirmed fee schedule.
   const surchargeMinor = plan.currency.toUpperCase() === "USD"
@@ -607,6 +729,7 @@ function absoluteWebUrl(path: string) {
 }
 
 function orderStatusUrl(token: string, status: string) {
+  if (/^spt_[a-f0-9]{32}$/.test(token)) return `/public/safepay/test-payment/orders/${token}`;
   return `/streaming-plans/order/${encodeURIComponent(token)}?status=${encodeURIComponent(status)}`;
 }
 
@@ -627,7 +750,46 @@ function checkoutError(req: Request, res: Response, statusCode: number, token?: 
     res.status(statusCode).json({ message: "Checkout could not be started", orderToken: token ?? null });
     return;
   }
+  if (req.path === "/test-payment" && !token) {
+    res.status(statusCode).send("The live test checkout could not be started. Reopen your private test link to try again.");
+    return;
+  }
   res.redirect(303, token ? orderStatusUrl(token, "unavailable") : "/checkout?status=unavailable");
+}
+
+function liveTestAccess(input: unknown) {
+  if (!input || typeof input !== "object" || Array.isArray(input)) return null;
+  const values = input as Record<string, unknown>;
+  const token = values.test_token;
+  const expires = values.test_expires;
+  const signature = values.test_signature;
+  const secret = process.env.OPPLEX_HANDOFF_SECRET?.trim();
+  if (!secret || typeof token !== "string" || !/^[a-f0-9]{32}$/.test(token) ||
+      typeof expires !== "string" || !/^\d{10}$/.test(expires) ||
+      typeof signature !== "string" || !/^[a-f0-9]{64}$/.test(signature)) return null;
+
+  const now = Math.floor(Date.now() / 1000);
+  if (Number(expires) <= now || Number(expires) > now + 86_400) return null;
+  const expected = createHmac("sha256", secret)
+    .update(`opplexify:live-test-payment:v1\nPKR\n5000\n${token}\n${expires}`)
+    .digest();
+  const supplied = Buffer.from(signature, "hex");
+  if (!timingSafeEqual(supplied, expected)) return null;
+  return { token, expires, signature };
+}
+
+function liveTestPage(res: Response, title: string, body: string) {
+  res.set({
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex, nofollow, noarchive",
+    "Referrer-Policy": "strict-origin",
+    "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self' https://getsafepay.com; frame-ancestors 'none'; base-uri 'none'"
+  });
+  res.type("html").send(`<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>${title} | Opplexify</title>
+<style>body{margin:0;background:#151515;color:#f6f6f6;font:17px/1.6 system-ui,sans-serif}main{max-width:620px;margin:6vh auto;padding:32px;border:1px solid #444;border-radius:22px;background:#222}h1{line-height:1.2}.badge,a{color:#68b4ff}.badge{font-weight:700}button{display:block;width:100%;margin:24px 0;padding:16px;border:0;border-radius:12px;background:#198beb;color:#fff;font:700 18px system-ui;cursor:pointer}label{display:block}.note,dt{color:#bbb;font-size:14px}dd{margin:0 0 16px;overflow-wrap:anywhere}input[type=checkbox]{width:18px;height:18px;margin-right:8px}@media(max-width:700px){main{margin:24px 16px;padding:24px}}</style></head>
+<body><main>${body}</main></body></html>`);
 }
 
 function createCheckoutRateLimit() {
