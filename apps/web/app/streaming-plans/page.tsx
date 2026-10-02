@@ -4,9 +4,9 @@ import { seoMetadata } from "../../lib/seo";
 import { StreamingPlans } from "./StreamingPlans";
 
 export const metadata: Metadata = seoMetadata({
-  title: "Secure Digital TV Checkout | Opplexify",
+  title: "Secure Digital Subscription Checkout | Opplexify",
   description:
-    "Review your selected digital TV streaming package, confirm your device and continue to secure SafePay checkout.",
+    "Review your selected digital subscription package, confirm your device and continue to secure SafePay checkout.",
   path: "/streaming-plans"
 });
 

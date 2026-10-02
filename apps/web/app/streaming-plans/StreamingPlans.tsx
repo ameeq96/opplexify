@@ -143,7 +143,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   const statusMessage = initialStatus ? statusMessages[initialStatus] : undefined;
   const needsDevice = plan?.type === "plan";
   const displayPackageName = plan
-    ? needsDevice ? `${plan.durationLabel} Package` : digitalTvText(plan.name)
+    ? `${plan.type === "reseller" && plan.credits ? `${plan.credits} Credits` : plan.durationLabel} Package`
     : "";
   const canCheckout = Boolean(plan && checkoutKey && (!needsDevice || selectedDeviceId));
 
@@ -193,8 +193,8 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
                 <div className={styles.selectedPackage}>
                   <div>
-                    <span>{needsDevice ? "Service" : "Provider"}</span>
-                    <strong>{needsDevice ? "Digital Subscription" : digitalTvText(plan.providerName)}</strong>
+                    <span>Service</span>
+                    <strong>Digital Subscription</strong>
                   </div>
                   <div>
                     <span>Package</span>
@@ -252,8 +252,8 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
               <dl className={styles.summaryDetails}>
                 <div>
-                  <dt>{needsDevice ? "Service" : "Provider"}</dt>
-                  <dd>{needsDevice ? "Digital Subscription" : digitalTvText(plan.providerName)}</dd>
+                  <dt>Service</dt>
+                  <dd>Digital Subscription</dd>
                 </div>
                 <div>
                   <dt>{plan.type === "reseller" ? "Package" : "Duration"}</dt>

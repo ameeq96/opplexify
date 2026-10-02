@@ -100,12 +100,12 @@ export default async function OrderStatusPage({ params }: OrderStatusPageProps) 
               {order ? (
                 <dl className={styles.orderDetails}>
                   <div>
-                    <dt>Provider</dt>
-                    <dd>{digitalTvText(order.providerName)}</dd>
+                    <dt>Service</dt>
+                    <dd>Digital Subscription</dd>
                   </div>
                   <div>
                     <dt>Package</dt>
-                    <dd>{digitalTvText(order.packageName)}</dd>
+                    <dd>{order.durationLabel ? `${order.durationLabel} Package` : "Subscription Package"}</dd>
                   </div>
                   {order.durationLabel ? (
                     <div>
