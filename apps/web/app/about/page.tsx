@@ -181,7 +181,7 @@ function renderTeam(_section: Section | undefined, team: TeamMember[]) {
 
   return `<div class="team-wrapper fade-anim">
     <div class="team-box-1 fade-anim">
-      <div class="thumb"><a href="/team/muhammad-emmad-khan"><img src="${escapeHtml(assetUrl(founder.image))}" alt="${escapeHtml(FOUNDER_NAME)}"></a></div>
+      <div class="thumb"><a href="/team/muhammad-emmad-khan"><img src="${escapeHtml(assetUrl(founder.image))}" alt="${escapeHtml(FOUNDER_NAME)}" loading="lazy" decoding="async"></a></div>
       <div class="content"><h3 class="name"><a href="/team/muhammad-emmad-khan">${escapeHtml(FOUNDER_NAME)}</a></h3><span class="post">Founder and Owner</span></div>
     </div>
   </div>`;
@@ -258,6 +258,7 @@ export default async function AboutPage() {
 
   return (
     <>
+      <link rel="preload" as="image" href="/template-assets/dark/assets/imgs/gallery/gallery-s-1.webp" fetchPriority="high" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbList([{ name: "Home", path: "/" }, { name: "About", path: "/about" }])) }} />
       <StaticTemplatePage html={applyAboutCms(aboutPageWithProviderHtml, page, team)} bodyClassName="body-about-us" />

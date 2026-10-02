@@ -36,6 +36,10 @@ export function optimizeTemplateMediaHtml(html: string) {
       if (isContentImage) contentImageIndex += 1;
       if (!/\bdecoding=/i.test(next)) next += ' decoding="async"';
       if (isContentImage && contentImageIndex > 2 && !/\bloading=/i.test(next)) next += ' loading="lazy"';
+      if (/gallery\/gallery-s-1\.webp/i.test(next)) {
+        if (!/\bwidth=/i.test(next)) next += ' width="300"';
+        if (!/\bheight=/i.test(next)) next += ' height="300"';
+      }
       if (/opplexify-logo-light\.svg/i.test(next)) {
         if (!/\bwidth=/i.test(next)) next += ' width="560"';
         if (!/\bheight=/i.test(next)) next += ' height="160"';

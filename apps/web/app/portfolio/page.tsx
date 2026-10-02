@@ -84,6 +84,15 @@ function isLegacyPortfolioImage(src: string) {
   }
 }
 
+const portfolioImageWidths = [384, 640, 750, 1080] as const;
+
+function portfolioImageSrcSet(src: string) {
+  if (!src.startsWith("/") || src.startsWith("//")) return undefined;
+  const encodedSrc = encodeURIComponent(src);
+
+  return portfolioImageWidths.map((width) => `/_next/image?url=${encodedSrc}&w=${width}&q=75 ${width}w`).join(", ");
+}
+
 export default async function PortfolioGridPage() {
   const [page, cmsItems] = await Promise.all([
     fetchApi<Page | null>("/public/pages/portfolio", null),
@@ -187,9 +196,10 @@ export default async function PortfolioGridPage() {
                     >
                       <img
                         src={item.src}
+                        srcSet={portfolioImageSrcSet(item.src)}
                         alt={item.alt ?? item.title}
-                        loading={index === 0 ? "eager" : "lazy"}
-                        fetchPriority={index === 0 ? "high" : "auto"}
+                        loading="lazy"
+                        fetchPriority="auto"
                         decoding="async"
                         sizes="(max-width: 575px) 82vw, (max-width: 900px) 72vw, 38vw"
                       />
@@ -208,7 +218,7 @@ export default async function PortfolioGridPage() {
           <div className="container rr-container-1650">
             <div className="portfolio-16-inner">
               <div className="works-16-wrapper-box opplexify-portfolio-wrapper-box">
-                <PortfolioGridScroller items={portfolioItems} filters={filters} batchSize={9} />
+                <PortfolioGridScroller items={portfolioItems} filters={filters} batchSize={3} />
               </div>
             </div>
           </div>

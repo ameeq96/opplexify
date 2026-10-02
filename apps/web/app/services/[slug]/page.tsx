@@ -8,6 +8,15 @@ export const revalidate = 300;
 
 type Props = { params: Promise<{ slug: string }> };
 
+const responsiveImageWidths = [384, 640, 750, 1080] as const;
+
+function responsiveLocalImageSrcSet(src: string) {
+  if (!src.startsWith("/") || src.startsWith("//")) return undefined;
+  const encodedSrc = encodeURIComponent(src);
+
+  return responsiveImageWidths.map((width) => `/_next/image?url=${encodedSrc}&w=${width}&q=75 ${width}w`).join(", ");
+}
+
 const fallbackServices: Record<string, Service> = {
   "custom-website-development": {
     id: "fallback-custom-website-development",
@@ -109,6 +118,8 @@ export default async function ServiceDetailPage({ params }: Props) {
   const service = await getService(slug);
   if (!service) notFound();
   const features = Array.isArray(service.gallery) ? service.gallery.filter(Boolean) : [];
+  const serviceImage = assetUrl(service.image);
+  const serviceImageSrcSet = responsiveLocalImageSrcSet(serviceImage);
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -132,7 +143,15 @@ export default async function ServiceDetailPage({ params }: Props) {
       <section className="section">
         <div className="container detail-layout">
           <div>
-            <img src={assetUrl(service.image)} alt={service.title} loading="lazy" decoding="async" sizes="(max-width: 900px) 100vw, 58vw" />
+            <img
+              src={serviceImage}
+              srcSet={serviceImageSrcSet}
+              alt={service.title}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              sizes="(max-width: 900px) calc(100vw - 30px), 58vw"
+            />
             <Prose text={service.description} />
           </div>
           <aside className="meta-panel">

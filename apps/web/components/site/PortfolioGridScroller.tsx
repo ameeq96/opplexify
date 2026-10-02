@@ -19,6 +19,14 @@ type PortfolioGridScrollerProps = {
 
 const allFilter = "All";
 const canTiltQuery = "(hover: hover) and (pointer: fine)";
+const portfolioImageWidths = [384, 640, 750, 1080] as const;
+
+function portfolioImageSrcSet(src: string) {
+  if (!src.startsWith("/") || src.startsWith("//")) return undefined;
+  const encodedSrc = encodeURIComponent(src);
+
+  return portfolioImageWidths.map((width) => `/_next/image?url=${encodedSrc}&w=${width}&q=75 ${width}w`).join(", ");
+}
 
 export function PortfolioGridScroller({ items, batchSize = 9, filters }: PortfolioGridScrollerProps) {
   const filterOptions = useMemo(() => {
@@ -128,6 +136,7 @@ export function PortfolioGridScroller({ items, batchSize = 9, filters }: Portfol
                   <img
                     className="portfolio-card-image"
                     src={image.src}
+                    srcSet={portfolioImageSrcSet(image.src)}
                     alt={image.alt ?? image.title}
                     loading="lazy"
                     decoding="async"
