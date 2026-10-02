@@ -54,7 +54,7 @@ const statusContent: Record<OrderStatus, { label: string; title: string; message
   CANCELLED: {
     label: "Checkout cancelled",
     title: "This checkout was cancelled.",
-    message: "No payment was taken. You can choose the package again whenever you are ready."
+    message: "This checkout was closed. If you completed a payment, contact support to confirm its status before trying again."
   }
 };
 

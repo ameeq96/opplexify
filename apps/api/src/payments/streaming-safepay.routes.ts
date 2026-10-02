@@ -67,6 +67,7 @@ export function createStreamingSafepayRouter() {
       }
 
       let orderToken: string | null = null;
+      let checkoutClaimAt: Date | null = null;
 
       try {
         const catalog = await fetchStreamingCatalog();
@@ -121,32 +122,40 @@ export function createStreamingSafepayRouter() {
           return;
         }
 
-        if (order.status === "FAILED" && !order.safepayTracker) {
-          await prisma.streamingOrder.updateMany({
-            where: { id: order.id, status: "FAILED", safepayTracker: null },
-            data: { status: "PENDING" }
-          });
-          order.status = "PENDING";
-        } else if (order.status === "FAILED") {
+        if (order.status === "FAILED" && order.safepayTracker) {
           checkoutStatus(req, res, order.publicToken, "failed");
           return;
         }
 
         let tracker = order.safepayTracker;
         if (!tracker) {
+          const claimTime = new Date();
           const claimed = await prisma.streamingOrder.updateMany({
-            where: { id: order.id, status: "PENDING", safepayTracker: null },
-            data: { status: "CHECKOUT_STARTED" }
+            where: {
+              id: order.id,
+              safepayTracker: null,
+              OR: [
+                { status: "PENDING" },
+                { status: "FAILED" },
+                { status: "CHECKOUT_STARTED", updatedAt: { lt: new Date(claimTime.getTime() - 120_000) } }
+              ]
+            },
+            data: { status: "CHECKOUT_STARTED", updatedAt: claimTime }
           });
 
           if (claimed.count === 0) {
             const current = await prisma.streamingOrder.findUnique({ where: { id: order.id } });
+            if (current?.status === "PAID" || current?.status === "CANCELLED" || current?.status === "FAILED") {
+              checkoutStatus(req, res, order.publicToken, current.status === "PAID" ? "success" : current.status.toLowerCase());
+              return;
+            }
             if (!current?.safepayTracker) {
               checkoutStatus(req, res, order.publicToken, "processing");
               return;
             }
             tracker = current.safepayTracker;
           } else {
+            checkoutClaimAt = claimTime;
             const session = await safepayRequest<PaymentSessionResponse>(config, "/order/payments/v3/", {
               merchant_api_key: config.publicKey,
               intent: config.intent,
@@ -166,10 +175,14 @@ export function createStreamingSafepayRouter() {
               throw new Error(`${config.intent} payments are not enabled for this Safepay account`);
             }
 
-            await prisma.streamingOrder.update({
-              where: { id: order.id },
+            const saved = await prisma.streamingOrder.updateMany({
+              where: { id: order.id, status: "CHECKOUT_STARTED", safepayTracker: null, updatedAt: checkoutClaimAt },
               data: { safepayTracker: tracker }
             });
+            if (saved.count === 0) {
+              checkoutStatus(req, res, order.publicToken, "processing");
+              return;
+            }
           }
         }
 
@@ -180,9 +193,9 @@ export function createStreamingSafepayRouter() {
         }
         res.redirect(303, checkoutUrl);
       } catch (error) {
-        if (orderToken) {
+        if (orderToken && checkoutClaimAt) {
           await prisma.streamingOrder.updateMany({
-            where: { publicToken: orderToken, status: "CHECKOUT_STARTED", safepayTracker: null },
+            where: { publicToken: orderToken, status: "CHECKOUT_STARTED", safepayTracker: null, updatedAt: checkoutClaimAt },
             data: { status: "FAILED" }
           });
         }
@@ -217,7 +230,7 @@ export function createStreamingSafepayRouter() {
           return;
         }
 
-        if (!verification.amountMatches) {
+        if (!verification.amountMatches && verification.state === "TRACKER_ENDED") {
           await prisma.streamingOrder.updateMany({
             where: { id: order.id, status: { not: "PAID" } },
             data: { status: "FAILED" }
@@ -244,11 +257,14 @@ export function createStreamingSafepayRouter() {
         return;
       }
 
-      await prisma.streamingOrder.updateMany({
-        where: { id: order.id, status: { not: "PAID" } },
-        data: { status: "CANCELLED" }
-      });
-      res.redirect(303, orderStatusUrl(order.publicToken, "cancelled"));
+      if (order.status === "PAID") {
+        res.redirect(303, orderStatusUrl(order.publicToken, "success"));
+        return;
+      }
+      // A browser cancellation callback is not proof that no payment was made.
+      res.redirect(303, order.safepayTracker
+        ? `/public/safepay/return?tracker=${encodeURIComponent(order.safepayTracker)}`
+        : orderStatusUrl(order.publicToken, "processing"));
     })
   );
 
@@ -260,7 +276,7 @@ export const safepayWebhookHandler = asyncHandler(async (req, res) => {
   const rawBody = Buffer.isBuffer(req.body) ? req.body : null;
   const suppliedSignature = req.get("X-SFPY-SIGNATURE")?.trim() ?? "";
 
-  if (!config?.webhookSecret || !rawBody || !validWebhookSignature(rawBody, suppliedSignature, config.webhookSecret)) {
+  if (!config?.webhookSecret || !rawBody) {
     res.status(401).json({ message: "Invalid webhook signature" });
     return;
   }
@@ -275,8 +291,18 @@ export const safepayWebhookHandler = asyncHandler(async (req, res) => {
     return;
   }
 
+  // The official SDK signs data; never trust unsigned envelope fields.
+  const data = payload.data;
+  if (data && typeof data === "object" && !Array.isArray(data) &&
+      validWebhookSignature(Buffer.from(JSON.stringify(data)), suppliedSignature, config.webhookSecret)) {
+    payload = data as Record<string, unknown>;
+  } else if (!validWebhookSignature(rawBody, suppliedSignature, config.webhookSecret)) {
+    res.status(401).json({ message: "Invalid webhook signature" });
+    return;
+  }
+
   const sourceEventKey = findString(payload, ["event_id", "eventId"]);
-  const eventKey = createHash("sha256").update(sourceEventKey || rawBody).digest("hex");
+  const eventKey = createHash("sha256").update(sourceEventKey || JSON.stringify(payload)).digest("hex");
   const eventType = (findString(payload, ["event_type", "eventType", "type"]) || "unknown").slice(0, 191);
   let event = await prisma.safepayWebhookEvent.findUnique({ where: { eventKey } });
 
@@ -319,15 +345,13 @@ export const safepayWebhookHandler = asyncHandler(async (req, res) => {
   );
   const verification = verifyReport(report, order.amountMinor, order.currency);
 
-  if (!verification.amountMatches) {
-    await prisma.streamingOrder.updateMany({
-      where: { id: order.id, status: { not: "PAID" } },
-      data: { status: "FAILED" }
-    });
-  } else if (verification.state === "TRACKER_ENDED") {
-    await markOrderPaid(order.id);
+  if (verification.state !== "TRACKER_ENDED" || !verification.amountMatches) {
+    res.set("Retry-After", "15");
+    res.status(503).json({ message: "Safepay payment confirmation is not available yet" });
+    return;
   }
 
+  await markOrderPaid(order.id);
   await prisma.safepayWebhookEvent.update({
     where: { id: event.id },
     data: { processedAt: new Date() }
