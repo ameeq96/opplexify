@@ -194,7 +194,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 <div className={styles.selectedPackage}>
                   <div>
                     <span>{needsDevice ? "Service" : "Provider"}</span>
-                    <strong>{needsDevice ? "Digital TV Subscription" : digitalTvText(plan.providerName)}</strong>
+                    <strong>{needsDevice ? "Digital Subscription" : digitalTvText(plan.providerName)}</strong>
                   </div>
                   <div>
                     <span>Package</span>
@@ -253,7 +253,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
               <dl className={styles.summaryDetails}>
                 <div>
                   <dt>{needsDevice ? "Service" : "Provider"}</dt>
-                  <dd>{needsDevice ? "Digital TV Subscription" : digitalTvText(plan.providerName)}</dd>
+                  <dd>{needsDevice ? "Digital Subscription" : digitalTvText(plan.providerName)}</dd>
                 </div>
                 <div>
                   <dt>{plan.type === "reseller" ? "Package" : "Duration"}</dt>
