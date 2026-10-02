@@ -152,13 +152,6 @@ export function createStreamingSafepayRouter() {
               amount: order.amountMinor,
               metadata: {
                 order_id: order.publicToken,
-                package_id: order.sourcePackageId,
-                product_type: "Digital TV Streaming Package",
-                provider: order.providerName,
-                package_name: order.packageName,
-                duration: order.durationLabel ?? undefined,
-                device_id: device?.id,
-                device: device?.name,
                 source: "opplexify"
               },
               include_fees: false
