@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./streaming-plans.module.css";
 
 type StreamingPlan = {
@@ -21,10 +21,18 @@ type StreamingDevice = {
   icon: string;
 };
 
+type SharedCheckout = {
+  expiresAt: string;
+  deviceId: number | null;
+  totalMinor: number;
+  status: "available" | "paid" | "in_use" | "failed";
+};
+
 type CatalogResponse = {
   plans: StreamingPlan[];
   devices: StreamingDevice[];
   selectedPackageId: number | null;
+  sharedCheckout?: SharedCheckout;
 };
 
 type StreamingPlansProps = {
@@ -35,6 +43,10 @@ type StreamingPlansProps = {
 
 const statusMessages: Record<string, string> = {
   cancelled: "SafePay checkout was cancelled. No payment was taken.",
+  share_paid: "This shared payment link has already been paid. No further payment is needed.",
+  share_in_use: "Payment has already started in another browser. Continue there; do not pay again.",
+  share_failed: "This payment link cannot be used again. If your bank shows a debit, contact support before trying again.",
+  share_invalid: "This shared payment link is invalid, expired or no longer matches the selected package.",
   unavailable: "Secure checkout is temporarily unavailable. Please try again shortly."
 };
 
@@ -91,8 +103,33 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [requestVersion, setRequestVersion] = useState(0);
+  const [sharedCheckout, setSharedCheckout] = useState<SharedCheckout | null>(null);
+  const [shareLink, setShareLink] = useState<{ url: string; expiresAt: string } | null>(null);
+  const [sharePanelOpen, setSharePanelOpen] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [shareError, setShareError] = useState("");
+  const [shareFeedback, setShareFeedback] = useState("");
+  const [nativeShareAvailable, setNativeShareAvailable] = useState(false);
+  const shareRequest = useRef<AbortController | null>(null);
+  const shareInput = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
+    setNativeShareAvailable(typeof navigator.share === "function");
+  }, []);
+
+  useEffect(() => {
+    shareRequest.current?.abort();
+    shareRequest.current = null;
+    setShareLink(null);
+    setSharePanelOpen(false);
+    setShareError("");
+    setShareFeedback("");
+    setSharing(false);
+    return () => shareRequest.current?.abort();
+  }, [selection, signature, selectedDeviceId]);
+
+  useEffect(() => {
+    setSharedCheckout(null);
     if (!selection || !signature) {
       setPlan(null);
       setError("This checkout link is invalid or has expired. Please choose your package again.");
@@ -132,7 +169,8 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
         setPlan(selectedPlan);
         setDevices(catalog.devices);
-        setSelectedDeviceId("");
+        setSharedCheckout(catalog.sharedCheckout ?? null);
+        setSelectedDeviceId(catalog.sharedCheckout?.deviceId ? String(catalog.sharedCheckout.deviceId) : "");
 
         const storageKey = `${checkoutStorageKey}.estimated-fees-v1.${selectedPlan.id}`;
         let key = createCheckoutKey();
@@ -162,11 +200,87 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   const displayPackageName = plan
     ? `${plan.type === "reseller" && plan.credits ? `${plan.credits} Credits` : plan.durationLabel} Package`
     : "";
-  const canCheckout = Boolean(plan && checkoutKey && (!needsDevice || selectedDeviceId));
   const estimatedDeductions = plan?.currency.toUpperCase() === "USD"
     ? estimateSafepayDeductions(plan.price)
     : null;
   const totalMinor = plan ? Math.round(plan.price * 100) + (estimatedDeductions?.totalMinor ?? 0) : 0;
+  const sharedNotice = sharedCheckout?.status === "paid"
+    ? statusMessages.share_paid
+    : sharedCheckout?.status === "in_use"
+      ? statusMessages.share_in_use
+      : sharedCheckout?.status === "failed"
+        ? "This payment link cannot be used again. If your bank shows a debit, contact support before trying again."
+        : sharedCheckout && sharedCheckout.totalMinor !== totalMinor
+          ? "The package total has changed. Please request a new payment link."
+          : "";
+  const canCheckout = Boolean(plan && checkoutKey && (!needsDevice || selectedDeviceId) && !sharedNotice);
+
+  async function createShareLink() {
+    if (!plan || !selection || !signature || !canCheckout || sharing) return;
+    if (sharedCheckout) {
+      const url = new URL("/checkout", window.location.origin);
+      url.search = new URLSearchParams({ selection, signature }).toString();
+      setShareLink({ url: url.toString(), expiresAt: sharedCheckout.expiresAt });
+      setSharePanelOpen(true);
+      return;
+    }
+    const controller = new AbortController();
+    shareRequest.current = controller;
+    setSharing(true);
+    setShareError("");
+    setShareFeedback("");
+    try {
+      const response = await fetch("/public/safepay/share-checkout", {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        cache: "no-store",
+        signal: controller.signal,
+        body: JSON.stringify({
+          selection, signature, package_id: plan.id,
+          device_id: needsDevice ? Number(selectedDeviceId) : null,
+          quoted_total_minor: totalMinor
+        })
+      });
+      if (!response.ok) throw new Error("Please reload your selected package and try sharing again.");
+      const result = await response.json() as { url?: string; expiresAt?: string };
+      const url = new URL(result.url ?? "");
+      if (url.origin !== window.location.origin || url.pathname !== "/checkout" ||
+          !url.searchParams.get("selection") || !url.searchParams.get("signature") ||
+          !result.expiresAt || !Number.isFinite(Date.parse(result.expiresAt))) {
+        throw new Error("The payment link could not be verified. Please try again.");
+      }
+      if (!controller.signal.aborted) {
+        setShareLink({ url: url.toString(), expiresAt: result.expiresAt });
+        setSharePanelOpen(true);
+      }
+    } catch (shareFailure) {
+      if (!controller.signal.aborted) setShareError((shareFailure as Error).message || "Could not create the payment link.");
+    } finally {
+      if (shareRequest.current === controller) setSharing(false);
+    }
+  }
+
+  async function copyShareLink() {
+    if (!shareLink) return;
+    try {
+      await navigator.clipboard.writeText(shareLink.url);
+      setShareFeedback("Payment link copied.");
+    } catch {
+      shareInput.current?.focus();
+      shareInput.current?.select();
+      setShareFeedback("Select and copy the link above to share it.");
+    }
+  }
+
+  async function openShareMenu() {
+    if (!shareLink || !plan) return;
+    try {
+      await navigator.share({ title: "Opplexify payment link", text: `${displayPackageName} — ${formatPrice(totalMinor / 100, plan.currency)}`, url: shareLink.url });
+      setShareFeedback("Payment link shared.");
+    } catch (shareFailure) {
+      if ((shareFailure as Error).name !== "AbortError") setShareFeedback("Please use Copy link or WhatsApp instead.");
+    }
+  }
 
   return (
     <section className={styles.page} aria-labelledby="streaming-checkout-title">
@@ -253,6 +367,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                             name="checkout_device"
                             value={value}
                             checked={selected}
+                            disabled={Boolean(sharedCheckout) || sharing}
                             onChange={(event) => setSelectedDeviceId(event.target.value)}
                           />
                           <span className={styles.deviceMark} aria-hidden="true">
@@ -263,6 +378,11 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                       );
                     })}
                   </div>
+                  {sharedCheckout ? (
+                    <p className={styles.paymentNote}>
+                      The shared link includes this device. To choose a different device, request a new link.
+                    </p>
+                  ) : null}
                 </section>
               ) : null}
             </div>
@@ -327,6 +447,13 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 <strong>{formatPrice(totalMinor / 100, plan.currency)}</strong>
               </div>
 
+              {sharedNotice ? <p className={styles.notice} role="status">{sharedNotice}</p> : null}
+              {sharedCheckout && !sharedNotice ? (
+                <p className={styles.paymentNote}>
+                  Shared checkout: use your own details in SafePay. The order, subscription and invoice will belong to the payer.
+                </p>
+              ) : null}
+
               <form action="/public/safepay/checkout" method="post" className={styles.checkoutForm}>
                 <input type="hidden" name="package_id" value={plan.id} />
                 <input type="hidden" name="selection" value={selection} />
@@ -334,10 +461,34 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 <input type="hidden" name="checkout_key" value={checkoutKey} />
                 <input type="hidden" name="quoted_total_minor" value={totalMinor} />
                 {needsDevice ? <input type="hidden" name="device_id" value={selectedDeviceId} /> : null}
-                <button type="submit" disabled={!canCheckout}>
+                <button type="submit" disabled={!canCheckout || sharing}>
                   Continue to SafePay
                 </button>
               </form>
+              <button type="button" className={styles.sharePaymentButton}
+                disabled={!canCheckout || sharing} aria-expanded={sharePanelOpen} aria-controls="share-payment-panel"
+                onClick={() => shareLink ? setSharePanelOpen((open) => !open) : void createShareLink()}>
+                {sharing ? "Creating secure link…" : "Share payment link"}
+              </button>
+              {shareError ? <p className={styles.sharePaymentFeedback} role="alert">{shareError}</p> : null}
+              {shareLink && sharePanelOpen ? (
+                <section id="share-payment-panel" className={styles.sharePaymentPanel} aria-label="Share payment link">
+                  <h3>Let someone pay directly</h3>
+                  <p>The recipient sees this package and total, then pays using their own name and email.</p>
+                  <label htmlFor="share-payment-url">Secure Opplexify checkout link</label>
+                  <input ref={shareInput} id="share-payment-url" type="text" readOnly value={shareLink.url}
+                    onFocus={(event) => event.currentTarget.select()} />
+                  <div className={styles.sharePaymentActions}>
+                    <button type="button" onClick={() => void copyShareLink()}>Copy link</button>
+                    <a href={`https://wa.me/?text=${encodeURIComponent(`Pay securely for ${displayPackageName}: ${shareLink.url}`)}`}
+                      target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                    {nativeShareAvailable ? <button type="button" onClick={() => void openShareMenu()}>Share…</button> : null}
+                  </div>
+                  <p>Expires {new Date(shareLink.expiresAt).toLocaleString()}. One payment per link.</p>
+                  <p>Once payment starts, continue in that browser. No card details or payment-session secrets are included in this link.</p>
+                  <span className={styles.sharePaymentFeedback} role="status" aria-live="polite">{shareFeedback}</span>
+                </section>
+              ) : null}
 
               <p className={styles.paymentNote}>
                 One-time payment. Your amount is verified securely before SafePay opens.

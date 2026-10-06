@@ -7,6 +7,7 @@ import { invoiceEmailRecipient } from "./invoice-email";
 import { asyncHandler } from "../http";
 import { prisma } from "../prisma/prisma.service";
 import { fetchStreamingCatalog, selectedPackageId, StreamingPlan } from "../streaming/catalog";
+import { createSharedCheckout, isSharedCheckoutSelection, sharedCheckoutKey, sharedCheckoutOwner, sharedCheckoutPublicToken, verifySharedCheckout } from "../streaming/shared-checkout";
 
 type SafepayEnvironment = "sandbox" | "production";
 
@@ -64,6 +65,42 @@ type PaymentReportResponse = {
 export function createStreamingSafepayRouter() {
   const router = Router();
   const checkoutRateLimit = createCheckoutRateLimit();
+  const shareRateLimit = createCheckoutRateLimit();
+
+  router.post("/share-checkout", shareRateLimit, asyncHandler(async (req, res) => {
+    res.set("Cache-Control", "private, no-store");
+    if (req.get("Origin") !== webOrigin) {
+      res.status(403).json({ message: "Open your checkout on Opplexify to share a payment link." });
+      return;
+    }
+    const packageId = Number(req.body?.package_id);
+    const deviceId = req.body?.device_id === undefined || req.body?.device_id === null || req.body?.device_id === ""
+      ? null : Number(req.body.device_id);
+    const selection = typeof req.body?.selection === "string" ? req.body.selection : "";
+    const signature = typeof req.body?.signature === "string" ? req.body.signature : "";
+    const catalog = await fetchStreamingCatalog();
+    const signedId = selectedPackageId(selection, signature, catalog.plans);
+    const plan = catalog.plans.find((entry) => entry.id === packageId && entry.available);
+    if (!plan || signedId !== packageId) {
+      res.status(404).json({ message: "This checkout link is invalid or expired. Please select your package again." });
+      return;
+    }
+    if ((plan.type === "plan" && !catalog.devices.some((device) => device.id === deviceId)) ||
+        (plan.type === "reseller" && deviceId !== null)) {
+      res.status(422).json({ message: "Please select a valid device before sharing this checkout." });
+      return;
+    }
+    const totalMinor = checkoutAmountMinor(plan);
+    if (Number(req.body?.quoted_total_minor) !== totalMinor) {
+      res.status(409).json({ message: "The price has changed. Reload your checkout before sharing it." });
+      return;
+    }
+    const shared = createSharedCheckout(plan, deviceId, totalMinor);
+    const url = new URL("/checkout", webOrigin);
+    url.searchParams.set("selection", shared.selection);
+    url.searchParams.set("signature", shared.signature);
+    res.status(201).json({ url: url.toString(), expiresAt: shared.expiresAt });
+  }));
 
   router.get("/invoice/:publicToken", asyncHandler(async (req, res) => {
     res.set("Cache-Control", "private, no-store");
@@ -160,12 +197,19 @@ export function createStreamingSafepayRouter() {
       const deviceId = isLiveTest || req.body?.device_id === undefined || req.body?.device_id === ""
         ? null
         : Number(req.body.device_id);
-      const checkoutKey = testAccess
+      let checkoutKey = testAccess
         ? `live_test_${testAccess.token}`
         : typeof req.body?.checkout_key === "string" ? req.body.checkout_key.trim() : "";
       const selection = typeof req.body?.selection === "string" ? req.body.selection.trim() : "";
       const signature = typeof req.body?.signature === "string" ? req.body.signature.trim() : "";
       const config = safepayConfig();
+      const sharedLink = !isLiveTest && isSharedCheckoutSelection(selection);
+      const sharedOwner = sharedLink ? sharedCheckoutOwner(req) : null;
+
+      if (sharedLink && (!sharedOwner || req.get("Origin") !== webOrigin)) {
+        sharedCheckoutError(req, res, "share_invalid", 403);
+        return;
+      }
 
       if (isLiveTest && (!testAccess || config?.environment !== "production")) {
         res.status(404).send("Not found");
@@ -180,7 +224,7 @@ export function createStreamingSafepayRouter() {
         !config ||
         !Number.isSafeInteger(packageId) ||
         (!isLiveTest && packageId <= 0) ||
-        !/^[A-Za-z0-9_-]{16,128}$/.test(checkoutKey)
+        (!sharedLink && (!/^[A-Za-z0-9_-]{16,128}$/.test(checkoutKey) || checkoutKey.startsWith("shared_")))
       ) {
         checkoutError(req, res, 422);
         return;
@@ -191,7 +235,15 @@ export function createStreamingSafepayRouter() {
 
       try {
         const catalog = isLiveTest ? null : await fetchStreamingCatalog();
-        const signedPackageId = catalog ? selectedPackageId(selection, signature, catalog.plans) : null;
+        const shared = sharedLink && catalog
+          ? verifySharedCheckout(selection, signature, catalog.plans, catalog.devices) : null;
+        if (sharedLink && (!shared || shared.package_id !== packageId || shared.device_id !== deviceId)) {
+          sharedCheckoutError(req, res, "share_invalid", 409);
+          return;
+        }
+        const signedPackageId = shared ? shared.package_id
+          : catalog ? selectedPackageId(selection, signature, catalog.plans) : null;
+        if (shared) checkoutKey = sharedCheckoutKey(shared);
         const plan = isLiveTest
           ? liveTestPlan
           : catalog?.plans.find((entry) => entry.id === packageId && entry.available);
@@ -209,6 +261,10 @@ export function createStreamingSafepayRouter() {
         }
 
         const amountMinor = checkoutAmountMinor(plan);
+        if (shared && (shared.total_minor !== amountMinor || Number(req.body?.quoted_total_minor) !== amountMinor)) {
+          sharedCheckoutError(req, res, "share_invalid", 409);
+          return;
+        }
         if ((isLiveTest || plan.currency.toUpperCase() === "USD") && Number(req.body?.quoted_total_minor) !== amountMinor) {
           checkoutError(req, res, 409);
           return;
@@ -218,7 +274,9 @@ export function createStreamingSafepayRouter() {
           update: {},
           create: {
             checkoutKey,
-            publicToken: `${isLiveTest ? "spt" : "sp2"}_${randomUUID().replace(/-/g, "")}`,
+            publicToken: shared && sharedOwner
+              ? sharedCheckoutPublicToken(shared, sharedOwner)
+              : `${isLiveTest ? "spt" : "sp2"}_${randomUUID().replace(/-/g, "")}`,
             sourcePackageId: plan.id,
             packageType: plan.type,
             providerName: plan.providerName,
@@ -229,6 +287,10 @@ export function createStreamingSafepayRouter() {
             currency: plan.currency
           }
         });
+        if (shared && sharedOwner && order.publicToken !== sharedCheckoutPublicToken(shared, sharedOwner)) {
+          sharedCheckoutError(req, res, order.status === "PAID" ? "share_paid" : "share_in_use", 409);
+          return;
+        }
         orderToken = order.publicToken;
 
         if (!matchesPlan(order, plan, amountMinor)) {
@@ -334,6 +396,10 @@ export function createStreamingSafepayRouter() {
           });
         }
         console.error("Safepay checkout initialization failed", error instanceof Error ? error.message : error);
+        if (sharedLink && !orderToken) {
+          sharedCheckoutError(req, res, "share_invalid", 503);
+          return;
+        }
         checkoutError(req, res, 503, orderToken ?? undefined);
       }
     })
@@ -777,6 +843,25 @@ function checkoutStatus(req: Request, res: Response, token: string, status: stri
     return;
   }
   res.redirect(303, orderStatusUrl(token, status));
+}
+
+function sharedCheckoutError(req: Request, res: Response, status: "share_invalid" | "share_paid" | "share_in_use", statusCode: number) {
+  const messages = {
+    share_invalid: "This shared checkout is invalid, expired, or has changed. Please request a new link.",
+    share_paid: "This shared checkout has already been paid. No further payment is needed.",
+    share_in_use: "This shared checkout has already been started in another browser. Please use that browser to continue."
+  };
+  if (wantsJson(req)) {
+    res.status(statusCode).json({ message: messages[status], status });
+    return;
+  }
+  const query = new URLSearchParams({ status });
+  if (typeof req.body?.selection === "string" && req.body.selection.length <= 1024 &&
+      typeof req.body?.signature === "string" && /^[a-f0-9]{64}$/i.test(req.body.signature)) {
+    query.set("selection", req.body.selection);
+    query.set("signature", req.body.signature);
+  }
+  res.redirect(303, `/checkout?${query.toString()}`);
 }
 
 function checkoutError(req: Request, res: Response, statusCode: number, token?: string) {
