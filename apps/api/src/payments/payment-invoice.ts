@@ -20,7 +20,7 @@ export function createPaymentInvoice(order: PaymentInvoice): Promise<Buffer> {
       margin: 48,
       info: {
         Title: `Paid invoice OPX-${order.id}`,
-        Author: BUSINESS_IDENTITY.freelancer.legalName,
+        Author: BUSINESS_IDENTITY.brand.name,
         Subject: "Receipt for a verified SafePay payment",
         CreationDate: order.paidAt
       }
@@ -48,9 +48,10 @@ export function createPaymentInvoice(order: PaymentInvoice): Promise<Buffer> {
       doc.font("Body").fontSize(10).fillColor("#b8d9f5").text("Payment confirmed via SafePay", 295, 82, { width: right - 295, align: "right" });
 
       doc.font("Heading").fontSize(9).fillColor(muted).text("ISSUED BY", 48, 159);
-      doc.fontSize(15).fillColor(ink).text(BUSINESS_IDENTITY.freelancer.legalName, 48, 178);
-      doc.font("Body").fontSize(10).fillColor(muted).text(BUSINESS_IDENTITY.freelancer.contact.phone, 48, 205);
+      doc.fontSize(15).fillColor(ink).text(BUSINESS_IDENTITY.brand.name, 48, 178);
+      doc.font("Body").fontSize(10).fillColor(muted).text(BUSINESS_IDENTITY.llc.contact.phone, 48, 205);
       doc.text(BUSINESS_IDENTITY.brand.websiteUrl, 48, doc.y + 5);
+      doc.fontSize(9).text(`SafePay merchant: ${BUSINESS_IDENTITY.freelancer.legalName}`, 48, doc.y + 5);
 
       let y = doc.y + 29;
       doc.moveTo(48, y).lineTo(right, y).strokeColor("#dce4ed").stroke();
@@ -65,15 +66,12 @@ export function createPaymentInvoice(order: PaymentInvoice): Promise<Buffer> {
       doc.font("Heading").fontSize(9).fillColor(muted).text("PURCHASE", 62, y + 11);
       doc.text("AMOUNT PAID", 395, y + 11, { width: right - 409, align: "right" });
       y += 49;
-      doc.font("Heading").fontSize(13).fillColor(ink).text(text(order.packageName), 62, y, { width: 310, lineGap: 3 });
+      doc.font("Heading").fontSize(13).fillColor(ink).text(test ? text(order.packageName) : "Digital Services", 62, y, { width: 310, lineGap: 3 });
       let detailsY = doc.y + 9;
       doc.fontSize(12).text(money(order.amountMinor), 388, y, { width: right - 402, align: "right" });
       doc.font("Body").fontSize(10).fillColor(muted);
       if (test) {
         doc.text("Live test payment - no subscription or service activated.", 62, detailsY, { width: 310, lineGap: 3 });
-      } else {
-        doc.text(`Provider: ${text(order.providerName)}`, 62, detailsY, { width: 310, lineGap: 3 });
-        if (order.durationLabel) doc.text(`Duration: ${text(order.durationLabel)}`, 62, doc.y + 5, { width: 310, lineGap: 3 });
       }
       y = doc.y + 27;
       if (y > 550) {
