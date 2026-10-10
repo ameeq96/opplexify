@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PublicShell } from "../../../../components/site/PublicShell";
 import { fetchApi } from "../../../../lib/api";
 import styles from "../../streaming-plans.module.css";
+import { PaymentWhatsAppPrompt } from "./PaymentWhatsAppPrompt";
 
 export const metadata: Metadata = {
   title: "Order Status | Opplexify",
@@ -34,7 +35,7 @@ const statusContent: Record<OrderStatus, { label: string; title: string; message
   PAID: {
     label: "Payment confirmed",
     title: "Your order is confirmed.",
-    message: "Safepay has verified your payment. Our team will now process the selected package."
+    message: "Safepay has verified your payment. Our team will now process the selected service."
   },
   PENDING: {
     label: "Payment pending",
@@ -49,7 +50,7 @@ const statusContent: Record<OrderStatus, { label: string; title: string; message
   FAILED: {
     label: "Payment not confirmed",
     title: "We could not verify this payment.",
-    message: "No confirmed payment is attached to this order. You can choose the package again and retry."
+    message: "No confirmed payment is attached to this order. You can choose the service again and retry."
   },
   CANCELLED: {
     label: "Checkout cancelled",
@@ -57,10 +58,6 @@ const statusContent: Record<OrderStatus, { label: string; title: string; message
     message: "This checkout was closed. If you completed a payment, contact support to confirm its status before trying again."
   }
 };
-
-function digitalTvText(value: string) {
-  return value.replace(/\bIPTV\b/gi, "Digital TV");
-}
 
 function formatPrice(price: number, currency: string) {
   try {
@@ -101,18 +98,8 @@ export default async function OrderStatusPage({ params }: OrderStatusPageProps) 
                 <dl className={styles.orderDetails}>
                   <div>
                     <dt>Service</dt>
-                    <dd>Digital Subscription</dd>
+                    <dd>Digital Services</dd>
                   </div>
-                  <div>
-                    <dt>Package</dt>
-                    <dd>{order.durationLabel ? `${order.durationLabel} Package` : "Subscription Package"}</dd>
-                  </div>
-                  {order.durationLabel ? (
-                    <div>
-                      <dt>Duration</dt>
-                      <dd>{digitalTvText(order.durationLabel)}</dd>
-                    </div>
-                  ) : null}
                   <div>
                     <dt>Amount</dt>
                     <dd>{formatPrice(order.amount, order.currency)}</dd>
@@ -136,8 +123,9 @@ export default async function OrderStatusPage({ params }: OrderStatusPageProps) 
                     Download invoice (PDF)
                   </a>
                 ) : null}
+                {order?.status === "PAID" ? <PaymentWhatsAppPrompt /> : null}
                 <a className={styles.primaryLink} href="https://opplexiptv.com/packages">
-                  Choose package
+                  Choose service
                 </a>
                 <a className={styles.secondaryLink} href="https://opplexiptv.com/contact">
                   Contact support

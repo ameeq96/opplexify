@@ -85,7 +85,7 @@ export function createStreamingSafepayRouter() {
       res.status(404).json({ message: "This checkout link is invalid or expired. Please select your package again." });
       return;
     }
-    if ((plan.type === "plan" && !catalog.devices.some((device) => device.id === deviceId)) ||
+    if ((plan.type === "plan" && deviceId !== null && !catalog.devices.some((device) => device.id === deviceId)) ||
         (plan.type === "reseller" && deviceId !== null)) {
       res.status(422).json({ message: "Please select a valid device before sharing this checkout." });
       return;
@@ -194,7 +194,7 @@ export function createStreamingSafepayRouter() {
       const isLiveTest = req.path === "/test-payment";
       const testAccess = isLiveTest ? liveTestAccess(req.body) : null;
       const packageId = isLiveTest ? 0 : Number(req.body?.package_id);
-      const deviceId = isLiveTest || req.body?.device_id === undefined || req.body?.device_id === ""
+      const deviceId = isLiveTest || req.body?.device_id === undefined || req.body?.device_id === null || req.body?.device_id === ""
         ? null
         : Number(req.body.device_id);
       let checkoutKey = testAccess
@@ -255,7 +255,7 @@ export function createStreamingSafepayRouter() {
         const device = deviceId === null
           ? null
           : catalog?.devices.find((entry) => entry.id === deviceId) ?? null;
-        if ((plan.type === "plan" && !device) || (plan.type === "reseller" && deviceId !== null)) {
+        if ((plan.type === "plan" && deviceId !== null && !device) || (plan.type === "reseller" && deviceId !== null)) {
           checkoutError(req, res, 422);
           return;
         }

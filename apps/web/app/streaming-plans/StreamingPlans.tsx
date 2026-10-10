@@ -46,16 +46,12 @@ const statusMessages: Record<string, string> = {
   share_paid: "This shared payment link has already been paid. No further payment is needed.",
   share_in_use: "Payment has already started in another browser. Continue there; do not pay again.",
   share_failed: "This payment link cannot be used again. If your bank shows a debit, contact support before trying again.",
-  share_invalid: "This shared payment link is invalid, expired or no longer matches the selected package.",
+  share_invalid: "This shared payment link is invalid, expired or no longer matches the selected service.",
   unavailable: "Secure checkout is temporarily unavailable. Please try again shortly."
 };
 
 const checkoutStorageKey = "opplexify.streaming.checkout-key";
 const sourcePackagesUrl = "https://opplexiptv.com/packages";
-
-function digitalTvText(value: string) {
-  return value.replace(/\bIPTV\b/gi, "Digital TV");
-}
 
 function formatPrice(price: number, currency: string) {
   try {
@@ -97,8 +93,6 @@ function estimateSafepayDeductions(price: number) {
 
 export function StreamingPlans({ selection, signature, initialStatus }: StreamingPlansProps) {
   const [plan, setPlan] = useState<StreamingPlan | null>(null);
-  const [devices, setDevices] = useState<StreamingDevice[]>([]);
-  const [selectedDeviceId, setSelectedDeviceId] = useState("");
   const [checkoutKey, setCheckoutKey] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -126,13 +120,13 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
     setShareFeedback("");
     setSharing(false);
     return () => shareRequest.current?.abort();
-  }, [selection, signature, selectedDeviceId]);
+  }, [selection, signature]);
 
   useEffect(() => {
     setSharedCheckout(null);
     if (!selection || !signature) {
       setPlan(null);
-      setError("This checkout link is invalid or has expired. Please choose your package again.");
+      setError("This checkout link is invalid or has expired. Please choose your service again.");
       setLoading(false);
       return;
     }
@@ -163,14 +157,12 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
         );
         if (!selectedPlan) {
           setPlan(null);
-          setError("This checkout link is invalid or has expired. Please choose your package again.");
+          setError("This checkout link is invalid or has expired. Please choose your service again.");
           return;
         }
 
         setPlan(selectedPlan);
-        setDevices(catalog.devices);
         setSharedCheckout(catalog.sharedCheckout ?? null);
-        setSelectedDeviceId(catalog.sharedCheckout?.deviceId ? String(catalog.sharedCheckout.deviceId) : "");
 
         const storageKey = `${checkoutStorageKey}.estimated-fees-v1.${selectedPlan.id}`;
         let key = createCheckoutKey();
@@ -196,10 +188,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   }, [requestVersion, selection, signature]);
 
   const statusMessage = initialStatus ? statusMessages[initialStatus] : undefined;
-  const needsDevice = plan?.type === "plan";
-  const displayPackageName = plan
-    ? `${plan.type === "reseller" && plan.credits ? `${plan.credits} Credits` : plan.durationLabel} Package`
-    : "";
+  const displayServiceName = "Digital Services";
   const estimatedDeductions = plan?.currency.toUpperCase() === "USD"
     ? estimateSafepayDeductions(plan.price)
     : null;
@@ -211,9 +200,9 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
       : sharedCheckout?.status === "failed"
         ? "This payment link cannot be used again. If your bank shows a debit, contact support before trying again."
         : sharedCheckout && sharedCheckout.totalMinor !== totalMinor
-          ? "The package total has changed. Please request a new payment link."
+          ? "The service total has changed. Please request a new payment link."
           : "";
-  const canCheckout = Boolean(plan && checkoutKey && (!needsDevice || selectedDeviceId) && !sharedNotice);
+  const canCheckout = Boolean(plan && checkoutKey && !sharedNotice);
 
   async function createShareLink() {
     if (!plan || !selection || !signature || !canCheckout || sharing) return;
@@ -237,11 +226,11 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
         signal: controller.signal,
         body: JSON.stringify({
           selection, signature, package_id: plan.id,
-          device_id: needsDevice ? Number(selectedDeviceId) : null,
+          device_id: null,
           quoted_total_minor: totalMinor
         })
       });
-      if (!response.ok) throw new Error("Please reload your selected package and try sharing again.");
+      if (!response.ok) throw new Error("Please reload your selected service and try sharing again.");
       const result = await response.json() as { url?: string; expiresAt?: string };
       const url = new URL(result.url ?? "");
       if (url.origin !== window.location.origin || url.pathname !== "/checkout" ||
@@ -275,7 +264,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   async function openShareMenu() {
     if (!shareLink || !plan) return;
     try {
-      await navigator.share({ title: "Opplexify payment link", text: `${displayPackageName} — ${formatPrice(totalMinor / 100, plan.currency)}`, url: shareLink.url });
+      await navigator.share({ title: "Opplexify payment link", text: `${displayServiceName} — ${formatPrice(totalMinor / 100, plan.currency)}`, url: shareLink.url });
       setShareFeedback("Payment link shared.");
     } catch (shareFailure) {
       if ((shareFailure as Error).name !== "AbortError") setShareFeedback("Please use Copy link or WhatsApp instead.");
@@ -289,7 +278,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
           <span className="section-subtitle">Secure one-time checkout</span>
           <h1 id="streaming-checkout-title">Complete your order</h1>
           <p>
-            Your selected package is ready. Confirm the details below and continue to SafePay.
+            Your selected service is ready. Confirm the details below and continue to SafePay.
           </p>
         </header>
 
@@ -312,7 +301,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 Try again
               </button>
             ) : null}
-            <a href={sourcePackagesUrl}>Choose a package</a>
+            <a href={sourcePackagesUrl}>Choose a service</a>
           </div>
         ) : (
           <div className={styles.checkoutLayout}>
@@ -321,7 +310,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 <div className={styles.stepHeading}>
                   <span>1</span>
                   <div>
-                    <p>Selected package</p>
+                    <p>Selected service</p>
                     <h2 id="selected-package-title">Review your selection</h2>
                   </div>
                 </div>
@@ -329,94 +318,25 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 <div className={styles.selectedPackage}>
                   <div>
                     <span>Service</span>
-                    <strong>Digital Subscription</strong>
-                  </div>
-                  <div>
-                    <span>Package</span>
-                    <strong>{displayPackageName}</strong>
-                  </div>
-                  <div>
-                    <span>{plan.type === "reseller" ? "Credits" : "Subscription"}</span>
-                    <strong>
-                      {plan.type === "reseller" && plan.credits
-                        ? `${plan.credits} Credits`
-                        : digitalTvText(plan.durationLabel)}
-                    </strong>
+                    <strong>{displayServiceName}</strong>
                   </div>
                 </div>
               </section>
-
-              {needsDevice ? (
-                <section className={styles.selectionPanel} aria-labelledby="device-title">
-                  <div className={styles.stepHeading}>
-                    <span>2</span>
-                    <div>
-                      <p>Compatibility</p>
-                      <h2 id="device-title">Choose your device</h2>
-                    </div>
-                  </div>
-
-                  <div className={styles.deviceGrid}>
-                    {devices.map((device) => {
-                      const value = String(device.id);
-                      const selected = selectedDeviceId === value;
-                      return (
-                        <label className={selected ? styles.selectedDevice : undefined} key={device.id}>
-                          <input
-                            type="radio"
-                            name="checkout_device"
-                            value={value}
-                            checked={selected}
-                            disabled={Boolean(sharedCheckout) || sharing}
-                            onChange={(event) => setSelectedDeviceId(event.target.value)}
-                          />
-                          <span className={styles.deviceMark} aria-hidden="true">
-                            {selected ? "✓" : ""}
-                          </span>
-                          <strong>{device.name}</strong>
-                        </label>
-                      );
-                    })}
-                  </div>
-                  {sharedCheckout ? (
-                    <p className={styles.paymentNote}>
-                      The shared link includes this device. To choose a different device, request a new link.
-                    </p>
-                  ) : null}
-                </section>
-              ) : null}
             </div>
 
             <aside className={styles.orderSummary} aria-labelledby="order-summary-title">
               <span className={styles.summaryEyebrow}>Order summary</span>
-              <h2 id="order-summary-title">{displayPackageName}</h2>
+              <h2 id="order-summary-title">{displayServiceName}</h2>
 
               <dl className={styles.summaryDetails}>
                 <div>
-                  <dt>Package price</dt>
+                  <dt>Service price</dt>
                   <dd>{formatPrice(plan.price, plan.currency)}</dd>
                 </div>
                 <div>
                   <dt>Service</dt>
-                  <dd>Digital Subscription</dd>
+                  <dd>{displayServiceName}</dd>
                 </div>
-                <div>
-                  <dt>{plan.type === "reseller" ? "Package" : "Duration"}</dt>
-                  <dd>
-                    {plan.type === "reseller" && plan.credits
-                      ? `${plan.credits} Credits`
-                      : digitalTvText(plan.durationLabel)}
-                  </dd>
-                </div>
-                {needsDevice ? (
-                  <div>
-                    <dt>Device</dt>
-                    <dd>
-                      {devices.find((device) => String(device.id) === selectedDeviceId)?.name ||
-                        "Select a device"}
-                    </dd>
-                  </div>
-                ) : null}
               </dl>
 
               {estimatedDeductions ? (
@@ -435,7 +355,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                     </div>
                   </dl>
                   <p className={styles.paymentNote}>
-                    This merchant surcharge is added to your package price to cover estimated processing fees
+                    This merchant surcharge is added to your service price to cover estimated processing fees
                     and taxes, based on a previous USD 11.99 sandbox payment. It is not a confirmed SafePay fee
                     or tax assessment; actual deductions may differ. You will pay the total shown below.
                   </p>
@@ -450,7 +370,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
               {sharedNotice ? <p className={styles.notice} role="status">{sharedNotice}</p> : null}
               {sharedCheckout && !sharedNotice ? (
                 <p className={styles.paymentNote}>
-                  Shared checkout: use your own details in SafePay. The order, subscription and invoice will belong to the payer.
+                  Shared checkout: use your own details in SafePay. The order, service and invoice will belong to the payer.
                 </p>
               ) : null}
 
@@ -460,7 +380,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 <input type="hidden" name="signature" value={signature} />
                 <input type="hidden" name="checkout_key" value={checkoutKey} />
                 <input type="hidden" name="quoted_total_minor" value={totalMinor} />
-                {needsDevice ? <input type="hidden" name="device_id" value={selectedDeviceId} /> : null}
+                {sharedCheckout?.deviceId != null ? <input type="hidden" name="device_id" value={sharedCheckout.deviceId} /> : null}
                 <button type="submit" disabled={!canCheckout || sharing}>
                   Continue to SafePay
                 </button>
@@ -474,13 +394,13 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
               {shareLink && sharePanelOpen ? (
                 <section id="share-payment-panel" className={styles.sharePaymentPanel} aria-label="Share payment link">
                   <h3>Let someone pay directly</h3>
-                  <p>The recipient sees this package and total, then pays using their own name and email.</p>
+                  <p>The recipient sees this service and total, then pays using their own name and email.</p>
                   <label htmlFor="share-payment-url">Secure Opplexify checkout link</label>
                   <input ref={shareInput} id="share-payment-url" type="text" readOnly value={shareLink.url}
                     onFocus={(event) => event.currentTarget.select()} />
                   <div className={styles.sharePaymentActions}>
                     <button type="button" onClick={() => void copyShareLink()}>Copy link</button>
-                    <a href={`https://wa.me/?text=${encodeURIComponent(`Pay securely for ${displayPackageName}: ${shareLink.url}`)}`}
+                    <a href={`https://wa.me/?text=${encodeURIComponent(`Pay securely for ${displayServiceName}: ${shareLink.url}`)}`}
                       target="_blank" rel="noopener noreferrer">WhatsApp</a>
                     {nativeShareAvailable ? <button type="button" onClick={() => void openShareMenu()}>Share…</button> : null}
                   </div>
@@ -494,7 +414,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 One-time payment. Your amount is verified securely before SafePay opens.
               </p>
               <a className={styles.changePackage} href={sourcePackagesUrl}>
-                Change package
+                Change service
               </a>
             </aside>
           </div>

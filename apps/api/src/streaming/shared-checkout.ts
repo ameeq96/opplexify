@@ -81,7 +81,7 @@ export function verifySharedCheckout(
         (payload.device_id !== null && (!Number.isSafeInteger(payload.device_id) || payload.device_id <= 0))) return null;
     const plan = plans.find((entry) => entry.id === payload.package_id && entry.available);
     if (!plan || plan.currency !== payload.currency || Math.round(plan.price * 100) !== payload.amount_minor ||
-        (plan.type === "plan" && !devices.some((device) => device.id === payload.device_id)) ||
+        (plan.type === "plan" && payload.device_id !== null && !devices.some((device) => device.id === payload.device_id)) ||
         (plan.type === "reseller" && payload.device_id !== null)) return null;
     return payload;
   } catch {

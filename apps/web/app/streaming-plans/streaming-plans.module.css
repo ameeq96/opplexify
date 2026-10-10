@@ -81,6 +81,109 @@
   outline-offset: 3px;
 }
 
+.whatsappPrompt {
+  position: fixed;
+  inset: 0;
+  width: min(540px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: clamp(24px, 5vw, 38px);
+  overflow-y: auto;
+  border: 1px solid rgba(92, 185, 160, 0.3);
+  border-radius: 24px;
+  background: linear-gradient(145deg, #172825, #151a22 65%);
+  color: #f8fafc;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.whatsappPrompt::backdrop {
+  background: rgba(4, 9, 16, 0.78);
+  backdrop-filter: blur(5px);
+}
+
+.whatsappClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: transparent;
+  color: #d8e3e9;
+}
+
+.whatsappSuccess {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(112, 236, 170, 0.35);
+  border-radius: 20px;
+  background: rgba(37, 211, 102, 0.12);
+  color: #78efab;
+}
+
+.whatsappPrompt .whatsappEyebrow {
+  margin: 0 0 10px;
+  color: #78efab;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.whatsappPrompt h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(25px, 4vw, 32px);
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+}
+
+.whatsappPrompt .whatsappDescription {
+  margin: 18px 0 14px;
+  color: #d6dfe9;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.whatsappPrompt .whatsappHint,
+.whatsappPrompt .whatsappFootnote {
+  margin: 0;
+  color: #acbacb;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.whatsappActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 26px 0 18px;
+}
+
+.whatsappButton {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 11px 20px;
+  border-radius: 12px;
+  background: #25d366;
+  color: #092714;
+  font-weight: 800;
+}
+
+.whatsappPrompt :is(a, button):focus-visible {
+  outline: 3px solid #a2f5c1;
+  outline-offset: 4px;
+}
+
 .page {
   min-height: 70vh;
   padding: clamp(116px, 10vw, 160px) 0 clamp(72px, 8vw, 120px);
@@ -246,7 +349,7 @@
 
 .selectedPackage {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin-top: 28px;
 }
