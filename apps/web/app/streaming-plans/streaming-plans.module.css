@@ -528,6 +528,22 @@
   opacity: 0.48;
 }
 
+.checkoutProgress {
+  color: #d2e7ff;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+
+.checkoutProgress:empty {
+  margin: 0;
+}
+
+.error:focus-visible {
+  outline: 3px solid #67b8ff;
+  outline-offset: 4px;
+}
+
 .paymentNote {
   margin: 16px 0 0;
   color: var(--muted-2);

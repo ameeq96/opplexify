@@ -104,14 +104,29 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   const [shareError, setShareError] = useState("");
   const [shareFeedback, setShareFeedback] = useState("");
   const [nativeShareAvailable, setNativeShareAvailable] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const checkoutSubmitting = useRef(false);
+  const checkoutError = useRef<HTMLDivElement | null>(null);
   const shareRequest = useRef<AbortController | null>(null);
   const shareInput = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setNativeShareAvailable(typeof navigator.share === "function");
+    const restoreCheckout = () => {
+      checkoutSubmitting.current = false;
+      setSubmitting(false);
+    };
+    window.addEventListener("pageshow", restoreCheckout);
+    return () => window.removeEventListener("pageshow", restoreCheckout);
   }, []);
 
   useEffect(() => {
+    if (!loading && error) checkoutError.current?.focus();
+  }, [error, loading]);
+
+  useEffect(() => {
+    checkoutSubmitting.current = false;
+    setSubmitting(false);
     shareRequest.current?.abort();
     shareRequest.current = null;
     setShareLink(null);
@@ -294,7 +309,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
             Loading your secure checkout…
           </div>
         ) : error || !plan ? (
-          <div className={styles.error} role="alert">
+          <div ref={checkoutError} className={styles.error} role="alert" tabIndex={-1}>
             <p>{error || "This checkout link is unavailable."}</p>
             {selection && signature ? (
               <button type="button" onClick={() => setRequestVersion((version) => version + 1)}>
@@ -374,19 +389,31 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 </p>
               ) : null}
 
-              <form action="/public/safepay/checkout" method="post" className={styles.checkoutForm}>
+              <form action="/public/safepay/checkout" method="post" className={styles.checkoutForm}
+                aria-busy={submitting} aria-describedby="checkout-progress"
+                onSubmit={(event) => {
+                  if (checkoutSubmitting.current || !canCheckout || sharing) {
+                    event.preventDefault();
+                    return;
+                  }
+                  checkoutSubmitting.current = true;
+                  setSubmitting(true);
+                }}>
                 <input type="hidden" name="package_id" value={plan.id} />
                 <input type="hidden" name="selection" value={selection} />
                 <input type="hidden" name="signature" value={signature} />
                 <input type="hidden" name="checkout_key" value={checkoutKey} />
                 <input type="hidden" name="quoted_total_minor" value={totalMinor} />
                 {sharedCheckout?.deviceId != null ? <input type="hidden" name="device_id" value={sharedCheckout.deviceId} /> : null}
-                <button type="submit" disabled={!canCheckout || sharing}>
-                  Continue to SafePay
+                <button type="submit" disabled={!canCheckout || sharing || submitting}>
+                  {submitting ? "Opening SafePay…" : "Continue to SafePay"}
                 </button>
               </form>
+              <p id="checkout-progress" className={styles.checkoutProgress} role="status" aria-live="polite" aria-atomic="true">
+                {submitting ? "Your checkout is being prepared. Please wait and do not pay again. If the page does not continue, check your order or contact support before retrying." : ""}
+              </p>
               <button type="button" className={styles.sharePaymentButton}
-                disabled={!canCheckout || sharing} aria-expanded={sharePanelOpen} aria-controls="share-payment-panel"
+                disabled={!canCheckout || sharing || submitting} aria-expanded={sharePanelOpen} aria-controls="share-payment-panel"
                 onClick={() => shareLink ? setSharePanelOpen((open) => !open) : void createShareLink()}>
                 {sharing ? "Creating secure link…" : "Share payment link"}
               </button>
