@@ -1,7 +1,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { Request, Response } from "express";
 import { webOrigin } from "../env";
-import type { StreamingDevice, StreamingPlan } from "./catalog";
+import { LandingAttribution, StreamingDevice, StreamingPlan, validLandingAttribution } from "./catalog";
 
 export type SharedCheckoutSelection = {
   v: 2;
@@ -12,6 +12,7 @@ export type SharedCheckoutSelection = {
   currency: string;
   exp: number;
   nonce: string;
+  attribution?: LandingAttribution;
 };
 
 const lifetimeSeconds = 86_400;
@@ -38,7 +39,8 @@ export function isSharedCheckoutSelection(selection: unknown): boolean {
   }
 }
 
-export function createSharedCheckout(plan: StreamingPlan, deviceId: number | null, totalMinor: number) {
+export function createSharedCheckout(plan: StreamingPlan, deviceId: number | null, totalMinor: number, attribution?: LandingAttribution) {
+  if (attribution !== undefined && !validLandingAttribution(attribution)) throw new Error("Invalid landing attribution");
   const payload: SharedCheckoutSelection = {
     v: 2,
     package_id: plan.id,
@@ -47,7 +49,8 @@ export function createSharedCheckout(plan: StreamingPlan, deviceId: number | nul
     total_minor: totalMinor,
     currency: plan.currency,
     exp: Math.floor(Date.now() / 1000) + lifetimeSeconds,
-    nonce: randomBytes(24).toString("hex")
+    nonce: randomBytes(24).toString("hex"),
+    ...(attribution ? { attribution } : {})
   };
   const selection = Buffer.from(JSON.stringify(payload)).toString("base64url");
   return {
@@ -78,7 +81,8 @@ export function verifySharedCheckout(
         !Number.isSafeInteger(payload.total_minor) || payload.total_minor < payload.amount_minor ||
         payload.total_minor > 2_147_483_647 ||
         typeof payload.currency !== "string" || !/^[A-Z]{3}$/.test(payload.currency) ||
-        (payload.device_id !== null && (!Number.isSafeInteger(payload.device_id) || payload.device_id <= 0))) return null;
+        (payload.device_id !== null && (!Number.isSafeInteger(payload.device_id) || payload.device_id <= 0)) ||
+        (payload.attribution !== undefined && !validLandingAttribution(payload.attribution))) return null;
     const plan = plans.find((entry) => entry.id === payload.package_id && entry.available);
     if (!plan || plan.currency !== payload.currency || Math.round(plan.price * 100) !== payload.amount_minor ||
         (plan.type === "plan" && payload.device_id !== null && !devices.some((device) => device.id === payload.device_id)) ||

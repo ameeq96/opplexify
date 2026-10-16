@@ -2,6 +2,7 @@ import * as bcrypt from "bcryptjs";
 import { HttpError } from "../http";
 import { prisma as defaultPrisma, PrismaService } from "../prisma/prisma.service";
 import { CreateContactMessageDto } from "./dto/contact.dto";
+import { enqueueCustomerEvent } from "../streaming/customer-sync";
 
 type ResourceConfig = {
   model: string;
@@ -182,7 +183,16 @@ export class CmsService {
   }
 
   createContactMessage(dto: CreateContactMessageDto) {
-    return this.prisma.contactMessage.create({ data: dto });
+    return this.prisma.$transaction(async (tx) => {
+      const contact = await tx.contactMessage.create({ data: dto });
+      await enqueueCustomerEvent(tx, {
+        eventType: "contact.submitted", entityType: "contact_message", entityId: contact.id,
+        dedupeKey: contact.id, occurredAt: contact.createdAt,
+        data: { customer: { name: dto.name, email: dto.email, ...(dto.phone ? { phone: dto.phone } : {}) },
+          message: dto.message, ...(dto.subject ? { subject: dto.subject } : {}) }
+      });
+      return contact;
+    });
   }
 
   async dashboard() {

@@ -13,6 +13,7 @@ import { createStreamingSafepayRouter, safepayWebhookHandler } from "./payments/
 import { prisma } from "./prisma/prisma.service";
 import { startInvoiceEmailWorker } from "./payments/invoice-email";
 import { createStreamingRouter } from "./streaming/streaming.routes";
+import { startCustomerSyncWorker } from "./streaming/customer-sync";
 
 export function createApiApp() {
   assertProductionEnv();
@@ -93,6 +94,7 @@ export function createApiApp() {
   app.use(errorHandler);
 
   startInvoiceEmailWorker();
+  startCustomerSyncWorker(prisma);
 
   return app;
 }

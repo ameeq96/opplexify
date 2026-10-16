@@ -3,6 +3,7 @@ import nodemailer, { Transporter } from "nodemailer";
 import { Prisma } from "../generated/prisma/client";
 import { prisma } from "../prisma/prisma.service";
 import { createPaymentInvoice } from "./payment-invoice";
+import { enqueueCustomerEvent } from "../streaming/customer-sync";
 
 const pollIntervalMs = 30_000;
 const leaseDurationMs = 5 * 60_000;
@@ -95,16 +96,33 @@ async function finishDelivery(
   lastErrorCode: string | null,
   nextAttemptAt?: Date
 ) {
-  return prisma.invoiceEmailDelivery.updateMany({
-    where: { id: delivery.id, status: "SENDING", claimToken: delivery.claimToken },
-    data: {
-      status,
-      lastErrorCode,
-      claimToken: null,
-      leaseExpiresAt: null,
-      ...(status === "SENT" ? { sentAt: new Date() } : {}),
-      ...(nextAttemptAt ? { nextAttemptAt } : {})
-    }
+  return prisma.$transaction(async (tx) => {
+    const changed = await tx.invoiceEmailDelivery.updateMany({
+      where: { id: delivery.id, status: "SENDING", claimToken: delivery.claimToken },
+      data: {
+        status,
+        lastErrorCode,
+        claimToken: null,
+        leaseExpiresAt: null,
+        ...(status === "SENT" ? { sentAt: new Date() } : {}),
+        ...(nextAttemptAt ? { nextAttemptAt } : {})
+      }
+    });
+    if (changed.count === 1) await enqueueInvoiceState(tx, delivery, status, lastErrorCode);
+    return changed;
+  });
+}
+
+async function enqueueInvoiceState(tx: Prisma.TransactionClient, delivery: Delivery, status: string, errorCode: string | null) {
+  if (delivery.order.publicToken.startsWith("spt_")) return;
+  const eventType = status === "SENT" ? "invoice.sent" : status === "FAILED" ? "invoice.failed"
+    : status === "UNKNOWN" ? "invoice.unknown" : status === "SENDING" ? "invoice.sending" : "invoice.pending";
+  const recipient = invoiceEmailRecipient(delivery.recipient);
+  await enqueueCustomerEvent(tx, {
+    eventType, entityType: "streaming_order", entityId: delivery.order.id,
+    dedupeKey: `${delivery.id}:${status}:${delivery.attempts}:${delivery.claimToken ?? "unclaimed"}`,
+    data: { reference: delivery.order.publicToken, checkout_key: delivery.order.checkoutKey, invoice_status: status,
+      ...(recipient ? { recipient } : {}), ...(errorCode ? { error_code: errorCode } : {}) }
   });
 }
 
@@ -236,13 +254,27 @@ export async function processInvoiceEmails(): Promise<void> {
     }
     configurationWarningShown = false;
     const now = new Date();
-    await prisma.invoiceEmailDelivery.updateMany({
-      where: { status: "SENDING", leaseExpiresAt: { lte: now } },
-      data: { status: "UNKNOWN", claimToken: null, leaseExpiresAt: null, lastErrorCode: "SMTP_LEASE_EXPIRED" }
-    });
-    await prisma.invoiceEmailDelivery.updateMany({
-      where: { status: { in: ["PENDING", "RETRY"] }, attempts: { gte: maximumAttempts } },
-      data: { status: "FAILED", lastErrorCode: "ATTEMPTS_EXHAUSTED", claimToken: null, leaseExpiresAt: null }
+    await prisma.$transaction(async (tx) => {
+      const expired = await tx.invoiceEmailDelivery.findMany({
+        where: { status: "SENDING", leaseExpiresAt: { lte: now } }, include: { order: true }
+      });
+      for (const delivery of expired) {
+        const changed = await tx.invoiceEmailDelivery.updateMany({
+          where: { id: delivery.id, status: "SENDING", claimToken: delivery.claimToken, leaseExpiresAt: { lte: now } },
+          data: { status: "UNKNOWN", claimToken: null, leaseExpiresAt: null, lastErrorCode: "SMTP_LEASE_EXPIRED" }
+        });
+        if (changed.count === 1) await enqueueInvoiceState(tx, delivery, "UNKNOWN", "SMTP_LEASE_EXPIRED");
+      }
+      const exhausted = await tx.invoiceEmailDelivery.findMany({
+        where: { status: { in: ["PENDING", "RETRY"] }, attempts: { gte: maximumAttempts } }, include: { order: true }
+      });
+      for (const delivery of exhausted) {
+        const changed = await tx.invoiceEmailDelivery.updateMany({
+          where: { id: delivery.id, status: { in: ["PENDING", "RETRY"] }, attempts: { gte: maximumAttempts } },
+          data: { status: "FAILED", lastErrorCode: "ATTEMPTS_EXHAUSTED", claimToken: null, leaseExpiresAt: null }
+        });
+        if (changed.count === 1) await enqueueInvoiceState(tx, delivery, "FAILED", "ATTEMPTS_EXHAUSTED");
+      }
     });
     const candidates = await prisma.invoiceEmailDelivery.findMany({
       where: { status: { in: ["PENDING", "RETRY"] }, nextAttemptAt: { lte: now }, attempts: { lt: maximumAttempts } },
@@ -271,20 +303,27 @@ export async function processInvoiceEmails(): Promise<void> {
     for (const candidate of candidates) {
       const claimedAt = new Date();
       const claimToken = randomUUID();
-      const claimed = await prisma.invoiceEmailDelivery.updateMany({
-        where: {
-          id: candidate.id,
-          status: { in: ["PENDING", "RETRY"] },
-          nextAttemptAt: { lte: claimedAt },
-          attempts: { lt: maximumAttempts }
-        },
-        data: {
-          status: "SENDING",
-          attempts: { increment: 1 },
-          claimToken,
-          leaseExpiresAt: new Date(claimedAt.getTime() + leaseDurationMs),
-          lastErrorCode: null
+      const claimed = await prisma.$transaction(async (tx) => {
+        const changed = await tx.invoiceEmailDelivery.updateMany({
+          where: {
+            id: candidate.id,
+            status: { in: ["PENDING", "RETRY"] },
+            nextAttemptAt: { lte: claimedAt },
+            attempts: { lt: maximumAttempts }
+          },
+          data: {
+            status: "SENDING",
+            attempts: { increment: 1 },
+            claimToken,
+            leaseExpiresAt: new Date(claimedAt.getTime() + leaseDurationMs),
+            lastErrorCode: null
+          }
+        });
+        if (changed.count === 1) {
+          const delivery = await tx.invoiceEmailDelivery.findUnique({ where: { id: candidate.id }, include: { order: true } });
+          if (delivery) await enqueueInvoiceState(tx, delivery, "SENDING", null);
         }
+        return changed;
       });
       if (claimed.count !== 1) continue;
       const delivery = await prisma.invoiceEmailDelivery.findUnique({ where: { id: candidate.id }, include: { order: true } });

@@ -28,6 +28,20 @@ export type StreamingCatalog = {
   devices: StreamingDevice[];
 };
 
+export type LandingAttribution = {
+  brand: "trex" | "opplex" | "geo" | "5g";
+  session_id?: string;
+};
+
+export function validLandingAttribution(value: unknown): value is LandingAttribution {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const attribution = value as Record<string, unknown>;
+  return Object.keys(attribution).every((key) => key === "brand" || key === "session_id") &&
+    typeof attribution.brand === "string" && ["trex", "opplex", "geo", "5g"].includes(attribution.brand) &&
+    (!Object.prototype.hasOwnProperty.call(attribution, "session_id") ||
+      (typeof attribution.session_id === "string" && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(attribution.session_id)));
+}
+
 type SourceCatalogItem = {
   id?: unknown;
   type?: unknown;
@@ -80,6 +94,14 @@ export function selectedPackageId(
   signature: unknown,
   plans: StreamingPlan[]
 ): number | null {
+  return verifiedCheckoutSelection(selection, signature, plans)?.package_id ?? null;
+}
+
+export function verifiedCheckoutSelection(
+  selection: unknown,
+  signature: unknown,
+  plans: StreamingPlan[]
+): { package_id: number; attribution?: LandingAttribution } | null {
   if (
     typeof selection !== "string" ||
     selection.length > 512 ||
@@ -101,16 +123,19 @@ export function selectedPackageId(
       v?: unknown;
       package_id?: unknown;
       exp?: unknown;
+      attribution?: unknown;
     };
     const packageId = Number(payload.package_id);
     const expiresAt = Number(payload.exp);
     const now = Math.floor(Date.now() / 1000);
 
-    if (payload.v !== 1 || !Number.isSafeInteger(packageId) || packageId <= 0 || !Number.isFinite(expiresAt) || expiresAt <= now) {
+    if (payload.v !== 1 || !Number.isSafeInteger(packageId) || packageId <= 0 || !Number.isFinite(expiresAt) || expiresAt <= now ||
+        (payload.attribution !== undefined && !validLandingAttribution(payload.attribution))) {
       return null;
     }
 
-    return plans.some((plan) => plan.id === packageId && plan.available) ? packageId : null;
+    return plans.some((plan) => plan.id === packageId && plan.available)
+      ? { package_id: packageId, ...(payload.attribution ? { attribution: payload.attribution } : {}) } : null;
   } catch {
     return null;
   }

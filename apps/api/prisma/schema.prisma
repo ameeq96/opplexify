@@ -344,9 +344,34 @@ model StreamingOrder {
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
 
+  iptvOrderId      Int?
+  iptvCustomerId   Int?
+
   invoiceEmail     InvoiceEmailDelivery?
 
   @@index([status, createdAt], map: "StreamingOrder_status_created_idx")
+  @@index([iptvCustomerId, iptvOrderId], map: "StreamingOrder_iptv_customer_order_idx")
+}
+
+model CustomerSyncOutbox {
+  sequence       BigInt    @id @default(autoincrement())
+  eventId        String    @unique @db.VarChar(64)
+  eventType      String    @db.VarChar(64)
+  entityType     String    @db.VarChar(32)
+  entityId       String    @db.VarChar(191)
+  occurredAt     DateTime
+  data           Json
+  status         String    @default("PENDING") @db.VarChar(24)
+  attempts       Int       @default(0)
+  nextAttemptAt  DateTime  @default(now())
+  claimToken     String?   @db.VarChar(36)
+  leaseExpiresAt DateTime?
+  deliveredAt    DateTime?
+  lastErrorCode  String?   @db.VarChar(64)
+  createdAt      DateTime  @default(now())
+
+  @@index([status, nextAttemptAt], map: "CustomerSyncOutbox_delivery_idx")
+  @@index([entityType, entityId, sequence], map: "CustomerSyncOutbox_entity_idx")
 }
 
 model SafepayWebhookEvent {

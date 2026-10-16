@@ -1,8 +1,10 @@
 import { Router } from "express";
+import { createHash } from "node:crypto";
 import { asyncHandler } from "../http";
 import { prisma } from "../prisma/prisma.service";
 import { fetchStreamingCatalog, selectedPackageId } from "./catalog";
 import { ensureSharedCheckoutOwner, isSharedCheckoutSelection, sharedCheckoutKey, sharedCheckoutPublicToken, verifySharedCheckout } from "./shared-checkout";
+import { enqueueCustomerEvent } from "./customer-sync";
 
 export function createStreamingRouter() {
   const router = Router();
@@ -22,6 +24,14 @@ export function createStreamingRouter() {
           return;
         }
         const owner = ensureSharedCheckoutOwner(req, res);
+        const sharedKey = sharedCheckoutKey(shared);
+        const actorHash = createHash("sha256").update(`opplexify:customer-actor:${owner}`).digest("hex");
+        await enqueueCustomerEvent(prisma, {
+          eventType: "share.opened", entityType: "shared_checkout", entityId: sharedKey,
+          dedupeKey: actorHash,
+          data: { checkout_key: sharedKey, actor_hash: actorHash, package_id: shared.package_id,
+            amount_minor: shared.total_minor, currency: shared.currency }
+        });
         const existing = await prisma.streamingOrder.findUnique({
           where: { checkoutKey: sharedCheckoutKey(shared) },
           select: { publicToken: true, status: true, safepayTracker: true }

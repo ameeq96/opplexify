@@ -6,8 +6,9 @@ import { createPaymentInvoice } from "./payment-invoice";
 import { invoiceEmailRecipient } from "./invoice-email";
 import { asyncHandler } from "../http";
 import { prisma } from "../prisma/prisma.service";
-import { fetchStreamingCatalog, selectedPackageId, StreamingPlan } from "../streaming/catalog";
+import { fetchStreamingCatalog, LandingAttribution, verifiedCheckoutSelection, StreamingPlan } from "../streaming/catalog";
 import { createSharedCheckout, isSharedCheckoutSelection, sharedCheckoutKey, sharedCheckoutOwner, sharedCheckoutPublicToken, verifySharedCheckout } from "../streaming/shared-checkout";
+import { customerSyncEnabled, enqueueCustomerEvent, CustomerEventData, validCustomerEventData } from "../streaming/customer-sync";
 
 type SafepayEnvironment = "sandbox" | "production";
 
@@ -79,9 +80,9 @@ export function createStreamingSafepayRouter() {
     const selection = typeof req.body?.selection === "string" ? req.body.selection : "";
     const signature = typeof req.body?.signature === "string" ? req.body.signature : "";
     const catalog = await fetchStreamingCatalog();
-    const signedId = selectedPackageId(selection, signature, catalog.plans);
+    const signed = verifiedCheckoutSelection(selection, signature, catalog.plans);
     const plan = catalog.plans.find((entry) => entry.id === packageId && entry.available);
-    if (!plan || signedId !== packageId) {
+    if (!plan || !signed || signed.package_id !== packageId) {
       res.status(404).json({ message: "This checkout link is invalid or expired. Please select your package again." });
       return;
     }
@@ -95,7 +96,14 @@ export function createStreamingSafepayRouter() {
       res.status(409).json({ message: "The price has changed. Reload your checkout before sharing it." });
       return;
     }
-    const shared = createSharedCheckout(plan, deviceId, totalMinor);
+    const shared = createSharedCheckout(plan, deviceId, totalMinor, signed.attribution);
+    const sharedSelection = verifySharedCheckout(shared.selection, shared.signature, catalog.plans, catalog.devices);
+    if (!sharedSelection) throw new Error("Shared checkout could not be verified");
+    const sharedKey = sharedCheckoutKey(sharedSelection);
+    await enqueueCustomerEvent(prisma, {
+      eventType: "share.created", entityType: "shared_checkout", entityId: sharedKey, dedupeKey: sharedKey,
+      data: { checkout_key: sharedKey, package_id: plan.id, amount_minor: totalMinor, currency: plan.currency }
+    });
     const url = new URL("/checkout", webOrigin);
     url.searchParams.set("selection", shared.selection);
     url.searchParams.set("signature", shared.signature);
@@ -241,8 +249,9 @@ export function createStreamingSafepayRouter() {
           sharedCheckoutError(req, res, "share_invalid", 409);
           return;
         }
-        const signedPackageId = shared ? shared.package_id
-          : catalog ? selectedPackageId(selection, signature, catalog.plans) : null;
+        const signed = !shared && catalog ? verifiedCheckoutSelection(selection, signature, catalog.plans) : null;
+        const signedPackageId = shared ? shared.package_id : signed?.package_id ?? null;
+        const attribution = shared ? shared.attribution : signed?.attribution;
         if (shared) checkoutKey = sharedCheckoutKey(shared);
         const plan = isLiveTest
           ? liveTestPlan
@@ -269,23 +278,31 @@ export function createStreamingSafepayRouter() {
           checkoutError(req, res, 409);
           return;
         }
-        const order = await prisma.streamingOrder.upsert({
-          where: { checkoutKey },
-          update: {},
-          create: {
-            checkoutKey,
-            publicToken: shared && sharedOwner
-              ? sharedCheckoutPublicToken(shared, sharedOwner)
-              : `${isLiveTest ? "spt" : "sp2"}_${randomUUID().replace(/-/g, "")}`,
-            sourcePackageId: plan.id,
-            packageType: plan.type,
-            providerName: plan.providerName,
-            packageName: plan.name,
-            durationLabel: plan.durationLabel,
-            amount: amountMinor / 100,
-            amountMinor,
-            currency: plan.currency
-          }
+        const order = await prisma.$transaction(async (tx) => {
+          const saved = await tx.streamingOrder.upsert({
+            where: { checkoutKey },
+            update: {},
+            create: {
+              checkoutKey,
+              publicToken: shared && sharedOwner
+                ? sharedCheckoutPublicToken(shared, sharedOwner)
+                : `${isLiveTest ? "spt" : "sp2"}_${randomUUID().replace(/-/g, "")}`,
+              sourcePackageId: plan.id,
+              packageType: plan.type,
+              providerName: plan.providerName,
+              packageName: plan.name,
+              durationLabel: plan.durationLabel,
+              amount: amountMinor / 100,
+              amountMinor,
+              currency: plan.currency
+            }
+          });
+          if (!isLiveTest) await enqueueCustomerEvent(tx, {
+            eventType: "checkout.started", entityType: "streaming_order", entityId: saved.id,
+            dedupeKey: saved.id, occurredAt: saved.createdAt,
+            data: { ...customerOrderData(saved), checkout_key: saved.checkoutKey, status: saved.status }
+          });
+          return saved;
         });
         if (shared && sharedOwner && order.publicToken !== sharedCheckoutPublicToken(shared, sharedOwner)) {
           sharedCheckoutError(req, res, order.status === "PAID" ? "share_paid" : "share_in_use", 409);
@@ -299,7 +316,7 @@ export function createStreamingSafepayRouter() {
         }
 
         if (requiresIptvStorage(order.publicToken)) {
-          await prepareIptvCheckout(order, deviceId, config.environment);
+          await prepareIptvCheckout(order, deviceId, config.environment, attribution);
         }
 
         if (order.status === "PAID") {
@@ -371,9 +388,16 @@ export function createStreamingSafepayRouter() {
               throw new Error(`${config.intent} payments are not enabled for this Safepay account`);
             }
 
-            const saved = await prisma.streamingOrder.updateMany({
-              where: { id: order.id, status: "CHECKOUT_STARTED", safepayTracker: null, updatedAt: checkoutClaimAt },
-              data: { safepayTracker: tracker }
+            const saved = await prisma.$transaction(async (tx) => {
+              const changed = await tx.streamingOrder.updateMany({
+                where: { id: order.id, status: "CHECKOUT_STARTED", safepayTracker: null, updatedAt: checkoutClaimAt! },
+                data: { safepayTracker: tracker }
+              });
+              if (changed.count === 1 && !isLiveTest) await enqueueCustomerEvent(tx, {
+                eventType: "checkout.tracker_attached", entityType: "streaming_order", entityId: order.id,
+                dedupeKey: tracker!, data: { ...customerOrderData(order), tracker: tracker!, status: "CHECKOUT_STARTED" }
+              });
+              return changed;
             });
             if (saved.count === 0) {
               checkoutStatus(req, res, order.publicToken, "processing");
@@ -390,9 +414,17 @@ export function createStreamingSafepayRouter() {
         res.redirect(303, checkoutUrl);
       } catch (error) {
         if (orderToken && checkoutClaimAt) {
-          await prisma.streamingOrder.updateMany({
-            where: { publicToken: orderToken, status: "CHECKOUT_STARTED", safepayTracker: null, updatedAt: checkoutClaimAt },
-            data: { status: "FAILED" }
+          await prisma.$transaction(async (tx) => {
+            const changed = await tx.streamingOrder.updateMany({
+              where: { publicToken: orderToken!, status: "CHECKOUT_STARTED", safepayTracker: null, updatedAt: checkoutClaimAt! },
+              data: { status: "FAILED" }
+            });
+            const failedOrder = changed.count === 1 ? await tx.streamingOrder.findUnique({ where: { publicToken: orderToken! } }) : null;
+            if (failedOrder && !isLiveTest) await enqueueCustomerEvent(tx, {
+              eventType: "checkout.failed", entityType: "streaming_order", entityId: failedOrder.id,
+              dedupeKey: checkoutClaimAt!.toISOString(),
+              data: { ...customerOrderData(failedOrder), status: "FAILED", error_code: "CHECKOUT_INITIALIZATION_FAILED" }
+            });
           });
         }
         console.error("Safepay checkout initialization failed", error instanceof Error ? error.message : error);
@@ -431,9 +463,15 @@ export function createStreamingSafepayRouter() {
         }
 
         if (!verification.amountMatches && verification.state === "TRACKER_ENDED") {
-          await prisma.streamingOrder.updateMany({
-            where: { id: order.id, status: { not: "PAID" } },
-            data: { status: "FAILED" }
+          await prisma.$transaction(async (tx) => {
+            const changed = await tx.streamingOrder.updateMany({
+              where: { id: order.id, status: { not: "PAID" } }, data: { status: "FAILED" }
+            });
+            if (changed.count === 1 && !order.publicToken.startsWith("spt_")) await enqueueCustomerEvent(tx, {
+              eventType: "checkout.failed", entityType: "streaming_order", entityId: order.id,
+              dedupeKey: `${tracker}:amount_mismatch`,
+              data: { ...customerOrderData(order), status: "FAILED", error_code: "PAYMENT_AMOUNT_MISMATCH" }
+            });
           });
           res.redirect(303, orderStatusUrl(order.publicToken, "failed"));
           return;
@@ -674,26 +712,40 @@ type IptvCheckout = {
   amountMinor: number;
   currency: string;
   safepayTracker: string | null;
+  checkoutKey?: string;
 };
+
+function customerOrderData(order: IptvCheckout): CustomerEventData {
+  return {
+    reference: order.publicToken,
+    ...(order.checkoutKey ? { checkout_key: order.checkoutKey } : {}),
+    ...(order.safepayTracker ? { tracker: order.safepayTracker } : {}),
+    ...(order.sourcePackageId > 0 ? { package_id: order.sourcePackageId } : {}),
+    amount_minor: order.amountMinor, currency: order.currency
+  };
+}
 
 function requiresIptvStorage(token: string) {
   // Existing gateway references keep their original callback behavior; only new checkouts use the bridge.
   return /^sp2_[a-f0-9]{32}$/.test(token);
 }
 
-async function prepareIptvCheckout(order: IptvCheckout, deviceId: number | null, environment: SafepayEnvironment) {
+async function prepareIptvCheckout(order: IptvCheckout, deviceId: number | null, environment: SafepayEnvironment, attribution?: LandingAttribution) {
   const result = await iptvOrderRequest("prepare", {
     reference: order.publicToken,
     package_id: order.sourcePackageId,
     device_id: deviceId,
     amount_minor: order.amountMinor,
     currency: order.currency,
-    environment
+    environment,
+    ...(attribution ? { attribution } : {})
   });
   if (result.prepared !== true) throw new Error("IPTV checkout preparation was not acknowledged");
 }
 
 async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse, environment: SafepayEnvironment) {
+  let iptvLink: { iptvOrderId: number; iptvCustomerId: number | null } | null = null;
+  let customerSnapshot: CustomerEventData["customer"];
   if (/^spt_[a-f0-9]{32}$/.test(order.publicToken)) {
     const verification = verifyReport(report, 5000, "PKR");
     if (environment !== "production" || order.sourcePackageId !== 0 || order.amountMinor !== 5000 ||
@@ -721,18 +773,43 @@ async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse,
     if (!(firstName || lastName) || !email) {
       throw new Error("SafePay customer details are not available for IPTV order storage yet");
     }
+    customerSnapshot = {
+      name: Array.from(`${firstName} ${lastName}`.trim()).slice(0, 191).join(""), email,
+      ...(phone && phone.length <= 50 ? { phone } : {})
+    };
+    if (customerSyncEnabled() && !validCustomerEventData({ customer: customerSnapshot }, "payment.verified")) {
+      throw new Error("SafePay customer details are not valid for IPTV order storage yet");
+    }
 
-    const saved = await iptvOrderRequest("complete", {
-      reference: order.publicToken,
-      package_id: order.sourcePackageId,
-      amount_minor: order.amountMinor,
-      currency: order.currency,
-      tracker: order.safepayTracker,
-      environment,
-      customer: { first_name: firstName, last_name: lastName, email, phone }
+    await enqueueCustomerEvent(prisma, {
+      eventType: "payment.verified", entityType: "streaming_order", entityId: order.id,
+      dedupeKey: order.safepayTracker!,
+      data: { ...customerOrderData(order), status: "PAID", customer: customerSnapshot }
     });
-    if (!Number.isSafeInteger(saved.order_id) || Number(saved.order_id) <= 0) {
-      throw new Error("IPTV order storage was not acknowledged");
+    try {
+      const saved = await iptvOrderRequest("complete", {
+        reference: order.publicToken,
+        package_id: order.sourcePackageId,
+        amount_minor: order.amountMinor,
+        currency: order.currency,
+        tracker: order.safepayTracker,
+        environment,
+        customer: { first_name: firstName, last_name: lastName, email, phone }
+      });
+      if (!Number.isSafeInteger(saved.order_id) || Number(saved.order_id) <= 0) {
+        throw new Error("IPTV order storage was not acknowledged");
+      }
+      iptvLink = {
+        iptvOrderId: Number(saved.order_id),
+        iptvCustomerId: Number.isSafeInteger(saved.customer_id) && Number(saved.customer_id) > 0 ? Number(saved.customer_id) : null
+      };
+    } catch (error) {
+      await enqueueCustomerEvent(prisma, {
+        eventType: "payment.bridge_failed", entityType: "streaming_order", entityId: order.id,
+        dedupeKey: order.safepayTracker!,
+        data: { ...customerOrderData(order), status: "PAID", error_code: "IPTV_ORDER_SYNC_FAILED" }
+      });
+      throw error;
     }
   }
 
@@ -746,6 +823,14 @@ async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse,
   const recipient = invoiceEmailRecipient(report.data?.customer?.email);
   await prisma.$transaction(async (tx) => {
     const paidAt = new Date();
+    if (iptvLink && customerSyncEnabled()) {
+      await tx.streamingOrder.update({ where: { id: order.id }, data: iptvLink });
+      await enqueueCustomerEvent(tx, {
+        eventType: "payment.bridge_completed", entityType: "streaming_order", entityId: order.id,
+        dedupeKey: order.safepayTracker!,
+        data: { ...customerOrderData(order), status: "PAID", ...(customerSnapshot ? { customer: customerSnapshot } : {}) }
+      });
+    }
     const changed = await tx.streamingOrder.updateMany({
       where: { id: order.id, status: { not: "PAID" } },
       data: { status: "PAID", paidAt }
@@ -754,6 +839,11 @@ async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse,
 
     const paidOrder = await tx.streamingOrder.findUnique({ where: { id: order.id } });
     if (!paidOrder?.paidAt) throw new Error("Invoice payment snapshot is not available");
+    if (!order.publicToken.startsWith("spt_")) await enqueueCustomerEvent(tx, {
+      eventType: "payment.verified", entityType: "streaming_order", entityId: order.id,
+      dedupeKey: order.safepayTracker!, occurredAt: paidOrder.paidAt,
+      data: { ...customerOrderData(order), status: "PAID", ...(customerSnapshot ? { customer: customerSnapshot } : {}) }
+    });
     await tx.invoiceEmailDelivery.create({
       data: {
         orderId: paidOrder.id,
@@ -772,6 +862,12 @@ async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse,
           paidAt: paidOrder.paidAt.toISOString()
         }
       }
+    });
+    if (!order.publicToken.startsWith("spt_")) await enqueueCustomerEvent(tx, {
+      eventType: recipient ? "invoice.pending" : "invoice.failed", entityType: "streaming_order", entityId: order.id,
+      dedupeKey: "invoice_created", occurredAt: paidOrder.paidAt,
+      data: { ...customerOrderData(order), invoice_status: recipient ? "PENDING" : "FAILED",
+        ...(recipient ? { recipient } : { error_code: "INVALID_RECIPIENT" }) }
     });
   });
 }
