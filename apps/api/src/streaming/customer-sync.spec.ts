@@ -280,6 +280,7 @@ function paymentHarness(options: { amount?: number; bridgeFailure?: boolean; out
     "../http": { asyncHandler: (handler: unknown) => handler },
     "../prisma/prisma.service": { prisma: db },
     "../streaming/catalog": {}, "../streaming/shared-checkout": {},
+    "../streaming/resume-checkout": {},
     "../streaming/customer-sync": { customerSyncEnabled: () => true, validCustomerEventData,
       enqueueCustomerEvent: async (tx: Client, input: Parameters<typeof enqueueCustomerEvent>[1]) => {
         if (options.outboxFailure && input.eventType === "invoice.pending") throw new Error("FAKE_OUTBOX_FAILURE");

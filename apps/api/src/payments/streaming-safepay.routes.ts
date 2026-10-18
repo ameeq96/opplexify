@@ -7,7 +7,8 @@ import { invoiceEmailRecipient } from "./invoice-email";
 import { asyncHandler } from "../http";
 import { prisma } from "../prisma/prisma.service";
 import { fetchStreamingCatalog, LandingAttribution, verifiedCheckoutSelection, StreamingPlan } from "../streaming/catalog";
-import { createSharedCheckout, isSharedCheckoutSelection, sharedCheckoutKey, sharedCheckoutOwner, sharedCheckoutPublicToken, verifySharedCheckout } from "../streaming/shared-checkout";
+import { createSharedCheckout, ensureSharedCheckoutOwner, isSharedCheckoutSelection, sharedCheckoutKey, sharedCheckoutOwner, sharedCheckoutPublicToken, verifySharedCheckout } from "../streaming/shared-checkout";
+import { createResumeCheckout, resumeCheckoutPublicToken, resumeCheckoutStatus, verifyResumeCheckout } from "../streaming/resume-checkout";
 import { customerSyncEnabled, enqueueCustomerEvent, CustomerEventData, validCustomerEventData } from "../streaming/customer-sync";
 
 type SafepayEnvironment = "sandbox" | "production";
@@ -67,6 +68,55 @@ export function createStreamingSafepayRouter() {
   const router = Router();
   const checkoutRateLimit = createCheckoutRateLimit();
   const shareRateLimit = createCheckoutRateLimit();
+
+  router.post("/resume-checkout", shareRateLimit, asyncHandler(async (req, res) => {
+    res.set("Cache-Control", "private, no-store");
+    res.set("Referrer-Policy", "no-referrer");
+    res.set("X-Robots-Tag", "noindex, nofollow");
+    if (req.get("Origin") !== webOrigin) {
+      res.status(403).json({ message: "Save a payment link from your checkout in its original browser." });
+      return;
+    }
+    const packageId = Number(req.body?.package_id);
+    const deviceId = req.body?.device_id === undefined || req.body?.device_id === null || req.body?.device_id === "" ? null : Number(req.body.device_id);
+    const catalog = await fetchStreamingCatalog();
+    const sharedLink = isSharedCheckoutSelection(req.body?.selection);
+    const shared = sharedLink ? verifySharedCheckout(req.body?.selection, req.body?.signature, catalog.plans, catalog.devices) : null;
+    const signed = !sharedLink ? verifiedCheckoutSelection(req.body?.selection, req.body?.signature, catalog.plans) : null;
+    const plan = catalog.plans.find((entry) => entry.id === packageId && entry.available);
+    const checkoutKey = shared ? sharedCheckoutKey(shared) : req.body?.checkout_key;
+    if (!plan || (!signed && !shared) || (shared ?? signed)!.package_id !== packageId ||
+        typeof checkoutKey !== "string" || !/^[A-Za-z0-9_-]{16,128}$/.test(checkoutKey) ||
+        (!shared && checkoutKey.startsWith("shared_")) || (shared && shared.device_id !== deviceId) ||
+        (plan.type === "plan" && deviceId !== null && !catalog.devices.some((entry) => entry.id === deviceId)) ||
+        (plan.type === "reseller" && deviceId !== null)) {
+      res.status(404).json({ message: "Reload your selected service before saving a payment link." });
+      return;
+    }
+    const totalMinor = checkoutAmountMinor(plan);
+    if (Number(req.body?.quoted_total_minor) !== totalMinor || (shared && shared.total_minor !== totalMinor)) {
+      res.status(409).json({ message: "The price has changed. Reload your selected service." });
+      return;
+    }
+    const existing = await prisma.streamingOrder.findUnique({ where: { checkoutKey } });
+    let owner = sharedCheckoutOwner(req);
+    if (!owner && (shared || existing)) {
+      res.status(403).json({ message: "Use the original browser for this payment. A new payment link cannot take ownership of it." });
+      return;
+    }
+    owner = ensureSharedCheckoutOwner(req, res);
+    const attribution = (shared ?? signed)!.attribution;
+    const publicToken = shared ? sharedCheckoutPublicToken(shared, owner) : resumeCheckoutPublicToken(checkoutKey, owner, attribution);
+    if (existing && (existing.publicToken !== publicToken || !matchesPlan(existing, plan, totalMinor) ||
+        ["PAID", "CANCELLED", "FAILED"].includes(existing.status))) {
+      res.status(409).json({ message: "This payment is complete, closed or cannot be resumed in this browser. Check its status or contact support before paying again." });
+      return;
+    }
+    const saved = createResumeCheckout(plan, checkoutKey, publicToken, deviceId, totalMinor, owner, attribution);
+    const url = new URL("/checkout", webOrigin);
+    url.hash = new URLSearchParams({ resume: saved.token }).toString();
+    res.status(201).json({ url: url.toString(), expiresAt: saved.expiresAt });
+  }));
 
   router.post("/share-checkout", shareRateLimit, asyncHandler(async (req, res) => {
     res.set("Cache-Control", "private, no-store");
@@ -200,6 +250,47 @@ export function createStreamingSafepayRouter() {
     checkoutRateLimit,
     asyncHandler(async (req, res) => {
       const isLiveTest = req.path === "/test-payment";
+      if (!isLiveTest && Object.prototype.hasOwnProperty.call(req.body ?? {}, "resume_token")) {
+        res.set("Cache-Control", "private, no-store");
+        res.set("Referrer-Policy", "no-referrer");
+        res.set("X-Robots-Tag", "noindex, nofollow");
+        const failResume = (message: string, status = 409) => {
+          if (wantsJson(req)) res.status(status).json({ message, status: "resume_unavailable" });
+          else res.status(status).send("This saved payment cannot be continued. Check the original payment status or contact support before paying again.");
+        };
+        if (req.get("Origin") !== webOrigin) {
+          failResume("Use the original browser for this saved payment.", 403);
+          return;
+        }
+        const config = safepayConfig();
+        if (!config) {
+          failResume("Secure payment is temporarily unavailable.", 503);
+          return;
+        }
+        try {
+          const catalog = await fetchStreamingCatalog();
+          const saved = verifyResumeCheckout(req.body.resume_token, sharedCheckoutOwner(req), catalog.plans, catalog.devices);
+          if (!saved) {
+            failResume("This saved payment link is invalid, expired or belongs to another browser.", 404);
+            return;
+          }
+          const order = await prisma.streamingOrder.findUnique({ where: { checkoutKey: saved.checkout_key } });
+          const plan = catalog.plans.find((entry) => entry.id === saved.package_id)!;
+          const status = resumeCheckoutStatus(saved, order);
+          if (checkoutAmountMinor(plan) !== saved.total_minor || status !== "available" || !order?.safepayTracker) {
+            failResume(status === "paid" ? "This payment has already been paid. Do not pay again."
+              : status === "processing" ? "The original payment is still processing. Check its status or contact support; do not start another payment."
+                : "The original payment is closed or no longer matches this saved link. Check its status before paying again.");
+            return;
+          }
+          const checkoutUrl = await hostedCheckoutUrl(config, order.safepayTracker, order.publicToken);
+          if (wantsJson(req)) res.json({ checkoutUrl, orderToken: order.publicToken });
+          else res.redirect(303, checkoutUrl);
+        } catch {
+          failResume("The existing payment could not be reopened. No replacement order or payment was created.", 503);
+        }
+        return;
+      }
       const testAccess = isLiveTest ? liveTestAccess(req.body) : null;
       const packageId = isLiveTest ? 0 : Number(req.body?.package_id);
       const deviceId = isLiveTest || req.body?.device_id === undefined || req.body?.device_id === null || req.body?.device_id === ""
@@ -213,6 +304,7 @@ export function createStreamingSafepayRouter() {
       const config = safepayConfig();
       const sharedLink = !isLiveTest && isSharedCheckoutSelection(selection);
       const sharedOwner = sharedLink ? sharedCheckoutOwner(req) : null;
+      const resumeOwner = !isLiveTest && !sharedLink ? sharedCheckoutOwner(req) : null;
 
       if (sharedLink && (!sharedOwner || req.get("Origin") !== webOrigin)) {
         sharedCheckoutError(req, res, "share_invalid", 403);
@@ -286,6 +378,7 @@ export function createStreamingSafepayRouter() {
               checkoutKey,
               publicToken: shared && sharedOwner
                 ? sharedCheckoutPublicToken(shared, sharedOwner)
+                : resumeOwner ? resumeCheckoutPublicToken(checkoutKey, resumeOwner, attribution)
                 : `${isLiveTest ? "spt" : "sp2"}_${randomUUID().replace(/-/g, "")}`,
               sourcePackageId: plan.id,
               packageType: plan.type,

@@ -31,15 +31,31 @@ export type StreamingCatalog = {
 export type LandingAttribution = {
   brand: "trex" | "opplex" | "geo" | "5g";
   session_id?: string;
+  locale?: "en" | "es" | "fr" | "it" | "nl" | "pt" | "ru" | "ur" | "ar" | "hi";
+  page?: string;
 };
 
 export function validLandingAttribution(value: unknown): value is LandingAttribution {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const attribution = value as Record<string, unknown>;
-  return Object.keys(attribution).every((key) => key === "brand" || key === "session_id") &&
+  const guides: Record<string, string[]> = {
+    trex: ["prepare-a-clean-playlist", "check-your-playback-chain", "write-a-useful-tv-support-request"],
+    opplex: ["keep-your-playlist-organised", "a-step-by-step-playback-check", "follow-up-with-the-right-order-details"],
+    geo: ["make-playlist-labels-easier-to-follow", "compare-playback-in-your-own-setup", "send-support-the-right-regional-context"],
+    "5g": ["build-a-manageable-mobile-playlist", "check-playback-when-your-network-changes", "report-a-mobile-playback-problem-clearly"]
+  };
+  const pages = ["", "about", "contact", "faqs", "packages", "reseller-panel", "iptv-applications", "setup", "movies", "shop",
+    "activate", "activate-info", "blogs", "terms-of-service", "privacy-policy", "refund-policy"];
+  const hasContext = Object.prototype.hasOwnProperty.call(attribution, "locale") || Object.prototype.hasOwnProperty.call(attribution, "page");
+  return Object.keys(attribution).every((key) => ["brand", "session_id", "locale", "page"].includes(key)) &&
     typeof attribution.brand === "string" && ["trex", "opplex", "geo", "5g"].includes(attribution.brand) &&
     (!Object.prototype.hasOwnProperty.call(attribution, "session_id") ||
-      (typeof attribution.session_id === "string" && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(attribution.session_id)));
+      (typeof attribution.session_id === "string" && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(attribution.session_id))) &&
+    (!hasContext || Object.prototype.hasOwnProperty.call(attribution, "session_id")) &&
+    (!Object.prototype.hasOwnProperty.call(attribution, "locale") ||
+      (typeof attribution.locale === "string" && ["en", "es", "fr", "it", "nl", "pt", "ru", "ur", "ar", "hi"].includes(attribution.locale))) &&
+    (!Object.prototype.hasOwnProperty.call(attribution, "page") ||
+      (typeof attribution.page === "string" && [...pages, ...guides[attribution.brand].map((slug) => `blogs/${slug}`)].includes(attribution.page)));
 }
 
 type SourceCatalogItem = {

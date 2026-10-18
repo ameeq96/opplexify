@@ -33,6 +33,12 @@ type CatalogResponse = {
   devices: StreamingDevice[];
   selectedPackageId: number | null;
   sharedCheckout?: SharedCheckout;
+  resumeCheckout?: {
+    expiresAt: string;
+    deviceId: number | null;
+    totalMinor: number;
+    status: "available" | "paid" | "processing" | "cancelled" | "failed" | "unavailable";
+  };
 };
 
 type StreamingPlansProps = {
@@ -98,6 +104,12 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   const [error, setError] = useState("");
   const [requestVersion, setRequestVersion] = useState(0);
   const [sharedCheckout, setSharedCheckout] = useState<SharedCheckout | null>(null);
+  const [resumeToken, setResumeToken] = useState("");
+  const [locationReady, setLocationReady] = useState(false);
+  const [resumedCheckout, setResumedCheckout] = useState<CatalogResponse["resumeCheckout"] | null>(null);
+  const [resumeLink, setResumeLink] = useState<{ url: string; expiresAt: string } | null>(null);
+  const [savingResume, setSavingResume] = useState(false);
+  const [resumeFeedback, setResumeFeedback] = useState("");
   const [shareLink, setShareLink] = useState<{ url: string; expiresAt: string } | null>(null);
   const [sharePanelOpen, setSharePanelOpen] = useState(false);
   const [sharing, setSharing] = useState(false);
@@ -109,6 +121,19 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   const checkoutError = useRef<HTMLDivElement | null>(null);
   const shareRequest = useRef<AbortController | null>(null);
   const shareInput = useRef<HTMLInputElement | null>(null);
+  const resumeInput = useRef<HTMLInputElement | null>(null);
+  const resumeRequest = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const readResume = () => {
+      const values = new URLSearchParams(window.location.hash.slice(1));
+      setResumeToken(values.get("resume") || "");
+      setLocationReady(true);
+    };
+    readResume();
+    window.addEventListener("hashchange", readResume);
+    return () => window.removeEventListener("hashchange", readResume);
+  }, []);
 
   useEffect(() => {
     setNativeShareAvailable(typeof navigator.share === "function");
@@ -134,12 +159,19 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
     setShareError("");
     setShareFeedback("");
     setSharing(false);
-    return () => shareRequest.current?.abort();
-  }, [selection, signature]);
+    setResumeLink(null);
+    setResumeFeedback("");
+    resumeRequest.current?.abort();
+    resumeRequest.current = null;
+    setSavingResume(false);
+    return () => { shareRequest.current?.abort(); resumeRequest.current?.abort(); };
+  }, [selection, signature, resumeToken]);
 
   useEffect(() => {
     setSharedCheckout(null);
-    if (!selection || !signature) {
+    setResumedCheckout(null);
+    if (!locationReady) return;
+    if (!resumeToken && (!selection || !signature)) {
       setPlan(null);
       setError("This checkout link is invalid or has expired. Please choose your service again.");
       setLoading(false);
@@ -147,20 +179,21 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
     }
 
     const controller = new AbortController();
-    const query = new URLSearchParams({ selection, signature });
+    const query = new URLSearchParams({ selection: selection || "", signature: signature || "" });
 
     const loadCheckout = async () => {
       setLoading(true);
       setError("");
 
       try {
-        const response = await fetch(`/public/streaming/catalog?${query.toString()}`, {
+        const response = await fetch(resumeToken ? "/public/streaming/checkout-resume" : `/public/streaming/catalog?${query.toString()}`, {
+          ...(resumeToken ? { method: "POST", body: JSON.stringify({ resume_token: resumeToken }) } : {}),
           cache: "no-store",
-          headers: { Accept: "application/json" },
+          headers: { Accept: "application/json", ...(resumeToken ? { "Content-Type": "application/json" } : {}) },
           signal: controller.signal
         });
 
-        if (!response.ok) throw new Error("Checkout request failed");
+        if (!response.ok) throw new Error(resumeToken ? "Resume request failed" : "Checkout request failed");
 
         const catalog = (await response.json()) as CatalogResponse;
         if (!Array.isArray(catalog.plans) || !Array.isArray(catalog.devices)) {
@@ -178,6 +211,14 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
         setPlan(selectedPlan);
         setSharedCheckout(catalog.sharedCheckout ?? null);
+        if (resumeToken) {
+          if (!catalog.resumeCheckout || !["available", "paid", "processing", "cancelled", "failed", "unavailable"].includes(catalog.resumeCheckout.status)) {
+            throw new Error("Invalid resume response");
+          }
+          setResumedCheckout(catalog.resumeCheckout);
+          setCheckoutKey("");
+          return;
+        }
 
         const storageKey = `${checkoutStorageKey}.estimated-fees-v1.${selectedPlan.id}`;
         let key = createCheckoutKey();
@@ -191,7 +232,9 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
       } catch (checkoutError) {
         if ((checkoutError as Error).name !== "AbortError") {
           setPlan(null);
-          setError("We could not load your checkout. Please try again.");
+          setError(resumeToken
+            ? "This saved payment link is invalid, expired, unavailable or belongs to another browser. Use the original browser, or contact support before paying again."
+            : "We could not load your checkout. Please try again.");
         }
       } finally {
         if (!controller.signal.aborted) setLoading(false);
@@ -200,7 +243,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
     void loadCheckout();
     return () => controller.abort();
-  }, [requestVersion, selection, signature]);
+  }, [requestVersion, selection, signature, resumeToken, locationReady]);
 
   const statusMessage = initialStatus ? statusMessages[initialStatus] : undefined;
   const displayServiceName = "Digital Services";
@@ -217,7 +260,59 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
         : sharedCheckout && sharedCheckout.totalMinor !== totalMinor
           ? "The service total has changed. Please request a new payment link."
           : "";
-  const canCheckout = Boolean(plan && checkoutKey && !sharedNotice);
+  const resumeNotice = resumedCheckout?.status === "paid"
+    ? "This payment has already been paid. Do not pay again."
+    : resumedCheckout?.status === "processing"
+      ? "The original payment is still processing or has no reusable payment session. Refresh its status or contact support; do not start another payment."
+      : resumedCheckout && resumedCheckout.status !== "available"
+        ? "The original payment is closed, has not been started or is no longer available. Check its status with support before paying again."
+        : resumedCheckout && resumedCheckout.totalMinor !== totalMinor
+          ? "The price has changed. This saved payment cannot be continued. Check its status with support before paying again."
+          : "";
+  const canCheckout = Boolean(plan && (resumeToken ? resumedCheckout?.status === "available" && !resumeNotice : checkoutKey && !sharedNotice));
+
+  async function savePaymentResume() {
+    if (!plan || !selection || !signature || resumeToken || !canCheckout || savingResume || submitting) return;
+    setSavingResume(true);
+    setResumeFeedback("");
+    const controller = new AbortController();
+    resumeRequest.current = controller;
+    try {
+      const response = await fetch("/public/safepay/resume-checkout", {
+        method: "POST", cache: "no-store",
+        signal: controller.signal,
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ selection, signature, package_id: plan.id, checkout_key: checkoutKey,
+          device_id: sharedCheckout?.deviceId ?? null, quoted_total_minor: totalMinor })
+      });
+      if (!response.ok) throw new Error("This payment cannot be saved here. Reload your checkout or check the original payment with support.");
+      const saved = await response.json() as { url?: string; expiresAt?: string };
+      const url = new URL(saved.url || "");
+      if (url.origin !== window.location.origin || url.pathname !== "/checkout" || url.search ||
+          !/^#resume=rc3_[A-Za-z0-9_-]{60,2048}$/.test(url.hash) || !saved.expiresAt ||
+          !Number.isFinite(Date.parse(saved.expiresAt))) throw new Error("The saved payment link could not be verified.");
+      if (!controller.signal.aborted) {
+        setResumeLink({ url: url.toString(), expiresAt: saved.expiresAt });
+        setResumeFeedback("Saved payment link ready. Copy it and keep it private; it only works in this browser.");
+      }
+    } catch (failure) {
+      if (!controller.signal.aborted) setResumeFeedback((failure as Error).message || "The payment link could not be saved.");
+    } finally {
+      if (resumeRequest.current === controller) setSavingResume(false);
+    }
+  }
+
+  async function copyPaymentResume() {
+    if (!resumeLink) return;
+    try {
+      await navigator.clipboard.writeText(resumeLink.url);
+      setResumeFeedback("Private payment-resume link copied. Use it in this original browser only.");
+    } catch {
+      resumeInput.current?.focus();
+      resumeInput.current?.select();
+      setResumeFeedback("Select and copy the private link above.");
+    }
+  }
 
   async function createShareLink() {
     if (!plan || !selection || !signature || !canCheckout || sharing) return;
@@ -311,7 +406,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
         ) : error || !plan ? (
           <div ref={checkoutError} className={styles.error} role="alert" tabIndex={-1}>
             <p>{error || "This checkout link is unavailable."}</p>
-            {selection && signature ? (
+            {(selection && signature) || resumeToken ? (
               <button type="button" onClick={() => setRequestVersion((version) => version + 1)}>
                 Try again
               </button>
@@ -383,6 +478,12 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
               </div>
 
               {sharedNotice ? <p className={styles.notice} role="status">{sharedNotice}</p> : null}
+              {resumeNotice ? <p className={styles.notice} role="status">{resumeNotice}</p> : null}
+              {resumedCheckout ? <section className={styles.resumeNotice} aria-label="Saved payment status">
+                <p>This private link reopens only the original payment in this browser. It never creates a replacement order or payment session.</p>
+                <button type="button" onClick={() => setRequestVersion((version) => version + 1)}>Refresh saved payment status</button>
+                <a href="https://opplexiptv.com/contact">Contact support before paying again</a>
+              </section> : null}
               {sharedCheckout && !sharedNotice ? (
                 <p className={styles.paymentNote}>
                   Shared checkout: use your own details in SafePay. The order, service and invoice will belong to the payer.
@@ -392,31 +493,45 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
               <form action="/public/safepay/checkout" method="post" className={styles.checkoutForm}
                 aria-busy={submitting} aria-describedby="checkout-progress"
                 onSubmit={(event) => {
-                  if (checkoutSubmitting.current || !canCheckout || sharing) {
+                  if (checkoutSubmitting.current || !canCheckout || sharing || savingResume) {
                     event.preventDefault();
                     return;
                   }
                   checkoutSubmitting.current = true;
                   setSubmitting(true);
                 }}>
+                {resumeToken ? <input type="hidden" name="resume_token" value={resumeToken} /> : <>
                 <input type="hidden" name="package_id" value={plan.id} />
                 <input type="hidden" name="selection" value={selection} />
                 <input type="hidden" name="signature" value={signature} />
                 <input type="hidden" name="checkout_key" value={checkoutKey} />
                 <input type="hidden" name="quoted_total_minor" value={totalMinor} />
                 {sharedCheckout?.deviceId != null ? <input type="hidden" name="device_id" value={sharedCheckout.deviceId} /> : null}
-                <button type="submit" disabled={!canCheckout || sharing || submitting}>
-                  {submitting ? "Opening SafePay…" : "Continue to SafePay"}
+                </>}
+                <button type="submit" disabled={!canCheckout || sharing || savingResume || submitting}>
+                  {submitting ? "Opening SafePay…" : resumeToken ? "Continue original SafePay payment" : "Continue to SafePay"}
                 </button>
               </form>
               <p id="checkout-progress" className={styles.checkoutProgress} role="status" aria-live="polite" aria-atomic="true">
                 {submitting ? "Your checkout is being prepared. Please wait and do not pay again. If the page does not continue, check your order or contact support before retrying." : ""}
               </p>
-              <button type="button" className={styles.sharePaymentButton}
+              {!resumeToken ? <section className={styles.resumeNotice} aria-label="Save original payment">
+                <button type="button" className={styles.sharePaymentButton} disabled={!canCheckout || sharing || savingResume || submitting}
+                  onClick={() => void savePaymentResume()}>{savingResume ? "Saving private link…" : "Save payment for later"}</button>
+                <p>Save this before opening SafePay. After payment starts, this link can reopen only that same payment session for 24 hours in this browser. It does not email anyone or save card details. It cannot restore a closed payment or work on another device.</p>
+                {resumeLink ? <>
+                  <label htmlFor="payment-resume-url">Private same-browser payment link</label>
+                  <input ref={resumeInput} id="payment-resume-url" readOnly value={resumeLink.url} onFocus={(event) => event.currentTarget.select()} />
+                  <button type="button" onClick={() => void copyPaymentResume()}>Copy private link</button>
+                  <p>Expires {new Date(resumeLink.expiresAt).toLocaleString()}. Keep the original browser cookies; do not share this link.</p>
+                </> : null}
+                <p role="status" aria-live="polite">{resumeFeedback}</p>
+              </section> : null}
+              {!resumeToken ? <button type="button" className={styles.sharePaymentButton}
                 disabled={!canCheckout || sharing || submitting} aria-expanded={sharePanelOpen} aria-controls="share-payment-panel"
                 onClick={() => shareLink ? setSharePanelOpen((open) => !open) : void createShareLink()}>
                 {sharing ? "Creating secure link…" : "Share payment link"}
-              </button>
+              </button> : null}
               {shareError ? <p className={styles.sharePaymentFeedback} role="alert">{shareError}</p> : null}
               {shareLink && sharePanelOpen ? (
                 <section id="share-payment-panel" className={styles.sharePaymentPanel} aria-label="Share payment link">

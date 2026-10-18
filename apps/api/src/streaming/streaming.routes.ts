@@ -3,7 +3,9 @@ import { createHash } from "node:crypto";
 import { asyncHandler } from "../http";
 import { prisma } from "../prisma/prisma.service";
 import { fetchStreamingCatalog, selectedPackageId } from "./catalog";
-import { ensureSharedCheckoutOwner, isSharedCheckoutSelection, sharedCheckoutKey, sharedCheckoutPublicToken, verifySharedCheckout } from "./shared-checkout";
+import { ensureSharedCheckoutOwner, isSharedCheckoutSelection, sharedCheckoutKey, sharedCheckoutOwner, sharedCheckoutPublicToken, verifySharedCheckout } from "./shared-checkout";
+import { resumeCheckoutStatus, verifyResumeCheckout } from "./resume-checkout";
+import { webOrigin } from "../env";
 import { enqueueCustomerEvent } from "./customer-sync";
 
 export function createStreamingRouter() {
@@ -53,13 +55,45 @@ export function createStreamingRouter() {
         });
         return;
       }
+      const selected = selectedPackageId(selection, signature, catalog.plans);
+      if (selected !== null) ensureSharedCheckoutOwner(req, res);
       res.json({
         plans: catalog.plans,
         devices: catalog.devices,
-        selectedPackageId: selectedPackageId(selection, signature, catalog.plans)
+        selectedPackageId: selected
       });
     })
   );
+
+  router.post("/checkout-resume", asyncHandler(async (req, res) => {
+    res.setHeader("Cache-Control", "private, no-store");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    if (req.get("Origin") !== webOrigin) {
+      res.status(403).json({ message: "Open your saved payment link in its original browser." });
+      return;
+    }
+    const owner = sharedCheckoutOwner(req);
+    if (!owner || typeof req.body?.resume_token !== "string" || !/^rc3_[A-Za-z0-9_-]{60,2048}$/.test(req.body.resume_token)) {
+      res.status(404).json({ message: "This saved payment link is invalid, expired or belongs to another browser." });
+      return;
+    }
+    const catalog = await fetchStreamingCatalog();
+    const selection = verifyResumeCheckout(req.body.resume_token, owner, catalog.plans, catalog.devices);
+    if (!selection) {
+      res.status(404).json({ message: "This saved payment link is invalid, expired or belongs to another browser." });
+      return;
+    }
+    const order = await prisma.streamingOrder.findUnique({ where: { checkoutKey: selection.checkout_key } });
+    const status = resumeCheckoutStatus(selection, order);
+    res.json({
+      plans: catalog.plans.filter((plan) => plan.id === selection.package_id),
+      devices: [],
+      selectedPackageId: selection.package_id,
+      resumeCheckout: { expiresAt: new Date(selection.exp * 1000).toISOString(), deviceId: selection.device_id,
+        totalMinor: selection.total_minor, status }
+    });
+  }));
 
   router.get(
     "/orders/:publicToken",

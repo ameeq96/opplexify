@@ -166,19 +166,54 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(safepayMerchantJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         {GOOGLE_ANALYTICS_ID ? (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GOOGLE_ANALYTICS_ID)}`}
-              strategy="lazyOnload"
-            />
-            <Script id="opplexify-google-analytics" strategy="lazyOnload">
-              {`window.dataLayer = window.dataLayer || [];
-function gtag(){window.dataLayer.push(arguments);}
-window.gtag = gtag;
-gtag('js', new Date());
-gtag('config', ${JSON.stringify(GOOGLE_ANALYTICS_ID)}, { anonymize_ip: true });`}
-            </Script>
-          </>
+          <Script id="opplexify-google-analytics" strategy="lazyOnload">
+            {`(() => {
+const id = ${JSON.stringify(GOOGLE_ANALYTICS_ID)};
+const disable = 'ga-disable-' + id;
+let started = false;
+let previousPublic = '';
+function privateUrl(value) {
+  try {
+    const url = new URL(value || location.href, location.href);
+    return /^\\/(?:checkout|streaming-plans)(?:\\/|$)/.test(url.pathname) || new URLSearchParams(url.hash.slice(1)).has('resume');
+  } catch { return true; }
+}
+function sync() {
+  const blocked = privateUrl(location.href);
+  window[disable] = blocked;
+  if (blocked) return;
+  window.dataLayer = window.dataLayer || [];
+  if (!window.gtag) window.gtag = function(){window.dataLayer.push(arguments);};
+  window.gtag('set', { page_location: location.href, page_referrer: previousPublic || (privateUrl(document.referrer) ? location.origin : document.referrer) });
+  previousPublic = location.href;
+  if (started) return;
+  started = true;
+  window.gtag('js', new Date());
+  window.gtag('config', id, { anonymize_ip: true });
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(script);
+}
+for (const method of ['pushState', 'replaceState']) {
+  const original = history[method];
+  history[method] = function(state, unused, url) {
+    if (privateUrl(url == null ? location.href : url)) window[disable] = true;
+    const result = original.apply(this, arguments);
+    sync();
+    return result;
+  };
+}
+document.addEventListener('click', event => {
+  if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target?.closest?.('a[href]');
+  if (link && (!link.target || link.target === '_self') && privateUrl(link.href)) window[disable] = true;
+}, true);
+window.addEventListener('popstate', sync, true);
+window.addEventListener('hashchange', sync, true);
+sync();
+})();`}
+          </Script>
         ) : null}
         {children}
       </body>

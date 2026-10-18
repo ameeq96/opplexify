@@ -38,6 +38,29 @@ test("all approved brands preserve only their signed optional consented session"
   }
 });
 
+test("consented locale and page context are bounded and remain inside the signed attribution", () => {
+  for (const locale of ["en", "es", "fr", "it", "nl", "pt", "ru", "ur", "ar", "hi"]) {
+    for (const page of ["", "packages", "setup", "blogs/compare-playback-in-your-own-setup"]) {
+      const attribution = { brand: "geo", session_id: sessionId, locale, page };
+      const link = signed({ attribution });
+      assert.deepEqual(verifiedCheckoutSelection(link.selection, link.signature, plans), { package_id: 17, attribution });
+    }
+  }
+  for (const attribution of [{ brand: "geo", locale: "en" }, { brand: "geo", page: "packages" },
+    { brand: "geo", session_id: sessionId, locale: "xx" }, { brand: "geo", session_id: sessionId, locale: null },
+    { brand: "geo", session_id: sessionId, page: "packages?email=private@example.test" },
+    { brand: "geo", session_id: sessionId, page: "packages/" },
+    { brand: "geo", session_id: sessionId, page: "blogs/check-your-playback-chain" },
+    { brand: "geo", session_id: sessionId, page: null }]) {
+    assert.equal(validLandingAttribution(attribution), false);
+    const link = signed({ attribution });
+    assert.equal(verifiedCheckoutSelection(link.selection, link.signature, plans), null);
+  }
+  const original = signed({ attribution: { brand: "geo", session_id: sessionId, locale: "ur", page: "setup" } });
+  const changed = signed({ attribution: { brand: "geo", session_id: sessionId, locale: "ar", page: "setup" } });
+  assert.equal(verifiedCheckoutSelection(changed.selection, original.signature, plans), null);
+});
+
 test("even correctly signed malformed attribution fails closed instead of becoming a legacy link", () => {
   const malformed = [null, "geo", [], {}, { brand: "unknown" }, { brand: "GEO" },
     { brand: "geo", session_id: null }, { brand: "geo", session_id: "" },

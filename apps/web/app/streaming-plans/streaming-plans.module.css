@@ -1,3 +1,44 @@
+.resumeNotice {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.resumeNotice p {
+  margin: 0;
+}
+
+.resumeNotice input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--surface, #10131c);
+  color: var(--text);
+}
+
+.resumeNotice :is(a, button) {
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent-2);
+  text-align: center;
+}
+
+.resumeNotice :is(a, button, input):focus-visible {
+  outline: 3px solid var(--accent-2);
+  outline-offset: 3px;
+}
+
 .sharePaymentButton {
   width: 100%;
   min-height: 50px;

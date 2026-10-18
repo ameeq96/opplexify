@@ -40,6 +40,9 @@ function loadSource(file: string, modules: Record<string, unknown>, extra: Recor
 const shared = loadSource("shared-checkout.ts", {
   "node:crypto": crypto, "../env": { webOrigin: origin }, "./catalog": catalog
 }) as typeof import("./shared-checkout");
+const resume = loadSource("resume-checkout.ts", {
+  "node:crypto": crypto, "./catalog": catalog
+}) as typeof import("./resume-checkout");
 
 function signPayload(payload: unknown, domain = "opplexify:shared-checkout:v2") {
   const selection = Buffer.from(JSON.stringify(payload)).toString("base64url");
@@ -121,6 +124,7 @@ function routeHarness(options: { prepareStatus?: number; foreignOwner?: boolean 
     "../prisma/prisma.service": { prisma: db },
     "../streaming/catalog": { ...catalog, fetchStreamingCatalog: async () => ({ plans: [plan], devices: [] }) },
     "../streaming/shared-checkout": shared,
+    "../streaming/resume-checkout": resume,
     "../streaming/customer-sync": { enqueueCustomerEvent: async () => null }
   }, { fetch: async (target: string | URL, request: any) => {
     const url = String(target);
@@ -159,7 +163,9 @@ test("share route forwards only original signed attribution, not unsigned browse
 });
 
 test("normal and shared checkout authenticate unchanged attribution in the IPTV prepare body", async () => {
-  for (const link of [originalLink(), originalLink(attribution), shared.createSharedCheckout(plan, null, 1000, attribution)]) {
+  const context: catalog.LandingAttribution = { ...attribution, locale: "ur", page: "setup" };
+  for (const link of [originalLink(), originalLink(attribution), originalLink(context),
+    shared.createSharedCheckout(plan, null, 1000, attribution), shared.createSharedCheckout(plan, null, 1000, context)]) {
     const harness = routeHarness();
     const result = await harness.run("/checkout", checkoutBody(link));
     assert.equal(result.statusCode, 409);
@@ -176,6 +182,18 @@ test("normal and shared checkout authenticate unchanged attribution in the IPTV 
       .update(`POST\n/integrations/opplexify/orders/prepare\n${request.headers["X-Opplexify-Timestamp"]}\n${hash}`).digest("hex");
     assert.equal(request.headers["X-Opplexify-Signature"], expected);
     assert.equal(request.redirect, "error");
+  }
+});
+
+test("legacy normal checkout without a resume cookie and existing public references retain their original behavior", async () => {
+  for (const [headers, existingReference] of [[{ Cookie: "" }, false], [{}, true]] as const) {
+    const harness = routeHarness({ foreignOwner: existingReference });
+    const result = await harness.run("/checkout", checkoutBody(originalLink(attribution)), headers);
+    assert.equal(result.statusCode, 409);
+    assert.equal(result.body.status, "cancelled");
+    assert.match(harness.savedOrders[0].publicToken, /^sp2_[a-f0-9]{32}$/);
+    if (existingReference) assert.equal(harness.savedOrders[0].publicToken, `sp2_${"f".repeat(32)}`);
+    assert.equal(harness.requests.length, 1);
   }
 });
 
