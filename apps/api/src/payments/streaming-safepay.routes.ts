@@ -1012,7 +1012,7 @@ function toMinorUnits(amount: number) {
   return value;
 }
 
-function checkoutAmountMinor(plan: Pick<StreamingPlan, "price" | "currency">) {
+export function checkoutAmountMinor(plan: Pick<StreamingPlan, "price" | "currency">) {
   const baseMinor = toMinorUnits(plan.price);
   // Match the disclosed estimate in StreamingPlans; not SafePay's confirmed fee schedule.
   const surchargeMinor = plan.currency.toUpperCase() === "USD"
@@ -1029,7 +1029,6 @@ function absoluteWebUrl(path: string) {
 
 function orderStatusUrl(token: string, status: string) {
   if (/^spt_[a-f0-9]{32}$/.test(token)) return `/public/safepay/test-payment/orders/${token}`;
-  if (/^gai_[a-f0-9]{32}$/.test(token)) return `/ai-checkout?order=${encodeURIComponent(token)}`;
   return `/streaming-plans/order/${encodeURIComponent(token)}?status=${encodeURIComponent(status)}`;
 }
 

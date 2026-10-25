@@ -15,11 +15,12 @@ type CheckoutPageProps = {
     selection?: string;
     signature?: string;
     status?: string;
+    source?: string;
   }>;
 };
 
 export default async function CheckoutPage({ searchParams }: CheckoutPageProps) {
-  const { selection, signature, status } = await searchParams;
+  const { selection, signature, status, source } = await searchParams;
 
   return (
     <PublicShell smooth={false} showLoader={false}>
@@ -28,6 +29,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
           selection={selection}
           signature={signature}
           initialStatus={status}
+          getai={source === "getaitools"}
         />
       </main>
     </PublicShell>
