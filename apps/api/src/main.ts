@@ -10,6 +10,7 @@ import { assertProductionEnv, isProduction, trustProxyHops, webOrigin } from "./
 import { requireTrustedOrigin } from "./auth/auth.middleware";
 import { errorHandler } from "./http";
 import { createStreamingSafepayRouter, safepayWebhookHandler } from "./payments/streaming-safepay.routes";
+import { createAiToolsRouter } from "./payments/ai-tools.routes";
 import { prisma } from "./prisma/prisma.service";
 import { startInvoiceEmailWorker } from "./payments/invoice-email";
 import { createStreamingRouter } from "./streaming/streaming.routes";
@@ -88,6 +89,7 @@ export function createApiApp() {
     res.status(404).json({ message: "Not found" });
   });
   app.use("/public/safepay", createStreamingSafepayRouter());
+  app.use("/public/ai-tools", createAiToolsRouter());
   app.use("/public/streaming", createStreamingRouter());
   app.use("/public", createPublicRouter());
   app.use("/admin", requireTrustedOrigin, createAdminRouter());

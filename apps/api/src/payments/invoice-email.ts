@@ -114,7 +114,7 @@ async function finishDelivery(
 }
 
 async function enqueueInvoiceState(tx: Prisma.TransactionClient, delivery: Delivery, status: string, errorCode: string | null) {
-  if (delivery.order.publicToken.startsWith("spt_")) return;
+  if (delivery.order.publicToken.startsWith("spt_") || delivery.order.publicToken.startsWith("gai_")) return;
   const eventType = status === "SENT" ? "invoice.sent" : status === "FAILED" ? "invoice.failed"
     : status === "UNKNOWN" ? "invoice.unknown" : status === "SENDING" ? "invoice.sending" : "invoice.pending";
   const recipient = invoiceEmailRecipient(delivery.recipient);

@@ -164,7 +164,7 @@ export function createStreamingSafepayRouter() {
     res.set("Cache-Control", "private, no-store");
     res.set("X-Robots-Tag", "noindex, nofollow");
     const token = typeof req.params.publicToken === "string" ? req.params.publicToken : "";
-    if (!/^(?:sp2_[a-f0-9]{32}|spt_[a-f0-9]{32}|c[a-z0-9]{24,31})$/.test(token)) {
+    if (!/^(?:sp2_[a-f0-9]{32}|spt_[a-f0-9]{32}|gai_[a-f0-9]{32}|c[a-z0-9]{24,31})$/.test(token)) {
       res.status(404).send("Invoice not found");
       return;
     }
@@ -560,7 +560,7 @@ export function createStreamingSafepayRouter() {
             const changed = await tx.streamingOrder.updateMany({
               where: { id: order.id, status: { not: "PAID" } }, data: { status: "FAILED" }
             });
-            if (changed.count === 1 && !order.publicToken.startsWith("spt_")) await enqueueCustomerEvent(tx, {
+            if (changed.count === 1 && !order.publicToken.startsWith("spt_") && !order.publicToken.startsWith("gai_")) await enqueueCustomerEvent(tx, {
               eventType: "checkout.failed", entityType: "streaming_order", entityId: order.id,
               dedupeKey: `${tracker}:amount_mismatch`,
               data: { ...customerOrderData(order), status: "FAILED", error_code: "PAYMENT_AMOUNT_MISMATCH" }
@@ -690,7 +690,7 @@ export const safepayWebhookHandler = asyncHandler(async (req, res) => {
   res.json({ received: true });
 });
 
-function safepayConfig(): SafepayConfig | null {
+export function safepayConfig(): SafepayConfig | null {
   const environment = process.env.SAFEPAY_ENVIRONMENT?.trim().toLowerCase() || "sandbox";
   if (environment !== "sandbox" && environment !== "production") return null;
 
@@ -710,7 +710,7 @@ function safepayConfig(): SafepayConfig | null {
   };
 }
 
-async function hostedCheckoutUrl(config: SafepayConfig, tracker: string, orderToken: string) {
+export async function hostedCheckoutUrl(config: SafepayConfig, tracker: string, orderToken: string) {
   const passport = await safepayRequest<PassportResponse>(config, "/client/passport/v1/token", {});
   if (!passport.data) throw new Error("Safepay did not return an authentication token");
 
@@ -725,7 +725,7 @@ async function hostedCheckoutUrl(config: SafepayConfig, tracker: string, orderTo
   return checkoutUrl.toString();
 }
 
-async function safepayRequest<T>(config: SafepayConfig, path: string, body: Record<string, unknown>): Promise<T> {
+export async function safepayRequest<T>(config: SafepayConfig, path: string, body: Record<string, unknown>): Promise<T> {
   const response = await fetch(`${config.apiBase}${path}`, {
     method: "POST",
     headers: {
@@ -801,6 +801,7 @@ function findString(value: unknown, keys: string[]): string | null {
 type IptvCheckout = {
   id: string;
   publicToken: string;
+  packageType?: string;
   sourcePackageId: number;
   amountMinor: number;
   currency: string;
@@ -839,6 +840,15 @@ async function prepareIptvCheckout(order: IptvCheckout, deviceId: number | null,
 async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse, environment: SafepayEnvironment) {
   let iptvLink: { iptvOrderId: number; iptvCustomerId: number | null } | null = null;
   let customerSnapshot: CustomerEventData["customer"];
+  if (/^gai_[a-f0-9]{32}$/.test(order.publicToken)) {
+    const verification = verifyReport(report, order.amountMinor, order.currency);
+    if (order.packageType !== "ai_tool" || order.currency !== "USD" || !order.safepayTracker ||
+        report.data?.token !== order.safepayTracker || report.data.environment !== environment ||
+        report.data.metadata?.order_id?.value !== order.publicToken ||
+        verification.state !== "TRACKER_ENDED" || !verification.amountMatches) {
+      throw new Error("SafePay payment does not match the GetAI Tools checkout");
+    }
+  }
   if (/^spt_[a-f0-9]{32}$/.test(order.publicToken)) {
     const verification = verifyReport(report, 5000, "PKR");
     if (environment !== "production" || order.sourcePackageId !== 0 || order.amountMinor !== 5000 ||
@@ -932,7 +942,7 @@ async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse,
 
     const paidOrder = await tx.streamingOrder.findUnique({ where: { id: order.id } });
     if (!paidOrder?.paidAt) throw new Error("Invoice payment snapshot is not available");
-    if (!order.publicToken.startsWith("spt_")) await enqueueCustomerEvent(tx, {
+    if (!order.publicToken.startsWith("spt_") && !order.publicToken.startsWith("gai_")) await enqueueCustomerEvent(tx, {
       eventType: "payment.verified", entityType: "streaming_order", entityId: order.id,
       dedupeKey: order.safepayTracker!, occurredAt: paidOrder.paidAt,
       data: { ...customerOrderData(order), status: "PAID", ...(customerSnapshot ? { customer: customerSnapshot } : {}) }
@@ -956,7 +966,7 @@ async function markOrderPaid(order: IptvCheckout, report: PaymentReportResponse,
         }
       }
     });
-    if (!order.publicToken.startsWith("spt_")) await enqueueCustomerEvent(tx, {
+    if (!order.publicToken.startsWith("spt_") && !order.publicToken.startsWith("gai_")) await enqueueCustomerEvent(tx, {
       eventType: recipient ? "invoice.pending" : "invoice.failed", entityType: "streaming_order", entityId: order.id,
       dedupeKey: "invoice_created", occurredAt: paidOrder.paidAt,
       data: { ...customerOrderData(order), invoice_status: recipient ? "PENDING" : "FAILED",
@@ -1019,6 +1029,7 @@ function absoluteWebUrl(path: string) {
 
 function orderStatusUrl(token: string, status: string) {
   if (/^spt_[a-f0-9]{32}$/.test(token)) return `/public/safepay/test-payment/orders/${token}`;
+  if (/^gai_[a-f0-9]{32}$/.test(token)) return `/ai-checkout?order=${encodeURIComponent(token)}`;
   return `/streaming-plans/order/${encodeURIComponent(token)}?status=${encodeURIComponent(status)}`;
 }
 
@@ -1100,7 +1111,7 @@ function liveTestPage(res: Response, title: string, body: string) {
 <body><main>${body}</main></body></html>`);
 }
 
-function createCheckoutRateLimit() {
+export function createCheckoutRateLimit() {
   const clients = new Map<string, { count: number; resetAt: number }>();
   const windowMs = 15 * 60 * 1000;
   const maxRequests = 10;
