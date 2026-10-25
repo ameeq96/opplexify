@@ -29,7 +29,7 @@ test("legacy signed selections keep their selected package without attribution",
 });
 
 test("all approved brands preserve only their signed optional consented session", () => {
-  for (const brand of ["trex", "opplex", "geo", "5g"]) {
+  for (const brand of ["trex", "opplex", "geo", "5g", "iptvsubscription", "getiptv"]) {
     for (const attribution of [{ brand }, { brand, session_id: sessionId }]) {
       const link = signed({ attribution });
       assert.deepEqual(verifiedCheckoutSelection(link.selection, link.signature, plans), { package_id: 17, attribution });
@@ -59,6 +59,24 @@ test("consented locale and page context are bounded and remain inside the signed
   const original = signed({ attribution: { brand: "geo", session_id: sessionId, locale: "ur", page: "setup" } });
   const changed = signed({ attribution: { brand: "geo", session_id: sessionId, locale: "ar", page: "setup" } });
   assert.equal(verifiedCheckoutSelection(changed.selection, original.signature, plans), null);
+});
+
+test("new landing brands keep their own signed guide context", () => {
+  const guides = {
+    iptvsubscription: ["choosing-an-iptv-subscription", "iptv-subscription-renewal-checklist", "iptv-device-and-player-costs"],
+    getiptv: ["how-to-get-iptv-on-your-device", "iptv-setup-before-checkout", "troubleshoot-an-iptv-connection"]
+  };
+  for (const [brand, slugs] of Object.entries(guides)) {
+    for (const slug of slugs) {
+      const attribution = { brand, session_id: sessionId, locale: "it", page: `blogs/${slug}` };
+      const link = signed({ attribution });
+      assert.deepEqual(verifiedCheckoutSelection(link.selection, link.signature, plans), { package_id: 17, attribution });
+      const other = brand === "getiptv" ? "iptvsubscription" : "getiptv";
+      assert.equal(validLandingAttribution({ ...attribution, brand: other }), false);
+      const tampered = signed({ attribution: { ...attribution, brand: other } });
+      assert.equal(verifiedCheckoutSelection(tampered.selection, link.signature, plans), null);
+    }
+  }
 });
 
 test("even correctly signed malformed attribution fails closed instead of becoming a legacy link", () => {
