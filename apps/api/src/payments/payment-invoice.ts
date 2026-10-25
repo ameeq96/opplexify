@@ -66,12 +66,15 @@ export function createPaymentInvoice(order: PaymentInvoice): Promise<Buffer> {
       doc.font("Heading").fontSize(9).fillColor(muted).text("PURCHASE", 62, y + 11);
       doc.text("AMOUNT PAID", 395, y + 11, { width: right - 409, align: "right" });
       y += 49;
-      doc.font("Heading").fontSize(13).fillColor(ink).text(test ? text(order.packageName) : "Digital Services", 62, y, { width: 310, lineGap: 3 });
+      doc.font("Heading").fontSize(13).fillColor(ink).text(test || order.packageType === "ai_tool" ? text(order.packageName) : "Digital Services", 62, y, { width: 310, lineGap: 3 });
       let detailsY = doc.y + 9;
       doc.fontSize(12).text(money(order.amountMinor), 388, y, { width: right - 402, align: "right" });
       doc.font("Body").fontSize(10).fillColor(muted);
       if (test) {
         doc.text("Live test payment - no subscription or service activated.", 62, detailsY, { width: 310, lineGap: 3 });
+      }
+      if (order.packageType === "ai_tool") {
+        doc.text(`${text(order.providerName)}${order.durationLabel ? ` · ${text(order.durationLabel)}` : ""}`, 62, detailsY, { width: 310, lineGap: 3 });
       }
       y = doc.y + 27;
       if (y > 550) {
