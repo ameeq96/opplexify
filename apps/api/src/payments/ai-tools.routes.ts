@@ -4,7 +4,7 @@ import { webOrigin } from "../env";
 import { asyncHandler } from "../http";
 import { prisma } from "../prisma/prisma.service";
 import { ensureSharedCheckoutOwner, sharedCheckoutOwner } from "../streaming/shared-checkout";
-import { createCheckoutRateLimit, hostedCheckoutUrl, safepayConfig, safepayRequest } from "./streaming-safepay.routes";
+import { checkoutAmountMinor, createCheckoutRateLimit, hostedCheckoutUrl, safepayConfig, safepayRequest } from "./streaming-safepay.routes";
 
 type AiSelection = {
   v: 1;
@@ -118,6 +118,11 @@ export function createAiToolsRouter() {
         res.status(409).json({ message: "This plan link has expired or changed. Return to GetAI Tools for the current price." });
         return;
       }
+      const totalMinor = checkoutAmountMinor({ price: selected.amount_minor / 100, currency: selected.currency });
+      if (Number(req.body?.quoted_total_minor) !== totalMinor || totalMinor > 2_147_483_647) {
+        res.status(409).json({ message: "The checkout total has changed. Reload your selected plan and review the fee and tax breakdown." });
+        return;
+      }
       const digest = createHash("sha256").update(`${req.body.selection}\n${owner}`).digest("hex");
       const checkoutKey = `getai_${digest}`;
       const token = `gai_${digest.slice(0, 32)}`;
@@ -130,14 +135,14 @@ export function createAiToolsRouter() {
         where: { checkoutKey }, update: {},
         create: {
           checkoutKey, publicToken: token, sourcePackageId: 0, packageType: "ai_tool", providerName: "GetAI Tools",
-          packageName, durationLabel: selected.duration, amount: selected.amount_minor / 100,
-          amountMinor: selected.amount_minor, currency: "USD"
+          packageName, durationLabel: selected.duration, amount: totalMinor / 100,
+          amountMinor: totalMinor, currency: "USD"
         }
       });
       orderToken = order.publicToken;
       orderId = order.id;
       if (order.packageType !== "ai_tool" || order.publicToken !== token || order.packageName !== packageName ||
-          order.amountMinor !== selected.amount_minor || order.currency !== "USD" || order.durationLabel !== selected.duration) {
+          order.amountMinor !== totalMinor || order.currency !== "USD" || order.durationLabel !== selected.duration) {
         res.status(409).json({ message: "This saved checkout no longer matches the selected plan.", orderToken });
         return;
       }

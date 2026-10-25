@@ -8,7 +8,7 @@ const whatsappUrl = "https://wa.me/923054136663?text=" + encodeURIComponent(
   "Hi, my payment for Digital Services has been confirmed. I would like to share the payment screenshot for my order."
 );
 
-export function PaymentWhatsAppPrompt() {
+export function PaymentWhatsAppPrompt({ getaiMessage }: { getaiMessage?: string } = {}) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -39,13 +39,13 @@ export function PaymentWhatsAppPrompt() {
         <p className={styles.whatsappEyebrow}>Payment confirmed</p>
         <h2 id="payment-whatsapp-title">One quick step: send your screenshot</h2>
         <p id="payment-whatsapp-description" className={styles.whatsappDescription}>
-          Your payment for Digital Services was successful. Please share your payment screenshot with our support team on WhatsApp.
+          {getaiMessage ? "Your GetAI Tools payment was successful. Please share your payment screenshot with GetAI Tools on WhatsApp." : "Your payment for Digital Services was successful. Please share your payment screenshot with our support team on WhatsApp."}
         </p>
         <p className={styles.whatsappHint}>
           Open WhatsApp, attach your screenshot, then tap send. Hide card details, passwords and any OTPs before sharing.
         </p>
         <div className={styles.whatsappActions}>
-          <a className={styles.whatsappButton} href={whatsappUrl} target="_blank"
+          <a className={styles.whatsappButton} href={getaiMessage ? `https://wa.me/923008092395?text=${encodeURIComponent(getaiMessage)}` : whatsappUrl} target="_blank"
             rel="noopener noreferrer" onClick={closePrompt}>
             <MessageCircle size={20} aria-hidden="true" /> Open WhatsApp
           </a>

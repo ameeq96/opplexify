@@ -13,6 +13,8 @@ type StreamingPlan = {
   price: number;
   currency: string;
   available: boolean;
+  description?: string;
+  features?: string[];
 };
 
 type StreamingDevice = {
@@ -45,6 +47,7 @@ type StreamingPlansProps = {
   selection?: string;
   signature?: string;
   initialStatus?: string;
+  getai?: boolean;
 };
 
 const statusMessages: Record<string, string> = {
@@ -97,11 +100,12 @@ function estimateSafepayDeductions(price: number) {
   return { items, totalMinor: items.reduce((total, item) => total + item.amountMinor, 0) };
 }
 
-export function StreamingPlans({ selection, signature, initialStatus }: StreamingPlansProps) {
+export function StreamingPlans({ selection, signature, initialStatus, getai = false }: StreamingPlansProps) {
   const [plan, setPlan] = useState<StreamingPlan | null>(null);
   const [checkoutKey, setCheckoutKey] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [paymentError, setPaymentError] = useState("");
   const [requestVersion, setRequestVersion] = useState(0);
   const [sharedCheckout, setSharedCheckout] = useState<SharedCheckout | null>(null);
   const [resumeToken, setResumeToken] = useState("");
@@ -127,13 +131,13 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   useEffect(() => {
     const readResume = () => {
       const values = new URLSearchParams(window.location.hash.slice(1));
-      setResumeToken(values.get("resume") || "");
+      setResumeToken(getai ? "" : values.get("resume") || "");
       setLocationReady(true);
     };
     readResume();
     window.addEventListener("hashchange", readResume);
     return () => window.removeEventListener("hashchange", readResume);
-  }, []);
+  }, [getai]);
 
   useEffect(() => {
     setNativeShareAvailable(typeof navigator.share === "function");
@@ -152,6 +156,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
   useEffect(() => {
     checkoutSubmitting.current = false;
     setSubmitting(false);
+    setPaymentError("");
     shareRequest.current?.abort();
     shareRequest.current = null;
     setShareLink(null);
@@ -165,7 +170,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
     resumeRequest.current = null;
     setSavingResume(false);
     return () => { shareRequest.current?.abort(); resumeRequest.current?.abort(); };
-  }, [selection, signature, resumeToken]);
+  }, [selection, signature, resumeToken, getai]);
 
   useEffect(() => {
     setSharedCheckout(null);
@@ -186,12 +191,31 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
       setError("");
 
       try {
-        const response = await fetch(resumeToken ? "/public/streaming/checkout-resume" : `/public/streaming/catalog?${query.toString()}`, {
-          ...(resumeToken ? { method: "POST", body: JSON.stringify({ resume_token: resumeToken }) } : {}),
+        const response = await fetch(getai ? `/public/ai-tools/selection?${query.toString()}` : resumeToken ? "/public/streaming/checkout-resume" : `/public/streaming/catalog?${query.toString()}`, {
+          ...(!getai && resumeToken ? { method: "POST", body: JSON.stringify({ resume_token: resumeToken }) } : {}),
           cache: "no-store",
-          headers: { Accept: "application/json", ...(resumeToken ? { "Content-Type": "application/json" } : {}) },
+          headers: { Accept: "application/json", ...(!getai && resumeToken ? { "Content-Type": "application/json" } : {}) },
           signal: controller.signal
         });
+
+        if (getai) {
+          const selected = await response.json();
+          if (!response.ok) throw new Error(typeof selected.message === "string" ? selected.message : "Your GetAI Tools plan could not be loaded.");
+          if (selected.source !== "getaitools" || selected.currency !== "USD" ||
+              !Number.isSafeInteger(selected.amount_minor) || selected.amount_minor <= 0 ||
+              typeof selected.tool_name !== "string" || !selected.tool_name ||
+              typeof selected.plan_name !== "string" || !selected.plan_name ||
+              typeof selected.duration !== "string" || typeof selected.access !== "string" ||
+              typeof selected.note !== "string") throw new Error("The selected GetAI Tools plan could not be verified.");
+          setPlan({
+            id: 0, type: "plan", providerName: selected.tool_name, name: selected.plan_name,
+            description: selected.access, durationLabel: selected.duration,
+            features: [selected.access, selected.note].filter(Boolean), credits: null,
+            price: selected.amount_minor / 100, currency: "USD", available: true
+          });
+          setCheckoutKey("");
+          return;
+        }
 
         if (!response.ok) throw new Error(resumeToken ? "Resume request failed" : "Checkout request failed");
 
@@ -232,7 +256,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
       } catch (checkoutError) {
         if ((checkoutError as Error).name !== "AbortError") {
           setPlan(null);
-          setError(resumeToken
+          setError(getai ? (checkoutError as Error).message || "We could not load your GetAI Tools plan. Please try again." : resumeToken
             ? "This saved payment link is invalid, expired, unavailable or belongs to another browser. Use the original browser, or contact support before paying again."
             : "We could not load your checkout. Please try again.");
         }
@@ -243,10 +267,11 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
     void loadCheckout();
     return () => controller.abort();
-  }, [requestVersion, selection, signature, resumeToken, locationReady]);
+  }, [requestVersion, selection, signature, resumeToken, locationReady, getai]);
 
   const statusMessage = initialStatus ? statusMessages[initialStatus] : undefined;
-  const displayServiceName = "Digital Services";
+  const displayServiceName = getai && plan ? `${plan.providerName} — ${plan.name}` : "Digital Services";
+  const packagesUrl = getai ? "https://getaitools.shop/#tools" : sourcePackagesUrl;
   const estimatedDeductions = plan?.currency.toUpperCase() === "USD"
     ? estimateSafepayDeductions(plan.price)
     : null;
@@ -269,7 +294,32 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
         : resumedCheckout && resumedCheckout.totalMinor !== totalMinor
           ? "The price has changed. This saved payment cannot be continued. Check its status with support before paying again."
           : "";
-  const canCheckout = Boolean(plan && (resumeToken ? resumedCheckout?.status === "available" && !resumeNotice : checkoutKey && !sharedNotice));
+  const canCheckout = Boolean(plan && (getai ? selection && signature : resumeToken ? resumedCheckout?.status === "available" && !resumeNotice : checkoutKey && !sharedNotice));
+
+  async function startGetaiPayment() {
+    setPaymentError("");
+    try {
+      const response = await fetch("/public/ai-tools/checkout", {
+        method: "POST", cache: "no-store", credentials: "same-origin",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ selection, signature, quoted_total_minor: totalMinor })
+      });
+      const body = await response.json();
+      if (typeof body.orderToken === "string" && /^gai_[a-f0-9]{32}$/.test(body.orderToken) && !body.checkoutUrl) {
+        window.location.assign(`/streaming-plans/order/${body.orderToken}`);
+        return;
+      }
+      if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Your payment could not be started. Please try again shortly.");
+      const url = new URL(body.checkoutUrl || "");
+      if (!["https://getsafepay.com", "https://sandbox.api.getsafepay.com"].includes(url.origin) ||
+          url.pathname !== "/embedded/" || url.username || url.password) throw new Error("The payment link could not be verified. Please contact GetAI Tools.");
+      window.location.assign(url.toString());
+    } catch (failure) {
+      checkoutSubmitting.current = false;
+      setSubmitting(false);
+      setPaymentError((failure as Error).message || "Your payment could not be started. Please contact GetAI Tools before retrying.");
+    }
+  }
 
   async function savePaymentResume() {
     if (!plan || !selection || !signature || resumeToken || !canCheckout || savingResume || submitting) return;
@@ -411,7 +461,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 Try again
               </button>
             ) : null}
-            <a href={sourcePackagesUrl}>Choose a service</a>
+            <a href={packagesUrl}>Choose a service</a>
           </div>
         ) : (
           <div className={styles.checkoutLayout}>
@@ -430,6 +480,10 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                     <span>Service</span>
                     <strong>{displayServiceName}</strong>
                   </div>
+                  {getai ? <>
+                    <div><span>Duration</span><strong>{plan.durationLabel}</strong></div>
+                    {plan.features?.map((detail, index) => <div key={index}><span>{index === 0 && plan.description ? "Access" : "Plan details"}</span><strong>{detail}</strong></div>)}
+                  </> : null}
                 </div>
               </section>
             </div>
@@ -479,26 +533,28 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
 
               {sharedNotice ? <p className={styles.notice} role="status">{sharedNotice}</p> : null}
               {resumeNotice ? <p className={styles.notice} role="status">{resumeNotice}</p> : null}
-              {resumedCheckout ? <section className={styles.resumeNotice} aria-label="Saved payment status">
+              {!getai && resumedCheckout ? <section className={styles.resumeNotice} aria-label="Saved payment status">
                 <p>This private link reopens only the original payment in this browser. It never creates a replacement order or payment session.</p>
                 <button type="button" onClick={() => setRequestVersion((version) => version + 1)}>Refresh saved payment status</button>
                 <a href="https://opplexiptv.com/contact">Contact support before paying again</a>
               </section> : null}
-              {sharedCheckout && !sharedNotice ? (
+              {!getai && sharedCheckout && !sharedNotice ? (
                 <p className={styles.paymentNote}>
                   Shared checkout: use your own details in SafePay. The order, service and invoice will belong to the payer.
                 </p>
               ) : null}
 
-              <form action="/public/safepay/checkout" method="post" className={styles.checkoutForm}
+              <form action={getai ? "/public/ai-tools/checkout" : "/public/safepay/checkout"} method="post" className={styles.checkoutForm}
                 aria-busy={submitting} aria-describedby="checkout-progress"
                 onSubmit={(event) => {
+                  if (getai) event.preventDefault();
                   if (checkoutSubmitting.current || !canCheckout || sharing || savingResume) {
                     event.preventDefault();
                     return;
                   }
                   checkoutSubmitting.current = true;
                   setSubmitting(true);
+                  if (getai) void startGetaiPayment();
                 }}>
                 {resumeToken ? <input type="hidden" name="resume_token" value={resumeToken} /> : <>
                 <input type="hidden" name="package_id" value={plan.id} />
@@ -512,10 +568,11 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                   {submitting ? "Opening SafePay…" : resumeToken ? "Continue original SafePay payment" : "Continue to SafePay"}
                 </button>
               </form>
+              {getai && paymentError ? <p className={styles.notice} role="alert">{paymentError}</p> : null}
               <p id="checkout-progress" className={styles.checkoutProgress} role="status" aria-live="polite" aria-atomic="true">
                 {submitting ? "Your checkout is being prepared. Please wait and do not pay again. If the page does not continue, check your order or contact support before retrying." : ""}
               </p>
-              {!resumeToken ? <section className={styles.resumeNotice} aria-label="Save original payment">
+              {!getai && !resumeToken ? <section className={styles.resumeNotice} aria-label="Save original payment">
                 <button type="button" className={styles.sharePaymentButton} disabled={!canCheckout || sharing || savingResume || submitting}
                   onClick={() => void savePaymentResume()}>{savingResume ? "Saving private link…" : "Save payment for later"}</button>
                 <p>Save this before opening SafePay. After payment starts, this link can reopen only that same payment session for 24 hours in this browser. It does not email anyone or save card details. It cannot restore a closed payment or work on another device.</p>
@@ -527,13 +584,13 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
                 </> : null}
                 <p role="status" aria-live="polite">{resumeFeedback}</p>
               </section> : null}
-              {!resumeToken ? <button type="button" className={styles.sharePaymentButton}
+              {!getai && !resumeToken ? <button type="button" className={styles.sharePaymentButton}
                 disabled={!canCheckout || sharing || submitting} aria-expanded={sharePanelOpen} aria-controls="share-payment-panel"
                 onClick={() => shareLink ? setSharePanelOpen((open) => !open) : void createShareLink()}>
                 {sharing ? "Creating secure link…" : "Share payment link"}
               </button> : null}
-              {shareError ? <p className={styles.sharePaymentFeedback} role="alert">{shareError}</p> : null}
-              {shareLink && sharePanelOpen ? (
+              {!getai && shareError ? <p className={styles.sharePaymentFeedback} role="alert">{shareError}</p> : null}
+              {!getai && shareLink && sharePanelOpen ? (
                 <section id="share-payment-panel" className={styles.sharePaymentPanel} aria-label="Share payment link">
                   <h3>Let someone pay directly</h3>
                   <p>The recipient sees this service and total, then pays using their own name and email.</p>
@@ -555,7 +612,7 @@ export function StreamingPlans({ selection, signature, initialStatus }: Streamin
               <p className={styles.paymentNote}>
                 One-time payment. Your amount is verified securely before SafePay opens.
               </p>
-              <a className={styles.changePackage} href={sourcePackagesUrl}>
+              <a className={styles.changePackage} href={packagesUrl}>
                 Change service
               </a>
             </aside>

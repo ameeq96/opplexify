@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { PublicShell } from "../../components/site/PublicShell";
-import { SAFEPAY_MERCHANT_NAME, seoMetadata } from "../../lib/seo";
-import { AiCheckout } from "./AiCheckout";
+import { redirect } from "next/navigation";
+import { seoMetadata } from "../../lib/seo";
 
 export const metadata: Metadata = seoMetadata({
   title: "GetAI Tools Checkout | Opplexify",
@@ -17,11 +16,13 @@ type AiCheckoutPageProps = {
 export default async function AiCheckoutPage({ searchParams }: AiCheckoutPageProps) {
   const { selection, signature, order } = await searchParams;
 
-  return (
-    <PublicShell smooth={false} showLoader={false}>
-      <main className="digital-agency-template dark body-wrapper body-digital-agency">
-        <AiCheckout selection={selection} signature={signature} order={order} merchantName={SAFEPAY_MERCHANT_NAME} />
-      </main>
-    </PublicShell>
-  );
+  if (typeof order === "string" && /^gai_[a-f0-9]{32}$/.test(order)) {
+    redirect(`/streaming-plans/order/${order}`);
+  }
+  const query = new URLSearchParams({ source: "getaitools" });
+  if (typeof selection === "string" && typeof signature === "string") {
+    query.set("selection", selection);
+    query.set("signature", signature);
+  }
+  redirect(`/checkout?${query.toString()}`);
 }

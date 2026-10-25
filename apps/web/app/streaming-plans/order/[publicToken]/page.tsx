@@ -81,6 +81,7 @@ export default async function OrderStatusPage({ params }: OrderStatusPageProps) 
   );
   const order = payload?.order;
   const content = order ? statusContent[order.status] : null;
+  const isGetAiOrder = /^gai_[a-f0-9]{32}$/.test(order?.token ?? "");
 
   return (
     <PublicShell smooth={false} showLoader={false}>
@@ -98,7 +99,7 @@ export default async function OrderStatusPage({ params }: OrderStatusPageProps) 
                 <dl className={styles.orderDetails}>
                   <div>
                     <dt>Service</dt>
-                    <dd>Digital Services</dd>
+                    <dd>{isGetAiOrder ? order.packageName : "Digital Services"}</dd>
                   </div>
                   <div>
                     <dt>Amount</dt>
@@ -123,11 +124,11 @@ export default async function OrderStatusPage({ params }: OrderStatusPageProps) 
                     Download invoice (PDF)
                   </a>
                 ) : null}
-                {order?.status === "PAID" ? <PaymentWhatsAppPrompt /> : null}
-                <a className={styles.primaryLink} href="https://opplexiptv.com/packages">
+                {order?.status === "PAID" ? <PaymentWhatsAppPrompt getaiMessage={isGetAiOrder ? `Hi GetAI Tools! My payment is confirmed. Order: ${order.token}. Plan: ${order.packageName}. Total paid: ${formatPrice(order.amount, order.currency)}. Please help with access and activation.` : undefined} /> : null}
+                <a className={styles.primaryLink} href={isGetAiOrder ? "https://getaitools.shop/#tools" : "https://opplexiptv.com/packages"}>
                   Choose service
                 </a>
-                <a className={styles.secondaryLink} href="https://opplexiptv.com/contact">
+                <a className={styles.secondaryLink} href={isGetAiOrder ? "https://getaitools.shop/contact" : "https://opplexiptv.com/contact"}>
                   Contact support
                 </a>
               </div>
