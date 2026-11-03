@@ -79,6 +79,24 @@ test("new landing brands keep their own signed guide context", () => {
   }
 });
 
+test("Cheap Accounts keeps its signed plan identity and rejects unsupported product context", () => {
+  const storePlans = [{ ...plans[0], id: 62, providerKey: "opplex", providerName: "Opplex" }];
+  for (const attribution of [{ brand: "cheapaccounts" }, { brand: "cheapaccounts", session_id: sessionId }]) {
+    const link = signed({ package_id: 62, attribution });
+    assert.deepEqual(verifiedCheckoutSelection(link.selection, link.signature, storePlans), { package_id: 62, attribution });
+    const changed = signed({ package_id: 62, attribution: { brand: "getiptv" } });
+    assert.equal(verifiedCheckoutSelection(changed.selection, link.signature, storePlans), null);
+  }
+  for (const page of ["products/opplex-iptv", "categories/netflix", "blogs/how-to-get-iptv-on-your-device"]) {
+    const attribution = { brand: "cheapaccounts", session_id: sessionId, locale: "en", page };
+    assert.equal(validLandingAttribution(attribution), false);
+    const link = signed({ package_id: 62, attribution });
+    assert.equal(verifiedCheckoutSelection(link.selection, link.signature, storePlans), null);
+  }
+  assert.equal(validLandingAttribution({ brand: "cheapaccounts.shop" }), false);
+  assert.equal(validLandingAttribution({ brand: "cheapaccounts", amount: 1 }), false);
+});
+
 test("even correctly signed malformed attribution fails closed instead of becoming a legacy link", () => {
   const malformed = [null, "geo", [], {}, { brand: "unknown" }, { brand: "GEO" },
     { brand: "geo", session_id: null }, { brand: "geo", session_id: "" },
