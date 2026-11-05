@@ -3331,3 +3331,11 @@ video {
     display: none !important;
   }
 }
+
+.digital-agency-template.dark .footer-area .footer-widget-box > .title {
+  color: #999999;
+}
+
+.digital-agency-template .about-area-2 .thumb img {
+  height: auto;
+}

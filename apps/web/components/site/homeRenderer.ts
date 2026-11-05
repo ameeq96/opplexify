@@ -175,7 +175,7 @@ function renderHomeWork(item: Section | null | undefined, portfolioItems: Portfo
                       return `<div class="work-box fade-anim">
                     <div class="thumb"><div class="image scale" data-cursor-text="View Details" data-cursor-class="-big"><a href="${escapeHtml(
                       href
-                    )}"><video class="home-work-video" muted loop playsinline preload="none" data-deferred-video data-autoplay><source data-src="${escapeHtml(
+                    )}" aria-label="${escapeHtml(stringValue(record.title, "Portfolio video"))}"><video class="home-work-video" muted loop playsinline preload="none" data-deferred-video data-autoplay><source data-src="${escapeHtml(
                       assetUrl(stringValue(record.mediaUrl))
                     )}" type="video/mp4"></video></a></div></div>
                     <div class="content"><h3 class="title"><a href="${escapeHtml(href)}">${escapeHtml(
