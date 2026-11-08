@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { PAKISTAN_SUPPORT_PHONE } from "../../lib/seo";
 import { TEMPLATE_ASSET_BASE, templateScriptFiles, withAssetVersion } from "./templateAssets";
 
 declare global {
@@ -266,6 +268,54 @@ function observeDeferredVideos() {
   return () => observer.disconnect();
 }
 
+const SUPPORT_CHAT_URL = 'https://tawk.to/chat/6ac929cd7f1f3634beb0e4f6/1k4gsmj54';
+
+function publicSupportContext(value: string): boolean {
+  try {
+    const url = new URL(value, window.location.origin);
+    if (/^\/(?:checkout|streaming-plans|admin|account|api|ai-checkout)(?:\/|$)/i.test(decodeURIComponent(url.pathname).replace(/\/+/g, '/'))) return false;
+    const privateKeys = /^(?:selection|signature|token|resume|checkout_key)$/i;
+    return ![...url.searchParams.keys(), ...new URLSearchParams(url.hash.slice(1)).keys()].some(key => privateKeys.test(key));
+  } catch { return false; }
+}
+
+function PublicSupport() {
+  const pathname = usePathname();
+  const [publicPath, setPublicPath] = useState<string | null>(null);
+  const [openPath, setOpenPath] = useState<string | null>(null);
+  const launcher = useRef<HTMLButtonElement>(null);
+  const permitted = () => publicSupportContext(window.location.href) && (!document.referrer || publicSupportContext(document.referrer));
+  const closeChat = () => { setOpenPath(null); launcher.current?.focus(); };
+
+  useEffect(() => {
+    const sync = () => { setOpenPath(null); setPublicPath(permitted() ? pathname : null); };
+    sync();
+    window.addEventListener("popstate", sync);
+    window.addEventListener("hashchange", sync);
+    return () => { window.removeEventListener("popstate", sync); window.removeEventListener("hashchange", sync); };
+  }, [pathname]);
+
+  const open = publicPath === pathname && openPath === pathname;
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") closeChat(); };
+    window.addEventListener("keydown", onKey);
+    return () => { window.removeEventListener("keydown", onKey); };
+  }, [open]);
+
+  if (publicPath !== pathname || !pathname || !publicSupportContext(pathname)) return null;
+  const number = PAKISTAN_SUPPORT_PHONE.replace(/\D/g, "");
+  return <>
+    <a className="opplexify-support-whatsapp" href={`https://wa.me/${number}`} target="_blank" rel="noopener noreferrer" aria-label="Contact Opplexify on WhatsApp" title="Contact Opplexify on WhatsApp">
+      <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M16 3A13 13 0 0 0 4.8 22.6L3 29l6.6-1.7A13 13 0 1 0 16 3Zm0 23.7c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-3.9 1 1-3.8-.3-.4A10.7 10.7 0 1 1 16 26.7Z" /><path d="M22.1 19.1c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.5-1.8-1.7-2.2-.2-.3 0-.5.1-.7l.5-.5.3-.5c.1-.2 0-.4 0-.6l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1.1 1.1-1.1 2.6s1.1 3 1.3 3.2c.2.2 2.2 3.4 5.3 4.7.7.3 1.3.5 1.8.6.7.2 1.4.2 2 .1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.3.2-1.5-.1-.1-.3-.2-.6-.4Z" /></svg>
+    </a>
+    <button ref={launcher} className="opplexify-support-chat" type="button" aria-label="Open live chat" aria-controls="opplexify-live-chat" aria-expanded={open} onClick={() => { if (permitted()) setOpenPath(open ? null : pathname); }}>
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M21 11a8 8 0 0 1-8 8H8l-5 3 1-6a8 8 0 1 1 17-5Z" /><path d="M8 10h8m-8 4h5" /></svg>
+    </button>
+    {open && <section className="opplexify-support-panel" id="opplexify-live-chat" role="region" aria-label="Opplexify live chat"><div className="opplexify-support-panel-heading"><span>Live chat</span><a href="/contact">Contact us</a><button type="button" onClick={closeChat} aria-label="Close live chat">×</button></div><iframe title="Opplexify support chat" src={SUPPORT_CHAT_URL} referrerPolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" /></section>}
+  </>;
+}
+
 export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", smooth = true }: DigitalAgencyRuntimeProps) {
   useEffect(() => {
     let mounted = true;
@@ -423,5 +473,5 @@ export function DigitalAgencyRuntime({ bodyClassName = "body-digital-agency", sm
     };
   }, [bodyClassName, smooth]);
 
-  return null;
+  return <PublicSupport />;
 }
