@@ -160,7 +160,7 @@ export function seoMetadata({
       description: resolvedDescription,
       url: canonicalUrl,
       siteName: SITE_NAME,
-      images: [{ url: imageUrl, alt: DEFAULT_OG_IMAGE_ALT, type: DEFAULT_OG_IMAGE_TYPE }],
+      images: [{ url: imageUrl, alt: DEFAULT_OG_IMAGE_ALT }],
       locale: SITE_LOCALE,
       type
     },
