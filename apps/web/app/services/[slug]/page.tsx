@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { PageHero, Prose } from "../../../components/site/Blocks";
+import { FaqList, PageHero, Prose, SectionHead } from "../../../components/site/Blocks";
 import { PublicShell } from "../../../components/site/PublicShell";
-import { assetUrl, fetchApi, pageMetadata, type Service } from "../../../lib/api";
+import { assetUrl, fetchApi, pageMetadata, type Faq, type Service } from "../../../lib/api";
 import { absoluteUrl, breadcrumbList } from "../../../lib/seo";
 
 export const revalidate = 300;
@@ -94,6 +94,16 @@ function getService(slug: string) {
   return fetchApi<Service | null>(`/public/services/${slug}`, fallbackServices[slug] ?? null);
 }
 
+// Existing /faq entries that apply to every service engagement. Answers are reused verbatim.
+// Pricing/payment questions are skipped because /faq appends a disclosure to those answers.
+const serviceFaqPatterns = [/how does a project start/i, /milestone/i, /revisions?/i, /invoices?|contracts?/i, /remote|international/i];
+
+function selectServiceFaqs(faqs: Faq[]) {
+  return serviceFaqPatterns
+    .map((pattern) => faqs.find((faq) => !/pricing|payment/i.test(faq.question) && pattern.test(faq.question)))
+    .filter((faq, index, list): faq is Faq => Boolean(faq) && list.indexOf(faq) === index);
+}
+
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const service = await getService(slug);
@@ -115,8 +125,14 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
-  const service = await getService(slug);
+  const [service, services, faqs] = await Promise.all([
+    getService(slug),
+    fetchApi<Service[]>("/public/services", Object.values(fallbackServices)),
+    fetchApi<Faq[]>("/public/faqs", [])
+  ]);
   if (!service) notFound();
+  const relatedServices = services.filter((item) => item.slug !== service.slug);
+  const serviceFaqs = selectServiceFaqs(faqs);
   const features = Array.isArray(service.gallery) ? service.gallery.filter(Boolean) : [];
   const serviceImage = assetUrl(service.image);
   const serviceImageSrcSet = responsiveLocalImageSrcSet(serviceImage);
@@ -141,6 +157,9 @@ export default async function ServiceDetailPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <PageHero title={service.title} subtitle={service.shortDescription} eyebrow="Service" />
       <section className="section">
+        <div className="container">
+          <SectionHead title="What this service covers" />
+        </div>
         <div className="container detail-layout">
           <div>
             <img
@@ -179,9 +198,35 @@ export default async function ServiceDetailPage({ params }: Props) {
                 <a href="/contact">Discuss your project</a>
               </strong>
             </div>
+            <div className="meta-row">
+              <span>Pricing</span>
+              <strong>
+                <a href="/pricing">View pricing</a>
+              </strong>
+            </div>
+            {relatedServices.length ? (
+              <div className="meta-list-panel">
+                <span>Related services</span>
+                <ul>
+                  {relatedServices.map((item) => (
+                    <li key={item.slug}>
+                      <a href={`/services/${item.slug}`}>{item.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </aside>
         </div>
       </section>
+      {serviceFaqs.length ? (
+        <section className="section">
+          <div className="container rr-container-1650">
+            <SectionHead title="Frequently asked questions" />
+            <FaqList faqs={serviceFaqs} />
+          </div>
+        </section>
+      ) : null}
     </PublicShell>
   );
 }
