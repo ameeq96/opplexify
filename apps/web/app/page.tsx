@@ -24,8 +24,6 @@ import {
   FOUNDER_NAME,
   LEGAL_NAME,
   LINKEDIN_URL,
-  PAKISTAN_BUSINESS_POSTAL_ADDRESS,
-  PAKISTAN_SUPPORT_PHONE,
   SAFEPAY_MERCHANT_NAME,
   absoluteUrl,
   siteUrl
@@ -596,9 +594,7 @@ export default async function HomePage() {
         "@id": `${siteUrl()}#safepay-merchant`,
         name: SAFEPAY_MERCHANT_NAME,
         jobTitle: "Independent Freelancer",
-        url: absoluteUrl("/ownership-statement"),
-        telephone: PAKISTAN_SUPPORT_PHONE,
-        address: PAKISTAN_BUSINESS_POSTAL_ADDRESS
+        url: absoluteUrl("/ownership-statement")
       }
     ]
   };

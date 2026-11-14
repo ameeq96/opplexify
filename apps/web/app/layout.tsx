@@ -14,8 +14,6 @@ import {
   LEGAL_NAME,
   LINKEDIN_URL,
   metadataBaseUrl,
-  PAKISTAN_BUSINESS_POSTAL_ADDRESS,
-  PAKISTAN_SUPPORT_PHONE,
   SAFEPAY_MERCHANT_NAME,
   SITE_LOCALE,
   SITE_NAME,
@@ -140,8 +138,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     name: SAFEPAY_MERCHANT_NAME,
     jobTitle: "Independent Freelancer",
     url: absoluteUrl("/ownership-statement"),
-    telephone: PAKISTAN_SUPPORT_PHONE,
-    address: PAKISTAN_BUSINESS_POSTAL_ADDRESS,
     knowsAbout: [
       "custom website development",
       "SaaS platform development",

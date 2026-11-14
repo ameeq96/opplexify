@@ -16,7 +16,6 @@ import {
   LINKEDIN_URL,
   LLC_DESCRIPTOR,
   PAKISTAN_ADDRESS_LABEL,
-  PAKISTAN_BUSINESS_POSTAL_ADDRESS,
   PAKISTAN_CONTACT_ADDRESS,
   PAKISTAN_SUPPORT_PHONE,
   PAKISTAN_SUPPORT_PHONE_TEL,
@@ -120,15 +119,7 @@ const contactJsonLd = {
       "@id": `${siteUrl()}#safepay-merchant`,
       name: SAFEPAY_MERCHANT_NAME,
       jobTitle: "Independent Freelancer",
-      url: absoluteUrl("/ownership-statement"),
-      telephone: PAKISTAN_SUPPORT_PHONE,
-      address: PAKISTAN_BUSINESS_POSTAL_ADDRESS,
-      contactPoint: {
-        "@type": "ContactPoint",
-        telephone: PAKISTAN_SUPPORT_PHONE,
-        contactType: "customer service",
-        areaServed: "PK"
-      }
+      url: absoluteUrl("/ownership-statement")
     }
   ]
 };
