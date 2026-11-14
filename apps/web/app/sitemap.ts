@@ -38,6 +38,10 @@ const staticRoutes: Array<Pick<SitemapEntry, "url" | "changeFrequency" | "priori
   { url: absoluteUrl("/ownership-statement"), changeFrequency: "yearly", priority: 0.3 }
 ];
 
+// Slugs of the built-in profiles in app/team/[slug]/page.tsx (fallbackTeamMembers),
+// which stay live when the API returns no team members.
+const fallbackTeamSlugs = ["muhammad-emmad-khan", "ameeq-khan", "atiq-khan"];
+
 function route(
   path: string,
   priority: number,
@@ -72,6 +76,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...services.map((item) => route(`/services/${item.slug}`, 0.75, pickDate(item.updatedAt), "monthly")),
     ...projects.map((item) => route(`/work/${item.slug}`, 0.75, pickDate(item.updatedAt, item.date), "monthly")),
     ...posts.map((item) => route(`/blog/${item.slug}`, 0.65, pickDate(item.updatedAt, item.publishedAt), "weekly")),
-    ...team.map((item) => route(`/team/${item.slug}`, 0.55, pickDate(item.updatedAt), "monthly"))
+    ...(team.length
+      ? team.map((item) => route(`/team/${item.slug}`, 0.55, pickDate(item.updatedAt), "monthly"))
+      : fallbackTeamSlugs.map((slug) => route(`/team/${slug}`, 0.55, BUILD_TIME, "monthly")))
   ];
 }

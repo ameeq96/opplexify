@@ -3,12 +3,19 @@ import { PublicShell } from "../../components/site/PublicShell";
 import { seoMetadata } from "../../lib/seo";
 import { StreamingPlans } from "../streaming-plans/StreamingPlans";
 
-export const metadata: Metadata = seoMetadata({
-  title: "Secure Digital Services Checkout | Opplexify",
-  description:
-    "Review your selected digital services and continue to secure SafePay checkout.",
-  path: "/checkout"
-});
+export const metadata: Metadata = {
+  ...seoMetadata({
+    title: "Secure Digital Services Checkout | Opplexify",
+    description:
+      "Review your selected digital services and continue to secure SafePay checkout.",
+    path: "/checkout"
+  }),
+  robots: {
+    index: false,
+    follow: true,
+    googleBot: { index: false, follow: true }
+  }
+};
 
 type CheckoutPageProps = {
   searchParams: Promise<{
