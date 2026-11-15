@@ -221,7 +221,7 @@ function applyAboutCms(html: string, page: Page | null, team: TeamMember[]) {
 
   if (image) {
     rendered = rendered.replace(
-      /<div class="about-us__media parallax-view">\s*<img data-speed="0\.6" src="[^"]*" alt="">\s*<\/div>/,
+      /<div class="about-us__media parallax-view">\s*<img data-speed="0\.6" src="[^"]*" alt="[^"]*">\s*<\/div>/,
       `<div class="about-us__media parallax-view"><img data-speed="0.6" src="${escapeHtml(image)}" alt="${escapeHtml(title ?? "Opplexify")}"></div>`
     );
   }

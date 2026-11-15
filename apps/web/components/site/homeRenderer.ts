@@ -97,8 +97,8 @@ function renderHomeAbout(item?: Section | null) {
               </div>
               <div class="section-content-wrapper">
                 <div class="area-shape-1">
-                  <img class="fade-anim show-light" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1.webp" alt="" data-speed="0.8" loading="lazy" decoding="async">
-                  <img class="fade-anim show-dark" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1-light.webp" alt="" data-speed="0.8" loading="lazy" decoding="async">
+                  <img class="fade-anim show-light" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1.webp" alt="" aria-hidden="true" role="presentation" data-speed="0.8" loading="lazy" decoding="async">
+                  <img class="fade-anim show-dark" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1-light.webp" alt="" aria-hidden="true" role="presentation" data-speed="0.8" loading="lazy" decoding="async">
                 </div>
                 <div class="section-subtitle-wrapper fade-anim">
                   <div class="subtitle-wrapper">

@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const homeHtml = String.raw`
   <div class="custom-cursor">
-    <img src="${A}/imgs/cursor/cursor-2-xs.svg" alt="" id="cursorImg">
+    <img src="${A}/imgs/cursor/cursor-2-xs.svg" alt="" id="cursorImg" aria-hidden="true" role="presentation">
   </div>
 
   <div class="loader-wrap">
@@ -200,8 +200,8 @@ const homeHtml = String.raw`
               </div>
               <div class="section-content-wrapper">
                 <div class="area-shape-1">
-                  <img class="fade-anim show-light" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1.webp" alt="" data-speed="0.8">
-                  <img class="fade-anim show-dark" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1-light.webp" alt="" data-speed="0.8">
+                  <img class="fade-anim show-light" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1.webp" alt="" aria-hidden="true" role="presentation" data-speed="0.8">
+                  <img class="fade-anim show-dark" data-fade-from="bottom" src="${A}/imgs/shape/shape-s-1-light.webp" alt="" aria-hidden="true" role="presentation" data-speed="0.8">
                 </div>
                 <div class="section-subtitle-wrapper fade-anim">
                   <div class="subtitle-wrapper">

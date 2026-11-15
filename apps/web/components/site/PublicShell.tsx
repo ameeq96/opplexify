@@ -31,7 +31,7 @@ function CursorAndLoader({ site, showLoader }: { site: SitePayload; showLoader: 
   return (
     <>
       <div className="custom-cursor">
-        <img src={`${A}/imgs/cursor/cursor-2-xs.svg`} alt="" id="cursorImg" decoding="async" aria-hidden="true" />
+        <img src={`${A}/imgs/cursor/cursor-2-xs.svg`} alt="" id="cursorImg" decoding="async" aria-hidden="true" role="presentation" />
       </div>
 
       {showLoader ? (
