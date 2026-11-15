@@ -33,7 +33,7 @@ export default async function BlogDetailPage({ params }: Props) {
   if (!post) notFound();
   const storedAuthorName = post.author?.name?.trim();
   const hasNamedAuthor = Boolean(storedAuthorName && !["Opplexify", LEGAL_NAME, "Opplexify Admin"].includes(storedAuthorName));
-  const authorName = hasNamedAuthor ? storedAuthorName : "Opplexify Editorial Team";
+  const authorName = hasNamedAuthor ? storedAuthorName : "Muhammad Ameeq Khan";
   const blogJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -44,9 +44,9 @@ export default async function BlogDetailPage({ params }: Props) {
     dateModified: post.updatedAt ?? post.publishedAt,
     inLanguage: "en",
     author: {
-      "@type": hasNamedAuthor ? "Person" : "Organization",
+      "@type": "Person",
       name: authorName,
-      ...(hasNamedAuthor ? {} : { url: siteUrl() })
+      ...(hasNamedAuthor ? {} : { url: absoluteUrl("/team/ameeq-khan") })
     },
     publisher: {
       "@type": "Organization",
